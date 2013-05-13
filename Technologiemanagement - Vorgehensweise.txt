@@ -1,0 +1,23 @@
+﻿Technologiemanagement
+
+Github-Repo by Shimal: ttps://github.com/scrumbleruser/TDWM.git
+
+Klassen:
+
+
+JAVA-API
+- http://jwbf.sourceforge.net/pw/index.php?n=Site.GettingStarted
+
+
+SQL-Interface (Daten holen - Daten abspeichern)
+
+
+
+
+Vergleichsbetrachtung - Metriken
+
+
+
+
+JAVA-Api-SQL-Interface - bis zum nächsten Termin fertig stellen
+Termin: Dienstag 21.5 - 20:15 Uhr
