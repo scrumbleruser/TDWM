@@ -1,0 +1,3 @@
+
+Vor einem Connectionaufbau muss diese jar-file in der 
+JRE System-Libary - BuildPath eingefügt werden als externe jar-file.
