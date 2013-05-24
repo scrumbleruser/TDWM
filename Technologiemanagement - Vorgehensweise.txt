@@ -21,3 +21,34 @@ Vergleichsbetrachtung - Metriken
 
 JAVA-Api-SQL-Interface - bis zum nächsten Termin fertig stellen
 Termin: Dienstag 21.5 - 20:15 Uhr
+
+------------------------------------------------------------------------------------
+1. Weitere Felder in DB
+- Revision 
+- Kategorie
+
+2. Wiki-Api weitere Informationen
+- Revision
+- Kategorien
+
+3. Vergleiche werden folgendermassen:
+- Revisionen sollen verglichen werden
+- Überprüfung auf kleine oder große Änderungen
+- wer hat die Änderungen verfasst (Benutzername)
+- wird für verschiedene Kategorien umgesetzt
+- User mit ähnlichen Verhalten werden in den Blickpunkt gestellt
+- Zwei Textdateien miteinander vergleichen (shimal will sich um die Thematik kümmern)
+
+4. GUI
+Mysql:
+- Textfelder (dbuser, dbpasswort, dbhost, dbname)
+- Textbox: Select oder anderes SQL-Statement aufführen
+- Textarea: Ergebnis anzeigen
+- Button: Senden
+Wiki-API:
+- Textfelder (benutzername,passwort,Artikelname)
+- Textbox: Ergebis anzeigen
+- Button (Senden)
+
+Vergleich:
+
