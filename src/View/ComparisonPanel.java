@@ -1,8 +1,9 @@
+package View;
+
 import java.awt.Color;
 
 import javax.swing.JPanel;
 import net.miginfocom.swing.MigLayout;
-
 
 public class ComparisonPanel {
 
@@ -21,12 +22,12 @@ public class ComparisonPanel {
 	private void init() {
 		panel = new JPanel();
 		panel.setLayout(new MigLayout("", "[]", "[]"));
-		//------------------------------------------------
-		
+		// ------------------------------------------------
+
 		panel.setBackground(Color.red);
-		
+
 	}
-	
+
 	public JPanel getComparisonPanel() {
 		return this.panel;
 	}

@@ -1,10 +1,6 @@
 package API;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-
-import lombok.extern.java.Log;
-import lombok.extern.slf4j.Slf4j;
 import net.sourceforge.jwbf.core.contentRep.Article;
 import net.sourceforge.jwbf.mediawiki.bots.MediaWikiBot;
 
@@ -20,6 +16,7 @@ public class Testmain {
       info.add(article.getRevisionId());
       info.add(article.getTitle());
       info.add(article.getText());
+      article.getSimpleArticle();
       info.add(article.getEditTimestamp().toString());
       
       for(String a : info)
