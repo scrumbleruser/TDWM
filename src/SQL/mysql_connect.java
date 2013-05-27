@@ -53,24 +53,42 @@ public class mysql_connect {
 			e.printStackTrace();
 		}
 	}
+	
+	public void setResult(ResultSet result){
+		try {
+			System.out.println(result.getInt(1) + " Datensatz");
+			System.out.println(result.getString(2));
+			System.out.println(result.getString(3));
+			System.out.println(result.getString(4));
+			System.out.println(result.getString(5));
+			System.out.println(result.getString(6));
+			System.out.println(result.getString(7));
+			System.out.println(result.getString(8));
+		} catch (SQLException e) {
+			System.out.println("setResult: SQL-Fehler");
+			e.printStackTrace();
+		}
+		
+	}
 
 	public void getSQL(String sql, int nr) {
 		try {
 			stmt = connect.createStatement();
-			
+			System.out.println("SQL ist: " + sql);
 			if(nr == 1){
 				connect.setReadOnly(true); // nur Lesezugriff möglich
 				// Select - Ausgabe
 				result = stmt.executeQuery(sql);
-				while (result.next()) {
-					// System.out.println(result.getString(spalten[i]));
-					System.out.println(result.getInt(1) + " Datensatz");
-					System.out.println(result.getString(2));
-					System.out.println(result.getString(3));
-					System.out.println(result.getString(4));
-					System.out.println(result.getString(5));
+				if (result.first() == true){  // nur wenn Datensätze vorhanden sind ausführen
+					setResult(result);
+					while (result.next()) {
+						// System.out.println(result.getString(spalten[i]));
+						setResult(result);
+					}
+						result.close();
+				}else{
+						System.out.println("Keine Datensätze in der Tabelle vorhanden");
 				}
-					result.close();
 			}else{
 					connect.setReadOnly(false);
 					// Weitere DDL-Befehle - Upade,Create,Delete
