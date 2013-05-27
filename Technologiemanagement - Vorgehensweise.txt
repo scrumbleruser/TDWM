@@ -10,7 +10,7 @@ JAVA-API
 
 
 SQL-Interface (Daten holen - Daten abspeichern)
-
+- MySQL Befehle für die Sortierung müssen noch implementiert werden
 
 
 
@@ -24,31 +24,47 @@ Termin: Dienstag 21.5 - 20:15 Uhr
 
 ------------------------------------------------------------------------------------
 1. Weitere Felder in DB
-- Revision 
-- Kategorie
+- Revision (Erledigt)
+- Kategorie (Erledigt)
+- Benutzergruppe löschen
 
 2. Wiki-Api weitere Informationen
 - Revision
 - Kategorien
+- Beiträge eines Users
+- Kann man Datun und Uhrzeit getrennt bekommen?
 
 3. Vergleiche werden folgendermassen:
 - Revisionen sollen verglichen werden
-- Überprüfung auf kleine oder große Änderungen
+- Überprüfung auf kleine oder große Änderungen		(Was ist eine kleine und große Änderung?)
 - wer hat die Änderungen verfasst (Benutzername)
 - wird für verschiedene Kategorien umgesetzt
-- User mit ähnlichen Verhalten werden in den Blickpunkt gestellt
+- User mit ähnlichen Verhalten werden in den Blickpunkt gestellt (z.B. habe verschiedene User an gleiche Themen oder Artikeln oder Kategorien gearbeitet)
 - Zwei Textdateien miteinander vergleichen (shimal will sich um die Thematik kümmern)
 
 4. GUI
 Mysql:
-- Textfelder (dbuser, dbpasswort, dbhost, dbname)
-- Textbox: Select oder anderes SQL-Statement aufführen
-- Textarea: Ergebnis anzeigen
-- Button: Senden
+- Textfelder (dbuser, dbpasswort, dbhost, dbname) (Erledigt)
+- Textbox: Select oder anderes SQL-Statement aufführen (Erledigt)
+- Textarea: Ergebnis anzeigen (Erledigt)
+- Button: Senden (Erledigt)
 Wiki-API:
-- Textfelder (benutzername,passwort,Artikelname)
-- Textbox: Ergebis anzeigen
-- Button (Senden)
+- Textfelder (benutzername,passwort,Artikelname) (Erledigt)
+- Textbox: Ergebis anzeigen (Erledigt)
+- Button (Senden) (Erledigt)
+- Kategorie
+- Revision
+- Benutzername
+- Artikelname
+- IP
+- Datum 
+- Uhrzeit
 
 Vergleich:
+- GUI fehlt noch
+- Zwei Textfelder (Ergebnis 1 und 2)
+- Button (Vergleichen)
+- 2 Textfeld für SQL-Statement + Ausführ-Button
+- Textfeld für das Final-Ergebnis, also ob zwei Artikeln ähnlich sind
 
+-> Funktionalität fehlt bei alle Views!!!
