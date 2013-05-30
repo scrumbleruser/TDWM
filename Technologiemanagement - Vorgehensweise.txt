@@ -29,9 +29,9 @@ Termin: Dienstag 21.5 - 20:15 Uhr
 - Benutzergruppe löschen
 
 2. Wiki-Api weitere Informationen
-- Revision
-- Kategorien
-- Beiträge eines Users
+- Revision (Erledigt)
+- Kategorien (Erledigt)
+- Beiträge eines Users (Erledigt)
 - Kann man Datun und Uhrzeit getrennt bekommen?
 
 3. Vergleiche werden folgendermassen:
