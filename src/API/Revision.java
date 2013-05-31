@@ -12,6 +12,15 @@ public class Revision {
 	private String timestamp;
 	private int userid;
 	boolean minorchange;
+	private long size;
+
+	public long getSize() {
+		return size;
+	}
+
+	public void setSize(long size) {
+		this.size = size;
+	}
 
 	public boolean isMinorchange() {
 		return minorchange;
@@ -59,7 +68,7 @@ public class Revision {
 
 	public String toString() {
 		return "RevisionID: " + revid + " UserID:" + userid + " User: " + user
-				+ " TimeSpamp: " + timestamp + " Minor change: " + minorchange;
+				+ " TimeSpamp: " + timestamp +  " Size: " +size+ " Minor change: " + minorchange;
 	}
 	
 	public String getDateString() {
@@ -92,6 +101,10 @@ public class Revision {
 		else
 			this.minorchange = true;
 		
+	}
+
+	public void setSize(String size) {
+		setSize(Long.parseLong(size));		
 	}
 
 }

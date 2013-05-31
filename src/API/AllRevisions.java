@@ -42,7 +42,7 @@ public class AllRevisions extends MWAction {
 		super(bot.getVersion());
 		this.bot = bot;
 		this.title = title;
-		msg = new Get(MediaWiki.URL_API + "?action=query&titles=" +MediaWiki.encode(title) + "&prop=revisions&rvlimit=max&rvprop=ids%7Ctimestamp%7Cuser%7Cuserid%7Cflags&format=xml");
+		msg = new Get(MediaWiki.URL_API + "?action=query&titles=" +MediaWiki.encode(title) + "&prop=revisions&rvlimit=max&rvprop=ids%7Ctimestamp%7Cuser%7Cuserid%7Cflags%7Csize&format=xml");
 	}
 
 	public String getTitle() {
@@ -127,6 +127,7 @@ public class AllRevisions extends MWAction {
 	    	rev.setUserID(element.getAttributeValue("userid"));
 	    	rev.setTimeStamp(element.getAttributeValue("timestamp"));
 	    	rev.setMinorchange(element.getAttributeValue("minor"));
+	    	rev.setSize(element.getAttributeValue("size"));
 	        rtn.add(rev);
 
 	      } else {
