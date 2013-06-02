@@ -1,11 +1,11 @@
 /**
  * Author: Daniel Fay
  * 
- * Java Klasse die folgende Funktionalitäten besitzt
- * - MySQL-Verbindung eröffnen
+ * Java Klasse die folgende Funktionalitï¿½ten besitzt
+ * - MySQL-Verbindung erï¿½ffnen
  * - diversen Daten auslesen
- * - Hinzufügen von neuen Daten in die DB-Tabelle
- * - Löschen von Datensäzen
+ * - Hinzufï¿½gen von neuen Daten in die DB-Tabelle
+ * - Lï¿½schen von Datensï¿½zen
  */
 
 package SQL;
@@ -26,21 +26,17 @@ public class mysql_connect {
 			
 			Enumeration allDrivers = DriverManager.getDrivers();
 			allDrivers.hasMoreElements();
-			System.out.println("Treiber kann geladen werden und lautet: " + allDrivers.nextElement());
+//			System.out.println("Treiber kann geladen werden und lautet: " + allDrivers.nextElement());
 			connect = DriverManager.getConnection(
 					"jdbc:mysql://"+dbhost+dbname, dbuser, dbpass);
-
 		} catch (SQLException e) {
-			System.out.println("mysql_connect: SQL-Statment falsch oder MySQL-Db nicht erreichbar \n");
+			System.out.println("mysql_connect: MySQL-Db nicht erreichbar \n");
 		} catch (InstantiationException e) {
-			System.out.println("mysql_connect: Instanz nicht ausführbar \n");
-			e.printStackTrace();
+			System.out.println("mysql_connect: Instanz nicht ausfÃ¼hrbar \n");
 		} catch (IllegalAccessException e) {
-			System.out.println("mysql_connect: Zugriff zur DB nicht möglich \n");
-			e.printStackTrace();
+			System.out.println("mysql_connect: Zugriff zur DB nicht mÃ¶glich \n");
 		} catch (ClassNotFoundException e) {
 			System.out.println("mysql_connect: Treiber nicht gefunden \n");
-			e.printStackTrace();
 		}
 	}
 
@@ -50,58 +46,29 @@ public class mysql_connect {
 			connect.close();
 		} catch (SQLException e) {
 			System.out.println("mysql_close: Fehler: ");
-			e.printStackTrace();
+//			e.printStackTrace();
 		}
-	}
-	
-	public void setResult(ResultSet result){
-		try {
-			System.out.println(result.getInt(1) + " Datensatz");
-			System.out.println(result.getString(2));
-			System.out.println(result.getString(3));
-			System.out.println(result.getString(4));
-			System.out.println(result.getString(5));
-			System.out.println(result.getString(6));
-			System.out.println(result.getString(7));
-			System.out.println(result.getString(8));
-		} catch (SQLException e) {
-			System.out.println("setResult: SQL-Fehler");
-			e.printStackTrace();
-		}
-		
 	}
 
-	public void getSQL(String sql, int nr) {
+	public ResultSet getSQL(String sql, int nr) {
 		try {
 			stmt = connect.createStatement();
-			System.out.println("SQL ist: " + sql);
+//			System.out.println("SQL ist: " + sql);
 			if(nr == 1){
-				connect.setReadOnly(true); // nur Lesezugriff möglich
+				connect.setReadOnly(true); // nur Lesezugriff mÃ¶glich
 				// Select - Ausgabe
 				result = stmt.executeQuery(sql);
-				if (result.first() == true){  // nur wenn Datensätze vorhanden sind ausführen
-					setResult(result);
-					while (result.next()) {
-						// System.out.println(result.getString(spalten[i]));
-						setResult(result);
-					}
-						result.close();
-				}else{
-						System.out.println("Keine Datensätze in der Tabelle vorhanden");
-				}
+				return result;
 			}else{
 					connect.setReadOnly(false);
 					// Weitere DDL-Befehle - Upade,Create,Delete
-					stmt.executeUpdate(sql); // Ausführen des angegeben SQL-Statements
-					System.out.println("SQL-Statement erfolgreich ausgeführt \n");
+					stmt.executeUpdate(sql); // AusfÃ¼hren des angegeben SQL-Statements
+//					System.out.println("SQL-Statement erfolgreich ausgefÃ¼hrt \n");
 				}
 		} catch (SQLException e) {
 			System.out.println("getSQL: SQL-Statment falsch oder MySQL-Db nicht erreichbar \n");
-			e.printStackTrace();
-		}
+			result = null;
+		};
+		return null;
 	}
-	public static void main(String[] args) {
-
-	}
-
 }
