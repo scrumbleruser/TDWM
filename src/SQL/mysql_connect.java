@@ -18,8 +18,7 @@ public class mysql_connect {
 	// Objekte zur Verbindung erstellen
 	static Connection connect = null;
 	static Statement stmt = null;
-	static ResultSet result = null;
-
+	
 	public mysql_connect(String dbhost, String dbname,String dbuser,String dbpass) {
 		try {
 			Class.forName("sun.jdbc.odbc.JdbcOdbcDriver").newInstance(); // Instanz der Treiberklasse laden
@@ -50,25 +49,14 @@ public class mysql_connect {
 		}
 	}
 
-	public ResultSet getSQL(String sql, int nr) {
+	public Statement getStatement(String sql, int nr) {
 		try {
 			stmt = connect.createStatement();
-//			System.out.println("SQL ist: " + sql);
-			if(nr == 1){
-				connect.setReadOnly(true); // nur Lesezugriff möglich
-				// Select - Ausgabe
-				result = stmt.executeQuery(sql);
-				return result;
-			}else{
-					connect.setReadOnly(false);
-					// Weitere DDL-Befehle - Upade,Create,Delete
-					stmt.executeUpdate(sql); // Ausführen des angegeben SQL-Statements
-//					System.out.println("SQL-Statement erfolgreich ausgeführt \n");
-				}
 		} catch (SQLException e) {
-			System.out.println("getSQL: SQL-Statment falsch oder MySQL-Db nicht erreichbar \n");
-			result = null;
-		};
-		return null;
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return stmt;
+//		System.out.println("SQL ist: " + sql);
 	}
 }

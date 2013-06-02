@@ -6,6 +6,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import javax.swing.ButtonGroup;
 import javax.swing.JButton;
@@ -31,7 +32,8 @@ public class SQLPanel {
 	JTextArea sqlStatementField = new JTextArea();
 	JTextArea sqlResultField = new JTextArea();
 	JTextField messageField = new JTextField();
-	ResultSet rsSet;
+	static Statement stmt = null;
+	static ResultSet result = null;
 	
 	JRadioButton rbSelect = new JRadioButton();
 	JRadioButton rbOtherSQL = new JRadioButton();
@@ -49,28 +51,27 @@ public class SQLPanel {
 		int i;
 		String content = "";
 		messageField.setText("Your SQL-Statment was: ");
+		String column ="";
 		try {
 			if (result.first() == true){  // nur wenn Datensätze vorhanden sind ausführen
-				list.add("ID  " + "DatumUhrzeit  " + "       IP  " + "       Benutzername  " + "  Artikel  " + "  Revision  " + "Kategorie  \n");
-				list.add(result.getString(1)+"  ");
-				list.add(result.getString(2)+"  ");
-				list.add(result.getString(3)+"  ");
-				list.add(result.getString(4)+"  ");
-				list.add(result.getString(5)+"  ");
-				list.add(result.getString(6)+"  ");
-				list.add(result.getString(7)+"  ");
+				int getcolumnncount = result.getMetaData().getColumnCount();
+				for(i=1;i<getcolumnncount+1;i++){
+					column += result.getMetaData().getColumnName(i);
+					column += "  ";
+				}
+				list.add(column);
 				list.add("\n");
-				while (rsSet.next()) {
-					list.add(result.getString(1)+"  ");
-					list.add(result.getString(2)+"  ");
-					list.add(result.getString(3)+"  ");
-					list.add(result.getString(4)+"  ");
-					list.add(result.getString(5)+"  ");
-					list.add(result.getString(6)+"  ");
-					list.add(result.getString(7)+"  ");
+				for(int e=1;e<getcolumnncount;e++){
+					list.add(result.getString(e)+ "  ");
+				}
+				list.add("\n");
+				while (result.next()) {
+					for(int e=1;e<getcolumnncount;e++){
+						list.add(result.getString(e)+ "  ");
+					}
 					list.add("\n");
 				}
-				content += ((list.size()/7)) + " Datensätze vorhanden \n";
+//				content += ((list.size()/7)) + " Datensätze vorhanden \n";
 				for(i=0; i<list.size();i++){
 					content += list.get(i).toString();
 				}
@@ -80,10 +81,12 @@ public class SQLPanel {
 //				Update wikiinfos set IP="192.168.8.83" WHERE ID="6"
 			}else{
 				messageField.setText("Keine Datensätze in der Tabelle vorhanden ");
+				sqlResultField.setText("");
 				con.mysql_close();
 			}
 		} catch (SQLException sqle) {
 			messageField.setText("SQL-Statement falsch oder MySQL-Db nicht erreichbar");
+			sqlResultField.setText("");
 			con.mysql_close();
 		}
 	}
@@ -92,18 +95,35 @@ public class SQLPanel {
 	    public void actionPerformed(ActionEvent e) {
 //	    	String dbhost = dbUserField.getText();
 	    	mysql_connect con = new mysql_connect(dbhostField.getText(),dbnameField.getText(),dbUserField.getText(),dbPasswordField.getText());
+	        
 	    	if (rbSelect.isSelected() == true){
 	    		// Parameter: SQL-Statement, Wert 1 nur für Select
-	    		rsSet = con.getSQL(sqlStatementField.getText(),1);
-	    		if(rsSet != null){
-	    			System.out.println(rsSet);
-			    	getRS(rsSet,con);
+				// Select - Ausgabe
+				stmt = con.getStatement(sqlStatementField.getText(),1);
+				try {
+					result = stmt.executeQuery(sqlStatementField.getText());
+				} catch (SQLException sqle) {
+					messageField.setText("SQL-Statement falsch oder MySQL-Db nicht erreichbar");
+					sqlResultField.setText("");
+					con.mysql_close();
+				}
+	    		if(result != null){
+//	    			System.out.println(result);
+			    	getRS(result,con);
 			    	sqlStatementField.setText(sqlStatementField.getText());
 			    	con.mysql_close();
 	    		}
 	    	}
 	    	if (rbOtherSQL.isSelected() == true){
-		    		con.getSQL(sqlStatementField.getText(),2);
+		    		stmt = con.getStatement(sqlStatementField.getText(),2);
+		    		// Weitere DDL-Befehle - Upade,Create,Delete
+					try {
+						stmt.executeUpdate(sqlStatementField.getText());
+					} catch (SQLException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					} // Ausführen des angegeben SQL-Statements
+//					System.out.println("SQL-Statement erfolgreich ausgeführt \n");
 		    		sqlStatementField.setText(sqlStatementField.getText());
 		    		con.mysql_close();
 	    	}
@@ -122,7 +142,7 @@ public class SQLPanel {
 
 		JPanel dbInfoPanel = new JPanel(new MigLayout());
 		dbInfoPanel.setBackground(Color.LIGHT_GRAY);
-		dbInfoPanel.setPreferredSize(new Dimension(600,500));
+		dbInfoPanel.setPreferredSize(new Dimension(800,500));
 		
 		JPanel dbResultPanel = new JPanel(new MigLayout());
 		dbResultPanel.setBackground(Color.LIGHT_GRAY);
@@ -134,8 +154,7 @@ public class SQLPanel {
 		dbUserField.setText("root");
 
 		JLabel dbPassword = new JLabel("Pass: ");
-		dbPasswordField.setPreferredSize(new Dimension(250, dbPasswordField
-				.getHeight()));
+		dbPasswordField.setPreferredSize(new Dimension(150, dbPasswordField.getHeight()));
 		dbPasswordField.setText("usbw");
 		
 		JLabel dbhostlbl = new JLabel("DB Host: ");
@@ -158,19 +177,19 @@ public class SQLPanel {
 //		rbOtherSQL.addActionListener(al);
 		
 		JLabel sqlStatementlbl = new JLabel("SQL Statement: ");
-		sqlStatementField.setPreferredSize(new Dimension(440,300));
+		sqlStatementField.setPreferredSize(new Dimension(540,300));
 		sqlStatementField.setLineWrap(true);
 		sqlStatementField.setWrapStyleWord(true);
 		sqlStatementField.setText(sql);
 
 		JButton loginBt = new JButton("Ausführen");
 		JLabel messagelbl = new JLabel("Message");
-		messageField.setPreferredSize(new Dimension(445, messageField.getHeight()));
+		messageField.setPreferredSize(new Dimension(340,200));
 		messageField.setText("Your SQL-Statment was: ");
 		loginBt.addActionListener(al);
 		
 		JLabel sqlResultlbl = new JLabel("Ergebnis: ");
-		sqlResultField.setPreferredSize(new Dimension(440,300));
+		sqlResultField.setPreferredSize(new Dimension(540,300));
 		sqlResultField.setLineWrap(true);
 		sqlResultField.setWrapStyleWord(true);
 		sqlResultField.setText("Ergebnis");
@@ -194,7 +213,7 @@ public class SQLPanel {
 		dbInfoPanel.add(sqlStatementField, "span 3");
 		dbInfoPanel.add(loginBt, "wrap");
 		dbInfoPanel.add(messagelbl,"gapright 30");
-		dbInfoPanel.add(messageField, "wrap");
+		dbInfoPanel.add(messageField, "span 3");
 		
 		dbResultPanel.add(sqlResultlbl, "gapright 38");
 		dbResultPanel.add(sqlResultField, "span 3");
