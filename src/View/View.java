@@ -1,14 +1,11 @@
 package View;
 
-import java.awt.Color;
-import java.awt.Dimension;
 import java.awt.EventQueue;
 
 import javax.swing.JFrame;
-import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
 import java.awt.BorderLayout;
-import java.awt.event.KeyEvent;
 
 
 public class View {
@@ -43,18 +40,21 @@ public class View {
 	 */
 	private void initialize() {
 		frame = new JFrame();
-		frame.setBounds(100, 100, 650, 500);
+		frame.setBounds(100, 100, 675, 500);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		frame.setTitle("Technologien des Wissensmanagement");
 		
 		// Tabs
 		JTabbedPane tabbedPane = new JTabbedPane(JTabbedPane.TOP);
-		tabbedPane.addTab("API", new APIPanel().getAPIPanel());
+		tabbedPane.addTab("Wiki API", new JScrollPane(new APIPanel().getAPIPanel()));
 //		tabbedPane.setMnemonicAt(0, KeyEvent.VK_1);
-		tabbedPane.addTab("SQL", new SQLPanel().getSQLPanel());
-		tabbedPane.addTab("Comparison", new ComparisonPanel().getComparisonPanel());		
+		tabbedPane.addTab("Datenbank", new JScrollPane(new SQLPanel().getSQLPanel()));
+		tabbedPane.addTab("Vergleichen", new JScrollPane(new ComparisonPanel().getComparisonPanel()));
+		tabbedPane.addTab("Expertensuche", new JScrollPane( /** hier soll ein Panel rein*/ ));
 		
 		
 		frame.getContentPane().add(tabbedPane, BorderLayout.CENTER);
+
 	}
 
 }
