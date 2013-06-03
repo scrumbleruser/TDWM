@@ -13,30 +13,47 @@ package SQL;
 import java.sql.*;
 import java.util.*;
 
+import View.SQLPanel;
+
 public class mysql_connect {
 
 	// Objekte zur Verbindung erstellen
 	static Connection connect = null;
-	static Statement stmt = null;
+	private static Statement stmt = null;
+	private static ResultSet result = null;
+	private String error_messages = "";
+	private String other_message = "";
+	private String error = "SQL-Statement falsch\n" +
+					"oder Button Other ist nicht angeklickt worden ";
 	
+	SQLPanel sqpPanel = new SQLPanel();
+	
+	// Zur Mysql-Db eine Verbindung aufbauen
 	public mysql_connect(String dbhost, String dbname,String dbuser,String dbpass) {
 		try {
 			Class.forName("sun.jdbc.odbc.JdbcOdbcDriver").newInstance(); // Instanz der Treiberklasse laden
-			
 			Enumeration allDrivers = DriverManager.getDrivers();
 			allDrivers.hasMoreElements();
-//			System.out.println("Treiber kann geladen werden und lautet: " + allDrivers.nextElement());
+			other_message  += "Treiber kann geladen werden und lautet: \n" + allDrivers.nextElement() + "\n";
 			connect = DriverManager.getConnection(
 					"jdbc:mysql://"+dbhost+dbname, dbuser, dbpass);
-		} catch (SQLException e) {
-			System.out.println("mysql_connect: MySQL-Db nicht erreichbar \n");
-		} catch (InstantiationException e) {
-			System.out.println("mysql_connect: Instanz nicht ausführbar \n");
-		} catch (IllegalAccessException e) {
-			System.out.println("mysql_connect: Zugriff zur DB nicht möglich \n");
-		} catch (ClassNotFoundException e) {
-			System.out.println("mysql_connect: Treiber nicht gefunden \n");
+		} catch (InstantiationException ine) {
+			error_messages  += "mysql_connect: Instanz nicht ausführbar \n";
+		} catch (IllegalAccessException iae) {
+			error_messages  += "mysql_connect: Zugriff zur DB nicht möglich \n";
+		} catch (ClassNotFoundException cnfe) {
+			error_messages  += "mysql_connect: Treiber nicht gefunden \n";
+		}catch (Exception e){
+			error_messages += "mysql_connect: MySQL-Db nicht erreichbar \n";
 		}
+	}
+	
+	public String getErrorMessages(){
+		return this.error_messages;
+	}
+	
+	public String getOtherMessage(){
+		return this.other_message;
 	}
 
 	public void mysql_close() {
@@ -44,19 +61,84 @@ public class mysql_connect {
 			stmt.close();
 			connect.close();
 		} catch (SQLException e) {
-			System.out.println("mysql_close: Fehler: ");
+			error_messages  += "mysql_close: Verbindung kann nicht geschlossen werden ";
 //			e.printStackTrace();
+		} catch (NullPointerException npe){
+			error_messages += "mysql_close: Null Pointer. Bitte DB-Verbindung prüfen";
 		}
 	}
-
-	public Statement getStatement(String sql, int nr) {
+	
+	public String getRS(ResultSet result){
+		ArrayList<String> list = new ArrayList<String>();
+		int i;
+		String content = "";
+		String column ="";
+		try {
+			if (result.first() == true){  // nur wenn Datensätze vorhanden sind ausführen
+				int getcolumnncount = result.getMetaData().getColumnCount();
+				for(i=1;i<getcolumnncount+1;i++){
+					column += result.getMetaData().getColumnName(i);
+					column += "  ";
+				}
+				list.add(column);
+				list.add("\n");
+				for(int e=1;e<getcolumnncount+1;e++){
+					list.add(result.getString(e)+ "  ");
+				}
+				list.add("\n");
+				while (result.next()) {
+					for(int e=1;e<getcolumnncount+1;e++){
+						list.add(result.getString(e)+ "  ");
+					}
+					list.add("\n");
+				}
+//				content += ((list.size()/7)) + " Datensätze vorhanden \n";
+				for(i=0; i<list.size();i++){
+					content += list.get(i).toString();
+				}
+//				messages  += "SQL-Statement: erfolgreich";
+//				Update wikiinfos set IP="192.168.8.83" WHERE ID="6"
+			}else{
+				error_messages  += "getRS: Keine Datensätze in der Tabelle vorhanden ";
+			}
+		} catch (SQLException sqle) {
+			error_messages  += "getRS: " + error;
+		}
+		return content;
+	}
+	
+	public String getSelectStatement(String sql){
+		String myContent = "";
 		try {
 			stmt = connect.createStatement();
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			result = stmt.executeQuery(sql);
+			if(result != null){
+//    			System.out.println(result);
+		    	myContent = getRS(result);
+		    	other_message += "SQL-Statement: erfolgreich";
+    		}
+		} catch (SQLException sqle) {
+			error_messages  += error;
+		}catch (Exception e){
+			error_messages += "getSelectionStatement: MySQL-Db nicht erreichbar \n" +
+					"oder SQL-Statement falsch"; 
+		;
 		}
+		return myContent;
+	}
+	
+	public Statement getOtherStatement(String sql){		
+		// Weitere DDL-Befehle - Upade,Create,Delete
+		try {
+			stmt = connect.createStatement();
+			stmt.executeUpdate(sql);
+			other_message += "SQL-Statement: erfolgreich";
+//			getResult(con);
+		} catch (SQLException sqle) {
+			error_messages  += "getOtherStatement: MySQL-Db nicht erreichbar \n" +
+					"oder SQL-Statement falsch";
+		} // Ausführen des angegeben SQL-Statements
+//		Update wikiinfos set IP="192.168.8.72" WHERE ID="13"
 		return stmt;
-//		System.out.println("SQL ist: " + sql);
 	}
 }

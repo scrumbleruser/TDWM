@@ -35,7 +35,7 @@ public class SQLPanel {
 	private JTextField hostField = new JTextField();
 	private JTextField nameField = new JTextField();
 	private JTextArea statementField = new JTextArea();
-	private JTextField messageField = new JTextField();
+	private JTextArea messageField = new JTextArea();
 	private JTextArea resultField = new JTextArea();
 
 	private static Statement stmt = null;
@@ -43,6 +43,7 @@ public class SQLPanel {
 
 	// Buttons
 	private JButton loginBt = new JButton("Ausführen");
+	private JButton resetBt = new JButton("Reset");
 	private JButton sendBt = new JButton("Senden");
 
 	// Radiobuttons
@@ -50,9 +51,8 @@ public class SQLPanel {
 	private JRadioButton rbOtherSQL = new JRadioButton();
 	private ButtonGroup bg = new ButtonGroup();
 	
-	// Strings
-	private String sql ="Select * from wikiinfos";
-
+	private String message = "SQL-Statement is:";
+	private String sql = "Select * from wikiinfos";
 
 	/**
 	 * Create the application.
@@ -71,11 +71,11 @@ public class SQLPanel {
 		panel.setOpaque(false);
 
 		// Subcontainers
-		loginInfoContainer.setPreferredSize(new Dimension(600,
+		loginInfoContainer.setPreferredSize(new Dimension(800,
 				loginInfoContainer.getHeight()));
-		preferencesContainer.setPreferredSize(new Dimension(600,
+		preferencesContainer.setPreferredSize(new Dimension(800,
 				preferencesContainer.getHeight()));
-		resultsContainer.setPreferredSize(new Dimension(600, 300));
+		resultsContainer.setPreferredSize(new Dimension(800, 300));
 
 		// Login
 		userField.setPreferredSize(new Dimension(150, userField.getHeight()));
@@ -86,11 +86,11 @@ public class SQLPanel {
 		hostField.setPreferredSize(new Dimension(345, hostField.getHeight()));
 		nameField.setPreferredSize(new Dimension(345, nameField.getHeight()));
 
-		// Statement
+		// Statement und Message
 		statementField.setPreferredSize(new Dimension(340, 200));
 		statementField.setLineWrap(true);
 		statementField.setWrapStyleWord(true);
-		statementField.setText(sql);
+		messageField.setPreferredSize(new Dimension(340, 200));
 		
 		bg.add(rbSelect);
 		bg.add(rbOtherSQL);
@@ -119,7 +119,10 @@ public class SQLPanel {
 		preferencesContainer.add(rbOtherSQL, "wrap");
 		preferencesContainer.add(new JLabel("SQL Statement: "));
 		preferencesContainer.add(statementField, "span 3");
-		preferencesContainer.add(loginBt, "wrap");
+		preferencesContainer.add(loginBt, "span 2");
+		preferencesContainer.add(resetBt, "wrap");
+		preferencesContainer.add(new JLabel("Message: "));
+		preferencesContainer.add(messageField, "span 3");
 
 		resultsContainer.add(new JLabel("<html><b>Ergebnis: </html>"), "wrap");
 		resultsContainer.add(resultField, "span 3");
@@ -129,7 +132,10 @@ public class SQLPanel {
 		panel.add(loginInfoContainer, "span");
 		panel.add(preferencesContainer, "span");
 		panel.add(resultsContainer, "span");
-
+		
+		loginBt.addActionListener(al);
+		resetBt.addActionListener(resetal);
+		setDefaultDBCon();
 	}
 
 	public JPanel getSQLPanel() {
@@ -157,7 +163,7 @@ public class SQLPanel {
 	 return this.statementField;
 	 }
 	
-	 public JTextField getMessageField() {
+	 public JTextArea getMessageField() {
 	 return this.messageField;
 	 }
 	
@@ -167,6 +173,10 @@ public class SQLPanel {
 	
 	 public JButton getLoginBt() {
 	 return this.loginBt;
+	 }
+	 
+	 public JButton getResetBt() {
+	 return this.resetBt;
 	 }
 	
 	 public JButton getSendBt() {
@@ -180,90 +190,61 @@ public class SQLPanel {
 	 public JRadioButton getRbOtherSQL() {
 	 return this.rbOtherSQL;
 	 }
-
-	public void getRS(ResultSet result, mysql_connect con){
-		ArrayList<String> list = new ArrayList<String>();
-		int i;
-		String content = "";
-		messageField.setText("Your SQL-Statment was: ");
-		String column ="";
-		try {
-			if (result.first() == true){  // nur wenn Datensätze vorhanden sind ausführen
-				int getcolumnncount = result.getMetaData().getColumnCount();
-				for(i=1;i<getcolumnncount+1;i++){
-					column += result.getMetaData().getColumnName(i);
-					column += "  ";
-				}
-				list.add(column);
-				list.add("\n");
-				for(int e=1;e<getcolumnncount;e++){
-					list.add(result.getString(e)+ "  ");
-				}
-				list.add("\n");
-				while (result.next()) {
-					for(int e=1;e<getcolumnncount;e++){
-						list.add(result.getString(e)+ "  ");
-					}
-					list.add("\n");
-				}
-//				content += ((list.size()/7)) + " Datensätze vorhanden \n";
-				for(i=0; i<list.size();i++){
-					content += list.get(i).toString();
-				}
-				resultField.setText(content);
-				messageField.setText("complete");
-//					con.mysql_close();
-//				Update wikiinfos set IP="192.168.8.83" WHERE ID="6"
-			}else{
-				messageField.setText("Keine Datensätze in der Tabelle vorhanden ");
-				resultField.setText("");
-				con.mysql_close();
-			}
-		} catch (SQLException sqle) {
-			messageField.setText("SQL-Statement falsch oder MySQL-Db nicht erreichbar");
-			resultField.setText("");
-			con.mysql_close();
-		}
-	}
+	 
+	 public void setDefaultDBCon(){
+		 this.getUserField().setText("root");
+		 this.getPasswordField().setText("usbw");
+		 this.getHostField().setText("localhost:3307/");
+		 this.getNameField().setText("wikiinfos");
+		 this.statementField.setText(sql);
+		 this.messageField.setText(message);
+		 this.rbSelect.setSelected(true);
+	 }
+	
+	private ActionListener resetal = new ActionListener() {
+	    public void actionPerformed(ActionEvent e) {
+	    	setDefaultDBCon();
+	    }
+	};
 	
 	private ActionListener al = new ActionListener() {
 	    public void actionPerformed(ActionEvent e) {
-//	    	String dbhost = userField.getText();
+	    	String error_messages ="";
+	    	String other_messages = "";
 	    	mysql_connect con = new mysql_connect(hostField.getText(),nameField.getText(),userField.getText(),passwordField.getText());
-	        
 	    	if (rbSelect.isSelected() == true){
-	    		// Parameter: SQL-Statement, Wert 1 nur für Select
-				// Select - Ausgabe
-				stmt = con.getStatement(statementField.getText(),1);
-				try {
-					result = stmt.executeQuery(statementField.getText());
-				} catch (SQLException sqle) {
-					messageField.setText("SQL-Statement falsch oder MySQL-Db nicht erreichbar");
-					resultField.setText("");
-					con.mysql_close();
-				}
-	    		if(result != null){
-//	    			System.out.println(result);
-			    	getRS(result,con);
-			    	statementField.setText(statementField.getText());
-			    	con.mysql_close();
+	    		String content = con.getSelectStatement(statementField.getText());
+	    		error_messages = con.getErrorMessages();
+	    		other_messages = con.getOtherMessage();
+	    		if(error_messages == ""){
+	    			// alles ok
+	    			messageField.setText(other_messages);
+	    			getStatementField().setText(getStatementField().getText());
+	    			getResultField().setText(content);
+	    		}else{
+	    		    messageField.setText(error_messages);
+	    			getResultField().setText("");
+	    			con.mysql_close();
 	    		}
 	    	}
 	    	if (rbOtherSQL.isSelected() == true){
-		    		stmt = con.getStatement(statementField.getText(),2);
-		    		// Weitere DDL-Befehle - Upade,Create,Delete
-					try {
-						stmt.executeUpdate(statementField.getText());
-					} catch (SQLException e1) {
-						// TODO Auto-generated catch block
-						e1.printStackTrace();
-					} // Ausführen des angegeben SQL-Statements
-//					System.out.println("SQL-Statement erfolgreich ausgeführt \n");
-		    		statementField.setText(statementField.getText());
-		    		con.mysql_close();
+	    		stmt = con.getOtherStatement(statementField.getText());
+	    		error_messages = con.getErrorMessages();
+	    		other_messages = con.getOtherMessage();
+	    		if(error_messages == ""){
+	    			messageField.setText(other_messages);
+	    			String content = con.getSelectStatement(sql);
+	    			getResultField().setText(content);
+//	    			Update wikiinfos set Benutzername="Testuser" WHERE ID="13"
+	    			
+	    		}else{
+	    		    messageField.setText(error_messages);
+	    			getResultField().setText("");
+	    			con.mysql_close();
+	    		}
 	    	}
 	    	statementField.setText(statementField.getText());
+	    	con.mysql_close();
 	    }
 	  };
-
 }
