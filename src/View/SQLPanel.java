@@ -137,57 +137,49 @@ public class SQLPanel {
 	}
 
 	// Getter
-	// public JTextField getUserField() {
-	// return this.userField;
-	// }
-	//
-	// public JPasswordField getPasswordField() {
-	// return this.passwordField;
-	// }
-	//
-	// public JTextField getHostField() {
-	// return this.hostField;
-	// }
-	//
-	// public JTextField getNameField() {
-	// return this.nameField;
-	// }
-	//
-	// public JTextArea getStatementField() {
-	// return this.statementField;
-	// }
-	//
-	// public JTextField messageField {
-	// return this.messageField;
-	// }
-	//
-	// public JTextArea resultField {
-	// return this.resultField;
-	// }
-	//
-	// public ResultSet getRsSet() {
-	// return this.rsSet;
-	// }
-	//
-	// public void setRsSet(ResultSet rsSet) {
-	// this.rsSet = rsSet;
-	// }
-	//
-	// public JButton getLoginBt() {
-	// return this.loginBt;
-	// }
-	//
-	// public JButton getSendBt() {
-	// return this.sendBt;
-	// }
-	//
-	// public JRadioButton getRbSelect() {
-	// return this.rbSelect;
-	// }
-	//
-	// public JRadioButton getRbOtherSQL() {
-	// return this.rbOtherSQL;
-	// }
+	 public JTextField getUserField() {
+	 return this.userField;
+	 }
+	
+	 public JPasswordField getPasswordField() {
+	 return this.passwordField;
+	 }
+	
+	 public JTextField getHostField() {
+	 return this.hostField;
+	 }
+	
+	 public JTextField getNameField() {
+	 return this.nameField;
+	 }
+	
+	 public JTextArea getStatementField() {
+	 return this.statementField;
+	 }
+	
+	 public JTextField getMessageField() {
+	 return this.messageField;
+	 }
+	
+	 public JTextArea getResultField() {
+	 return this.resultField;
+	 }
+	
+	 public JButton getLoginBt() {
+	 return this.loginBt;
+	 }
+	
+	 public JButton getSendBt() {
+	 return this.sendBt;
+	 }
+	
+	 public JRadioButton getRbSelect() {
+	 return this.rbSelect;
+	 }
+	
+	 public JRadioButton getRbOtherSQL() {
+	 return this.rbOtherSQL;
+	 }
 
 	public void getRS(ResultSet result, mysql_connect con){
 		ArrayList<String> list = new ArrayList<String>();
