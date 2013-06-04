@@ -48,8 +48,15 @@ public class Testmain {
 	   
 	   for(String r : ui.getArticels())
 		   System.out.println(r);
+	   
+	   AllArticlesOfUser aaou = new AllArticlesOfUser(wb.getWikiBot(), "Qafgbxvghnx");
+	   
+	   
 //	   for(String r : ui.getRights())
 //		   System.out.println(r);
+	   for(String r : aaou.getArticlesNames())
+	   System.out.println(r);
       
+	  
    }
 }

@@ -1,6 +1,8 @@
 package View;
 
 import java.awt.Dimension;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 import javax.swing.ButtonGroup;
 import javax.swing.JButton;
@@ -11,9 +13,14 @@ import javax.swing.JRadioButton;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 
+import API.WikiBot;
+
 import net.miginfocom.swing.MigLayout;
 
 public class APIPanel {
+
+	private WikiBot wikiBot;
+	private String starturl;
 
 	private JPanel panel = new JPanel();;
 	private JPanel loginInfoContainer = new JPanel(new MigLayout());
@@ -66,9 +73,25 @@ public class APIPanel {
 		userField.setPreferredSize(new Dimension(150, userField.getHeight()));
 		passwordField.setPreferredSize(new Dimension(150, passwordField
 				.getHeight()));
+		
+		rbWikiDE.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {			
+				setStarturl("http://de.wikipedia.org/w/");
+			}
+		});
+		
+		rbWikiEN.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {			
+				setStarturl("http://en.wikipedia.org/w/");
+			}
+		});
+		
 
 		bg.add(rbWikiDE);
 		bg.add(rbWikiEN);
+		
 
 		// Preferences
 		usernameField
@@ -87,6 +110,20 @@ public class APIPanel {
 		resultField.setPreferredSize(new Dimension(500, 300));
 		resultField.setLineWrap(true);
 		resultField.setWrapStyleWord(true);
+
+		// LoginButton
+		loginBt.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+
+				wikiBot = new WikiBot(userField.getText(), passwordField
+						.getPassword().toString());
+				wikiBot.setWiki(starturl);
+				resultField.append("Connected" + "\n");
+
+			}
+		});
 
 		// Add components to the Subcontainers
 		loginInfoContainer.add(new JLabel("<html><b>Wikipedia: </html>"),
@@ -129,6 +166,14 @@ public class APIPanel {
 		panel.add(preferencesContainer, "span");
 		panel.add(resultsContainer, "span");
 
+		initData();
+	}
+
+	private void initData() {
+		userField.setText("wissensmanagement");
+		passwordField.setText("asdasd");
+		starturl = "http://de.wikipedia.org/w/";
+		loginBt.doClick();
 	}
 
 	/**
@@ -186,13 +231,29 @@ public class APIPanel {
 	public JButton getSendBt() {
 		return this.sendBt;
 	}
-	
+
 	public JRadioButton getRbWikiDE() {
 		return this.rbWikiDE;
 	}
 
 	public JRadioButton getRbWikiEN() {
 		return this.rbWikiEN;
+	}
+
+	public WikiBot getWikiBot() {
+		return wikiBot;
+	}
+
+	public void setWikiBot(WikiBot wikiBot) {
+		this.wikiBot = wikiBot;
+	}
+
+	public String getStarturl() {
+		return starturl;
+	}
+
+	public void setStarturl(String starturl) {
+		this.starturl = starturl;
 	}
 
 }

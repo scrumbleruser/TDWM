@@ -9,6 +9,8 @@ public class Revision {
 
 	private int revid;
 	private String user;
+	private String name;
+	private String content;
 	private String timestamp;
 	private int userid;
 	boolean minorchange;
@@ -105,6 +107,22 @@ public class Revision {
 
 	public void setSize(String size) {
 		setSize(Long.parseLong(size));		
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public String getContent() {
+		return content;
+	}
+
+	public void setContent(String content) {
+		this.content = content;
 	}
 
 }
