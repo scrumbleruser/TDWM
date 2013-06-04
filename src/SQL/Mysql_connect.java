@@ -127,6 +127,23 @@ public class Mysql_connect {
 		return myContent;
 	}
 	
+	public Statement setInsertInto(String valRevID, String valUserID, String valUser, String valDatum, String valGroesse, String valkAenderung){
+		try {
+			stmt = connect.createStatement();
+			String sql = "Insert into wikiinfos " +
+						"(Artikel, RevisionID, UserID,User,DatumUhrzeit,Groesse,Rechte)" +
+						"VALUES(" + valRevID + "," + valUserID +
+						"," + valUser + "," + valDatum + "," + valGroesse +
+						"," + valkAenderung + ")";
+			stmt.executeUpdate(sql);
+			
+		} catch (SQLException sqle) {
+			error_messages  += "getOtherStatement: MySQL-Db nicht erreichbar \n" +
+					"oder SQL-Statement falsch";
+		}
+		return stmt;
+	}
+	
 	public Statement getOtherStatement(String sql){		
 		// Weitere DDL-Befehle - Upade,Create,Delete
 		try {
