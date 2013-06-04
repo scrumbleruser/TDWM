@@ -20,7 +20,20 @@ public class WikiBot {
 	}
 
 	Article article;
+	
+public Revision[] getAllRevisions()
+{
+	AllRevisions ar = new AllRevisions(wikiBot, article.getTitle());
+	
+	return ar.getRevisions();
+}
 
+public Article getArticle() {
+		return article;
+	}
+	public void setArticle(Article article) {
+		this.article = article;
+	}
 public WikiBot(String login, String password)
 {
 	wikiBot.login("wissensmanagement", "asdasd");

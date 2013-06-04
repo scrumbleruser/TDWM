@@ -13,6 +13,8 @@ import javax.swing.JRadioButton;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 
+import API.Revision;
+import API.UserInfo;
 import API.WikiBot;
 
 import net.miginfocom.swing.MigLayout;
@@ -30,7 +32,6 @@ public class APIPanel {
 	private JTextField userField = new JTextField();
 	private JPasswordField passwordField = new JPasswordField();
 	private JTextField usernameField = new JTextField();
-	private JTextField ipField = new JTextField();
 	private JTextField articleField = new JTextField();
 	private JTextField revisionField = new JTextField();
 	private JTextField categoryField = new JTextField();
@@ -44,6 +45,7 @@ public class APIPanel {
 
 	private JButton loginBt = new JButton("Login");
 	private JButton sendBt = new JButton("Speichern");
+	private JButton execBt = new JButton("Ausführen");
 
 	/**
 	 * Create the application.
@@ -96,9 +98,8 @@ public class APIPanel {
 		// Preferences
 		usernameField
 				.setPreferredSize(new Dimension(150, userField.getHeight()));
-		ipField.setPreferredSize(new Dimension(150, userField.getHeight()));
 		articleField
-				.setPreferredSize(new Dimension(419, userField.getHeight()));
+				.setPreferredSize(new Dimension(150, userField.getHeight()));
 		revisionField
 				.setPreferredSize(new Dimension(150, userField.getHeight()));
 		categoryField
@@ -124,6 +125,25 @@ public class APIPanel {
 
 			}
 		});
+		
+		execBt.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				if(!usernameField.getText().equals(""))	
+				{
+					UserInfo ui = new UserInfo(wikiBot.getWikiBot(), usernameField.getText());
+					resultField.append(ui.getUsername());
+				}
+				if(!articleField.getText().equals(""))	
+				{
+					wikiBot.setArticle(articleField.getText());
+					resultField.append(wikiBot.getArticle().getTitle());
+					for(Revision r : wikiBot.getAllRevisions())
+					resultField.append(r.toString() + "\n");
+				}
+			}
+		});
 
 		// Add components to the Subcontainers
 		loginInfoContainer.add(new JLabel("<html><b>Wikipedia: </html>"),
@@ -144,10 +164,8 @@ public class APIPanel {
 				new JLabel("<html><b>Einstellungen: </html>>"), "wrap");
 		preferencesContainer.add(new JLabel("User: "));
 		preferencesContainer.add(usernameField);
-		preferencesContainer.add(new JLabel("Oder IP-Adresse: "));
-		preferencesContainer.add(ipField, "wrap");
 		preferencesContainer.add(new JLabel("Artikel: "));
-		preferencesContainer.add(articleField, "span");
+		preferencesContainer.add(articleField, "wrap");
 		preferencesContainer.add(new JLabel("Revision: "));
 		preferencesContainer.add(revisionField);
 		preferencesContainer.add(new JLabel("Kategorie: "), "gapright 30");
@@ -159,7 +177,9 @@ public class APIPanel {
 
 		resultsContainer.add(new JLabel("<html><b>Ergebnis: </html>"), "wrap");
 		resultsContainer.add(resultField, "span 3");
+		resultsContainer.add(execBt, "wrap");
 		resultsContainer.add(sendBt, "wrap");
+		
 
 		// Add Subcontainers to the Maincontainer
 		panel.add(loginInfoContainer, "span");
@@ -196,9 +216,6 @@ public class APIPanel {
 		return this.usernameField;
 	}
 
-	public JTextField getIPField() {
-		return this.ipField;
-	}
 
 	public JTextField getArticleField() {
 		return this.articleField;
