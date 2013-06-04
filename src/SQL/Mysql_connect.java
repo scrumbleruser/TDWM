@@ -15,7 +15,7 @@ import java.util.*;
 
 import View.SQLPanel;
 
-public class mysql_connect {
+public class Mysql_connect {
 
 	// Objekte zur Verbindung erstellen
 	static Connection connect = null;
@@ -29,7 +29,7 @@ public class mysql_connect {
 	SQLPanel sqpPanel = new SQLPanel();
 	
 	// Zur Mysql-Db eine Verbindung aufbauen
-	public mysql_connect(String dbhost, String dbname,String dbuser,String dbpass) {
+	public Mysql_connect(String dbhost, String dbname,String dbuser,String dbpass) {
 		try {
 			Class.forName("sun.jdbc.odbc.JdbcOdbcDriver").newInstance(); // Instanz der Treiberklasse laden
 			Enumeration allDrivers = DriverManager.getDrivers();

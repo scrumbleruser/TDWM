@@ -13,9 +13,9 @@ public class mainSQL {
 		String dbhost = "localhost:3307/";
 		String dbname = "wikiinfos";
 //		String[] spalten = {"ID","IP","Benutzername"};
-		mysql_connect con = new mysql_connect(dbhost,dbname,dbuser,dbpass);
-		// Parameter: SQL-Statement, Wert 1 nur für Select
-		con.getSQL("Select * from wiki2",1);
+		Mysql_connect con = new Mysql_connect(dbhost,dbname,dbuser,dbpass);
+		// Parameter: SQL-Statement, Wert 1 nur fï¿½r Select
+//		con.getSQL("Select * from wiki2",1);
 //		con.getSQL("DROP TABLE wiki;",2);
 //		con.getSQL("CREATE TABLE IF NOT EXISTS wiki(ID mediumint(8) unsigned NOT NULL AUTO_INCREMENT," +
 //				"DatumUhrzeit varchar(255),IP varchar(40),Benutzername varchar(255)," +

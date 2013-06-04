@@ -17,7 +17,7 @@ import javax.swing.JRadioButton;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 
-import SQL.mysql_connect;
+import SQL.Mysql_connect;
 
 import net.miginfocom.swing.MigLayout;
 
@@ -211,7 +211,7 @@ public class SQLPanel {
 	    public void actionPerformed(ActionEvent e) {
 	    	String error_messages ="";
 	    	String other_messages = "";
-	    	mysql_connect con = new mysql_connect(hostField.getText(),nameField.getText(),userField.getText(),passwordField.getText());
+	    	Mysql_connect con = new Mysql_connect(hostField.getText(),nameField.getText(),userField.getText(),passwordField.getText());
 	    	if (rbSelect.isSelected() == true){
 	    		String content = con.getSelectStatement(statementField.getText());
 	    		error_messages = con.getErrorMessages();
