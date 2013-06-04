@@ -122,6 +122,7 @@ public class AllRevisions extends MWAction {
 	      Element element = el.next();
 	      if (element.getQualifiedName().equalsIgnoreCase("rev")) {
 	    	Revision rev = new Revision();
+	    	rev.setName(title);
 	    	rev.setRevID(element.getAttributeValue("revid"));
 	    	rev.setUser(element.getAttributeValue("user"));
 	    	rev.setUserID(element.getAttributeValue("userid"));

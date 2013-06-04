@@ -13,6 +13,8 @@ import javax.swing.JRadioButton;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 
+import SQL.Mysql_connect;
+
 import API.Revision;
 import API.UserInfo;
 import API.WikiBot;
@@ -140,7 +142,11 @@ public class APIPanel {
 					wikiBot.setArticle(articleField.getText());
 					resultField.append(wikiBot.getArticle().getTitle());
 					for(Revision r : wikiBot.getAllRevisions())
+					{
 					resultField.append(r.toString() + "\n");
+					Mysql_connect mysql = new Mysql_connect("localhost:3307/", "revision", "root", "usbw");
+					mysql.setInsertInto(r.getRevid() + "", r.getUserid() + "", r.getUser(), r.getTimestamp(), r.getSize() +"" , r.isMinorchange()+"");
+					}
 				}
 			}
 		});

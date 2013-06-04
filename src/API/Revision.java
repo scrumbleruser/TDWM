@@ -69,7 +69,7 @@ public class Revision {
 	}
 
 	public String toString() {
-		return "RevisionID: " + revid + " UserID:" + userid + " User: " + user
+		return "Article : " + name + " RevisionID: " + revid + " UserID:" + userid + " User: " + user
 				+ " TimeSpamp: " + timestamp +  " Size: " +size+ " Minor change: " + minorchange;
 	}
 	

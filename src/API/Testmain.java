@@ -39,23 +39,25 @@ public class Testmain {
 //	   for(String s : tmo)
 //		   System.out.println(s);
 	   
-//	   AllRevisions ar = new AllRevisions(wb.getWikiBot(),"Klothoide");
+	   AllRevisions ar = new AllRevisions(wb.getWikiBot(),"Klothoide");
 //	   
-//	   for(Revision r : ar.getRevisions())
-//	   System.out.println(r.toString());
-	   
-	   UserInfo ui = new UserInfo(wb.getWikiBot(), "Reinhard_Dietrich");
-	   
-	   for(String r : ui.getArticels())
-		   System.out.println(r);
-	   
-	   AllArticlesOfUser aaou = new AllArticlesOfUser(wb.getWikiBot(), "Qafgbxvghnx");
-	   
-	   
+	   for(Revision r : ar.getRevisions())
+	   System.out.println(r.toString());
+//	   
+//	   UserInfo ui = new UserInfo(wb.getWikiBot(), "Reinhard_Dietrich");
+//	   
+//	   for(String r : ui.getArticels())
+//		   System.out.println(r);
+//	   
+//	   AllArticlesOfUser aaou = new AllArticlesOfUser(wb.getWikiBot(), "Qafgbxvghnx");
+//	   
+//	   
 //	   for(String r : ui.getRights())
 //		   System.out.println(r);
-	   for(String r : aaou.getArticlesNames())
-	   System.out.println(r);
+//	   for(String r : aaou.getArticlesNames())
+//	   System.out.println(r);
+	   
+	
       
 	  
    }
