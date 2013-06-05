@@ -5,8 +5,11 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.sql.ResultSet;
 import java.sql.Statement;
+import java.util.ArrayList;
+
 import javax.swing.ButtonGroup;
 import javax.swing.JButton;
+import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JPasswordField;
@@ -14,7 +17,7 @@ import javax.swing.JRadioButton;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 
-import SQL.Mysql_connect;
+import SQL.mysql_connect;
 
 import net.miginfocom.swing.MigLayout;
 
@@ -31,15 +34,16 @@ public class SQLPanel {
 	private JPasswordField passwordField = new JPasswordField();
 	private JTextField hostField = new JTextField();
 	private JTextField nameField = new JTextField();
+//	private JTextField tablenameField = new JTextField();
 	private JTextArea statementField = new JTextArea();
 	private JTextArea messageField = new JTextArea();
 	private JTextArea resultField = new JTextArea();
-
-	private static Statement stmt = null;
-	private static ResultSet result = null;
+	
+	// ComboBox
+	private JComboBox<String> tbnamesComboBox = new JComboBox<String>();
 
 	// Buttons
-	private JButton loginBt = new JButton("Ausführen");
+	private JButton resultBt = new JButton("Ausführen");
 	private JButton resetBt = new JButton("Reset");
 	private JButton sendBt = new JButton("Senden");
 
@@ -49,7 +53,10 @@ public class SQLPanel {
 	private ButtonGroup bg = new ButtonGroup();
 	
 	private String message = "SQL-Statement is:";
-	private String sql = "Select * from wikiinfos";
+	private String sql = "Select * from ";
+	
+	private static Statement stmt = null;
+	private String[] tables = {"revision", "rechte", "kategorien", "artikel"};
 
 	/**
 	 * Create the application.
@@ -82,6 +89,7 @@ public class SQLPanel {
 		// Host and Name
 		hostField.setPreferredSize(new Dimension(345, hostField.getHeight()));
 		nameField.setPreferredSize(new Dimension(345, nameField.getHeight()));
+//		tablenameField.setPreferredSize(new Dimension(345, tablenameField.getHeight()));
 
 		// Statement und Message
 		statementField.setPreferredSize(new Dimension(340, 200));
@@ -108,6 +116,8 @@ public class SQLPanel {
 		loginInfoContainer.add(hostField, "span");
 		loginInfoContainer.add(new JLabel("DB Name: "));
 		loginInfoContainer.add(nameField, "span");
+		loginInfoContainer.add(new JLabel("Tablename: "));
+		loginInfoContainer.add(tbnamesComboBox, "span");
 		
 		preferencesContainer.add(new JLabel("<html><b>Statement: </html>"), "wrap");
 		preferencesContainer.add(new JLabel("Select"), "gapright 70");
@@ -116,7 +126,7 @@ public class SQLPanel {
 		preferencesContainer.add(rbOtherSQL, "wrap");
 		preferencesContainer.add(new JLabel("SQL Statement: "));
 		preferencesContainer.add(statementField, "span 3");
-		preferencesContainer.add(loginBt, "span 2");
+		preferencesContainer.add(resultBt, "span 2");
 		preferencesContainer.add(resetBt, "wrap");
 		preferencesContainer.add(new JLabel("Message: "));
 		preferencesContainer.add(messageField, "span 3");
@@ -130,7 +140,7 @@ public class SQLPanel {
 		panel.add(preferencesContainer, "span");
 		panel.add(resultsContainer, "span");
 		
-		loginBt.addActionListener(al);
+		resultBt.addActionListener(al);
 		resetBt.addActionListener(resetal);
 		setDefaultDBCon();
 	}
@@ -152,12 +162,20 @@ public class SQLPanel {
 	 return this.hostField;
 	 }
 	
-	 public JTextField getNameField() {
-	 return this.nameField;
-	 }
+	public JTextField getNameField() {
+		return this.nameField;
+	}
+	
+	public JComboBox<String> getTbnamesComboBox() {
+		return tbnamesComboBox;
+	}
+	
+	public String[] getTables() {
+		return tables;
+	}
 	
 	 public JTextArea getStatementField() {
-	 return this.statementField;
+		 return this.statementField;
 	 }
 	
 	 public JTextArea getMessageField() {
@@ -168,8 +186,8 @@ public class SQLPanel {
 	 return this.resultField;
 	 }
 	
-	 public JButton getLoginBt() {
-	 return this.loginBt;
+	 public JButton getresultBt() {
+	 return this.resultBt;
 	 }
 	 
 	 public JButton getResetBt() {
@@ -188,16 +206,24 @@ public class SQLPanel {
 	 return this.rbOtherSQL;
 	 }
 	 
+	 // setzen der Default-Einstellungen
 	 public void setDefaultDBCon(){
-		 this.getUserField().setText("root");
-		 this.getPasswordField().setText("usbw");
-		 this.getHostField().setText("localhost:3307/");
-		 this.getNameField().setText("wikiinfos");
-		 this.statementField.setText(sql);
-		 this.messageField.setText(message);
-		 this.rbSelect.setSelected(true);
+		this.getUserField().setText("y9r106037");
+		this.getPasswordField().setText("basilius789063");
+		this.getHostField().setText("134.0.26.187:3306/");
+		this.getNameField().setText("y9r106037_usr_web27_2");
+		//		 this.tablenameField.setText("revision");
+		for (String tab : tables){
+			tbnamesComboBox.addItem(tab);
+		}
+			tbnamesComboBox.setSelectedItem("revision");
+			
+		this.statementField.setText("Select * from " + ""+tbnamesComboBox.getSelectedItem());
+		this.messageField.setText(message);
+		this.rbSelect.setSelected(true);
 	 }
 	
+	 // ActionListener
 	private ActionListener resetal = new ActionListener() {
 	    public void actionPerformed(ActionEvent e) {
 	    	setDefaultDBCon();
@@ -208,7 +234,17 @@ public class SQLPanel {
 	    public void actionPerformed(ActionEvent e) {
 	    	String error_messages ="";
 	    	String other_messages = "";
-	    	Mysql_connect con = new Mysql_connect(hostField.getText(),nameField.getText(),userField.getText(),passwordField.getText());
+	    	getStatementField().setText(sql + ""+tbnamesComboBox.getSelectedItem());
+	    	mysql_connect con = new mysql_connect();
+	    	
+//	    	ArrayList<String> listColumn = new ArrayList<String>();
+//	    	listColumn = con.getColumnName(tablenameField.getText());
+//	    	for(int i=0; i<listColumn.size();i++){
+//	    		System.out.println("Das ist der: " + i + "Datensatz");
+//	    		System.out.println(listColumn.get(i).toString());
+//	    	}
+	    	
+	    	// Select Befehle
 	    	if (rbSelect.isSelected() == true){
 	    		String content = con.getSelectStatement(statementField.getText());
 	    		error_messages = con.getErrorMessages();
@@ -224,6 +260,7 @@ public class SQLPanel {
 	    			con.mysql_close();
 	    		}
 	    	}
+	    	// Other SQL-Befehle
 	    	if (rbOtherSQL.isSelected() == true){
 	    		stmt = con.getOtherStatement(statementField.getText());
 	    		error_messages = con.getErrorMessages();
@@ -232,7 +269,6 @@ public class SQLPanel {
 	    			messageField.setText(other_messages);
 	    			String content = con.getSelectStatement(sql);
 	    			getResultField().setText(content);
-//	    			Update wikiinfos set Benutzername="Testuser" WHERE ID="13"
 	    			
 	    		}else{
 	    		    messageField.setText(error_messages);

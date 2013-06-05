@@ -15,7 +15,7 @@ import java.util.*;
 
 import View.SQLPanel;
 
-public class Mysql_connect {
+public class mysql_connect {
 
 	// Objekte zur Verbindung erstellen
 	static Connection connect = null;
@@ -26,17 +26,18 @@ public class Mysql_connect {
 	private String error = "SQL-Statement falsch\n" +
 					"oder Button Other ist nicht angeklickt worden ";
 	
-	SQLPanel sqpPanel = new SQLPanel();
+	SQLPanel pan = new SQLPanel();
 	
 	// Zur Mysql-Db eine Verbindung aufbauen
-	public Mysql_connect(String dbhost, String dbname,String dbuser,String dbpass) {
+	public mysql_connect() {
 		try {
 			Class.forName("sun.jdbc.odbc.JdbcOdbcDriver").newInstance(); // Instanz der Treiberklasse laden
 			Enumeration allDrivers = DriverManager.getDrivers();
 			allDrivers.hasMoreElements();
 			other_message  += "Treiber kann geladen werden und lautet: \n" + allDrivers.nextElement() + "\n";
 			connect = DriverManager.getConnection(
-					"jdbc:mysql://"+dbhost+dbname, dbuser, dbpass);
+			"jdbc:mysql://" +pan.getHostField().getText()+pan.getNameField().getText(),""
+							+pan.getUserField().getText(), pan.getPasswordField().getText());
 		} catch (InstantiationException ine) {
 			error_messages  += "mysql_connect: Instanz nicht ausführbar \n";
 		} catch (IllegalAccessException iae) {
@@ -127,14 +128,49 @@ public class Mysql_connect {
 		return myContent;
 	}
 	
-	public Statement setInsertInto(String valRevID, String valUserID, String valUser, String valDatum, String valGroesse, String valkAenderung){
+	public ArrayList<String> getColumnName(String tablename){
+		ArrayList<String> list = new ArrayList<String>();
+		int i;
+		String columnName = "";
+		String count ="";
 		try {
 			stmt = connect.createStatement();
-			String sql = "Insert into wikiinfos " +
-						"(Artikel, RevisionID, UserID,User,DatumUhrzeit,Groesse,Rechte)" +
-						"VALUES(" + valRevID + "," + valUserID +
-						"," + valUser + "," + valDatum + "," + valGroesse +
-						"," + valkAenderung + ")";
+			result = stmt.executeQuery("Select * from " + tablename);
+			result.last();
+			if(result != null){
+				int getcolumnncount = result.getMetaData().getColumnCount();
+				count = Integer.toString(getcolumnncount);
+				list.add(0, count);
+				// Dynamische Erstellung von Spaltennamen
+				for(i=2;i<getcolumnncount;i++){
+					columnName += result.getMetaData().getColumnName(i);
+					columnName += ",";
+				}
+					columnName += result.getMetaData().getColumnName(getcolumnncount);
+					list.add(1,columnName);
+			}else{
+				error_messages  += "getRS: Keine Datensätze in der Tabelle vorhanden ";
+			}
+		} catch (SQLException sqle) {
+			error_messages  += "getRS: " + error;
+		}
+		return list;
+		
+	}
+	
+	public Statement setInsertInto(String myvalues, String tabname)
+	{
+		ArrayList<String> list = new ArrayList<String>();
+		list = getColumnName(tabname);
+		String rows = list.get(1).toString();
+
+		String sql = "Insert into "+tabname +
+				" (" +rows+ ")" + "VALUES("+myvalues+")";
+//		System.out.println(sql);
+//		SELECT Artikel, Count(*) FROM `revision` group by Artikel
+//		Delete from revision WHERE Artikel="Deutschland"
+		try {
+			stmt = connect.createStatement();
 			stmt.executeUpdate(sql);
 			
 		} catch (SQLException sqle) {

@@ -3,9 +3,13 @@ package View;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
+import java.sql.Statement;
 
 import javax.swing.ButtonGroup;
 import javax.swing.JButton;
+import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JPasswordField;
@@ -13,8 +17,7 @@ import javax.swing.JRadioButton;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 
-import SQL.Mysql_connect;
-
+import SQL.mysql_connect;
 import API.Revision;
 import API.UserInfo;
 import API.WikiBot;
@@ -40,6 +43,7 @@ public class APIPanel {
 	private JTextField dateField = new JTextField();
 	private JTextField timeField = new JTextField();
 	private JTextArea resultField = new JTextArea();
+	private JComboBox<String> tbnamesComboBox = new JComboBox<String>();
 
 	private JRadioButton rbWikiDE = new JRadioButton();
 	private JRadioButton rbWikiEN = new JRadioButton();
@@ -48,6 +52,8 @@ public class APIPanel {
 	private JButton loginBt = new JButton("Login");
 	private JButton sendBt = new JButton("Speichern");
 	private JButton execBt = new JButton("Ausführen");
+	
+	private static Statement stmt = null;
 
 	/**
 	 * Create the application.
@@ -116,7 +122,6 @@ public class APIPanel {
 
 		// LoginButton
 		loginBt.addActionListener(new ActionListener() {
-
 			@Override
 			public void actionPerformed(ActionEvent e) {
 
@@ -124,7 +129,7 @@ public class APIPanel {
 						.getPassword().toString());
 				wikiBot.setWiki(starturl);
 				resultField.append("Connected" + "\n");
-
+				
 			}
 		});
 		
@@ -137,15 +142,46 @@ public class APIPanel {
 					UserInfo ui = new UserInfo(wikiBot.getWikiBot(), usernameField.getText());
 					resultField.append(ui.getUsername());
 				}
+
 				if(!articleField.getText().equals(""))	
 				{
 					wikiBot.setArticle(articleField.getText());
 					resultField.append(wikiBot.getArticle().getTitle());
+					mysql_connect mysql = new mysql_connect();
+//					int i=0;
+					JComboBox<String> cb = initComboBox(tbnamesComboBox);
+					String myselectedTab = ""+cb.getSelectedItem();
 					for(Revision r : wikiBot.getAllRevisions())
 					{
-					resultField.append(r.toString() + "\n");
-					Mysql_connect mysql = new Mysql_connect("localhost:3307/", "revision", "root", "usbw");
-					mysql.setInsertInto(r.getRevid() + "", r.getUserid() + "", r.getUser(), r.getTimestamp(), r.getSize() +"" , r.isMinorchange()+"");
+//						i++;
+//						if(i == 15) break;
+						resultField.append(r.toString() + "\n");
+	//					stmt = mysql.setInsertInto(r.getName(), r.getRevid() + "", r.getUserid() + "", r.getUser(), r.getTimestamp(), r.getSize() +"" , r.isMinorchange()+"");
+						String values = "";
+//						System.out.println("Meine Tab ist: " + myselectedTab);
+						switch(myselectedTab){
+							case "revision":
+								values +=
+									"'" + r.getName() + "'," +
+									"'" + r.getRevid() + "'," +
+									"'" + r.getUserid() + "'," +
+									"'" + r.getUser() + "'," +
+									"'" + r.getTimestamp() + "'," +
+									"'" + r.getSize() + "'," +
+									"'" + r.isMinorchange() + "'";
+									stmt = mysql.setInsertInto(values,myselectedTab);
+									break;
+							case "rechte":
+								values +=
+								"'" + r.getUserid() + "'," +
+								"'" + r.isMinorchange() + "'";
+								stmt = mysql.setInsertInto(values,myselectedTab);
+								break;
+							case "weitereTabellen":
+								break;
+							default:
+								resultField.append("Tabelle nicht gefunden" + "\n");		
+						}
 					}
 				}
 			}
@@ -179,7 +215,9 @@ public class APIPanel {
 		preferencesContainer.add(new JLabel("Datum: "));
 		preferencesContainer.add(dateField);
 		preferencesContainer.add(new JLabel("Uhrzeit: "));
-		preferencesContainer.add(timeField);
+		preferencesContainer.add(timeField, "wrap");
+		preferencesContainer.add(new JLabel("Tables: "));
+		preferencesContainer.add(tbnamesComboBox);
 
 		resultsContainer.add(new JLabel("<html><b>Ergebnis: </html>"), "wrap");
 		resultsContainer.add(resultField, "span 3");
@@ -199,7 +237,26 @@ public class APIPanel {
 		userField.setText("wissensmanagement");
 		passwordField.setText("asdasd");
 		starturl = "http://de.wikipedia.org/w/";
+		articleField.setText("Berlin");
 		loginBt.doClick();
+		SQLPanel pan = new SQLPanel();;
+		for (String tab : pan.getTables()){
+			tbnamesComboBox.addItem(tab);
+		}
+		tbnamesComboBox.setSelectedItem("rechte");
+	}
+	
+	public JComboBox<String> initComboBox(final JComboBox<String> combobox){
+		
+		combobox.addItemListener(new ItemListener(){
+			@SuppressWarnings("unchecked")
+			public void itemStateChanged( ItemEvent e ) {
+				JComboBox<String> selectedChoice = (JComboBox<String>)e.getItemSelectable();
+		        }
+		     } 
+		);
+			return combobox;
+		
 	}
 
 	/**
@@ -241,6 +298,10 @@ public class APIPanel {
 
 	public JTextField getTimeField() {
 		return this.timeField;
+	}
+	
+	public JComboBox getTbnamesComboBox() {
+		return tbnamesComboBox;
 	}
 
 	public JTextArea getResultField() {
