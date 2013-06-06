@@ -15,7 +15,7 @@ import java.util.*;
 
 import View.SQLPanel;
 
-public class mysql_connect {
+public class Mysql_connect {
 
 	// Objekte zur Verbindung erstellen
 	static Connection connect = null;
@@ -29,7 +29,7 @@ public class mysql_connect {
 	SQLPanel pan = new SQLPanel();
 	
 	// Zur Mysql-Db eine Verbindung aufbauen
-	public mysql_connect() {
+	public Mysql_connect() {
 		try {
 			Class.forName("sun.jdbc.odbc.JdbcOdbcDriver").newInstance(); // Instanz der Treiberklasse laden
 			Enumeration allDrivers = DriverManager.getDrivers();
@@ -49,6 +49,26 @@ public class mysql_connect {
 		}
 	}
 	
+	public Mysql_connect(String dbhost, String dbname, String dbuser,
+			String dbpass) {
+		try {
+			Class.forName("sun.jdbc.odbc.JdbcOdbcDriver").newInstance(); // Instanz der Treiberklasse laden
+			Enumeration allDrivers = DriverManager.getDrivers();
+			allDrivers.hasMoreElements();
+			other_message  += "Treiber kann geladen werden und lautet: \n" + allDrivers.nextElement() + "\n";
+			connect = DriverManager.getConnection(
+			"jdbc:mysql://" +dbhost+dbname,dbuser, dbpass);
+		} catch (InstantiationException ine) {
+			error_messages  += "mysql_connect: Instanz nicht ausführbar \n";
+		} catch (IllegalAccessException iae) {
+			error_messages  += "mysql_connect: Zugriff zur DB nicht möglich \n";
+		} catch (ClassNotFoundException cnfe) {
+			error_messages  += "mysql_connect: Treiber nicht gefunden \n";
+		}catch (Exception e){
+			error_messages += "mysql_connect: MySQL-Db nicht erreichbar \n";
+		}
+	}
+
 	public String getErrorMessages(){
 		return this.error_messages;
 	}

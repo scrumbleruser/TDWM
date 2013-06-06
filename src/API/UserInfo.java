@@ -150,9 +150,9 @@ public class UserInfo extends MWAction {
 		Iterator<Element> el = root.getChildren().iterator();
 		while (el.hasNext()) {
 			Element element = el.next();
-			if (element.getQualifiedName().equalsIgnoreCase("pl")){
+			if (element.getQualifiedName().equalsIgnoreCase("pl")) {
 				rtnt.add(element.getAttributeValue("title"));
-			}else{
+			} else {
 				if (element.getQualifiedName().equalsIgnoreCase("g"))
 					rtng.add(element.getText());
 				if (element.getQualifiedName().equalsIgnoreCase("r"))
@@ -164,15 +164,15 @@ public class UserInfo extends MWAction {
 					this.userrealname = element.getAttributeValue("name");
 					this.editcount = Integer.parseInt(element
 							.getAttributeValue("editcount"));
-					this.registration = element.getAttributeValue("registration");
+					this.registration = element
+							.getAttributeValue("registration");
 					this.gender = element.getAttributeValue("gender");
 					findContent(element, rtng, rtnr, rtnt);
 				} else {
 					findContent(element, rtng, rtnr, rtnt);
-					
+
 				}
 			}
-			
 
 		}
 
@@ -184,6 +184,25 @@ public class UserInfo extends MWAction {
 
 	public void setUsername(String username) {
 		this.username = username;
+	}
+
+	public String toString() {
+		String rtn = "";
+		rtn = "Username: " + username + " User Realname: " + userrealname
+				+ " UserID: " + userid + " Gender: " + gender
+				+ " Registration: " + registration + " EditCount: " + editcount;
+		StringBuffer tmp = new StringBuffer(" Groups:");
+		for (String s : getGroups())
+			tmp.append(" "+s + " ,");
+		tmp = new StringBuffer(tmp.substring(0, tmp.length()-2));
+		tmp.append(" Rights:");
+		
+		for(String s: getRights())
+			tmp.append(" "+s + " ,");
+		
+		tmp = new StringBuffer(tmp.substring(0, tmp.length()-2));
+		
+		return rtn + tmp.toString();
 	}
 
 }

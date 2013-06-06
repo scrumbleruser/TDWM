@@ -26,11 +26,17 @@ public class Testmain {
       }*/
 	   WikiBot wb = new WikiBot("wissensmanagement", "asdasd");
 //	   wb.setArticle("Klothoide");
+//	   
 //	   String[] tmo = wb.getCategories();
+//	   
+//	   for(String s : wb.getBacklinks())
+//		   System.out.println(s);
 //	   
 //	   for(String s : tmo)
 //		   System.out.println(s);
 	   
+	   Links bl = new Links(wb.getWikiBot(), "Klothoide");
+	   System.out.println(bl.toString());
 	   
 //	   Categories c = new Categories(wb.getWikiBot(),"Klothoide");
 //	   
@@ -39,13 +45,13 @@ public class Testmain {
 //	   for(String s : tmo)
 //		   System.out.println(s);
 	   
-	   AllRevisions ar = new AllRevisions(wb.getWikiBot(),"Klothoide");
+//	   AllRevisions ar = new AllRevisions(wb.getWikiBot(),"Deutschland");
 //	   
-	   for(Revision r : ar.getRevisions())
-	   System.out.println(r.toString());
+//	   for(Revision r : ar.getRevisions())
+//	   System.out.println(r.toString());
 //	   
-//	   UserInfo ui = new UserInfo(wb.getWikiBot(), "Reinhard_Dietrich");
-//	   
+	   UserInfo ui = new UserInfo(wb.getWikiBot(), "Reinhard_Dietrich");
+	   System.out.println(ui.toString());
 //	   for(String r : ui.getArticels())
 //		   System.out.println(r);
 //	   

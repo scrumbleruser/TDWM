@@ -1,10 +1,15 @@
 package View;
 
 import java.awt.Dimension;
+import java.awt.TextField;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.InputMethodEvent;
+import java.awt.event.InputMethodListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.sql.Statement;
 
 import javax.swing.ButtonGroup;
@@ -14,10 +19,11 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JRadioButton;
+import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
+import javax.swing.text.DefaultCaret;
 
-import SQL.mysql_connect;
 import API.Revision;
 import API.UserInfo;
 import API.WikiBot;
@@ -40,9 +46,10 @@ public class APIPanel {
 	private JTextField articleField = new JTextField();
 	private JTextField revisionField = new JTextField();
 	private JTextField categoryField = new JTextField();
-	private JTextField dateField = new JTextField();
-	private JTextField timeField = new JTextField();
-	private JTextArea resultField = new JTextArea();
+	private JTextArea resultArea = new JTextArea();
+	private JScrollPane resultField = new JScrollPane(resultArea);
+
+
 	private JComboBox<String> tbnamesComboBox = new JComboBox<String>();
 
 	private JRadioButton rbWikiDE = new JRadioButton();
@@ -52,6 +59,7 @@ public class APIPanel {
 	private JButton loginBt = new JButton("Login");
 	private JButton sendBt = new JButton("Speichern");
 	private JButton execBt = new JButton("Ausführen");
+	private JButton clearBt = new JButton("Text Löschen");
 	
 	private static Statement stmt = null;
 
@@ -99,6 +107,7 @@ public class APIPanel {
 		});
 		
 
+		
 		bg.add(rbWikiDE);
 		bg.add(rbWikiEN);
 		
@@ -112,14 +121,27 @@ public class APIPanel {
 				.setPreferredSize(new Dimension(150, userField.getHeight()));
 		categoryField
 				.setPreferredSize(new Dimension(150, userField.getHeight()));
-		dateField.setPreferredSize(new Dimension(150, userField.getHeight()));
-		timeField.setPreferredSize(new Dimension(150, userField.getHeight()));
 
 		// Results
+		resultField.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
 		resultField.setPreferredSize(new Dimension(500, 300));
-		resultField.setLineWrap(true);
-		resultField.setWrapStyleWord(true);
+		resultArea.setLineWrap(true);
+		resultArea.setAutoscrolls(true);
+		resultArea.setWrapStyleWord(true);
+		
+		
+		DefaultCaret caret = (DefaultCaret)resultArea.getCaret();
+		caret.setUpdatePolicy(DefaultCaret.ALWAYS_UPDATE);
 
+		clearBt.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				resultArea.setText("");
+				
+			}
+		});
+		
 		// LoginButton
 		loginBt.addActionListener(new ActionListener() {
 			@Override
@@ -128,7 +150,8 @@ public class APIPanel {
 				wikiBot = new WikiBot(userField.getText(), passwordField
 						.getPassword().toString());
 				wikiBot.setWiki(starturl);
-				resultField.append("Connected" + "\n");
+				resultArea.append("Connected" + "\n");
+				
 				
 			}
 		});
@@ -137,17 +160,22 @@ public class APIPanel {
 			
 			@Override
 			public void actionPerformed(ActionEvent e) {
+				if(!categoryField.getText().equals(""))
+				{
+					wikiBot.setArticle(categoryField.getText());
+					for(String s: wikiBot.getLinks())
+						resultArea.append(s + "\n");
+				}
 				if(!usernameField.getText().equals(""))	
 				{
 					UserInfo ui = new UserInfo(wikiBot.getWikiBot(), usernameField.getText());
-					resultField.append(ui.getUsername());
+					resultArea.append(ui.getUsername());
 				}
 
 				if(!articleField.getText().equals(""))	
 				{
 					wikiBot.setArticle(articleField.getText());
-					resultField.append(wikiBot.getArticle().getTitle());
-					mysql_connect mysql = new mysql_connect();
+					resultArea.append(wikiBot.getArticle().getTitle());
 //					int i=0;
 					JComboBox<String> cb = initComboBox(tbnamesComboBox);
 					String myselectedTab = ""+cb.getSelectedItem();
@@ -155,7 +183,7 @@ public class APIPanel {
 					{
 //						i++;
 //						if(i == 15) break;
-						resultField.append(r.toString() + "\n");
+						resultArea.append(r.toString() + "\n");
 	//					stmt = mysql.setInsertInto(r.getName(), r.getRevid() + "", r.getUserid() + "", r.getUser(), r.getTimestamp(), r.getSize() +"" , r.isMinorchange()+"");
 						String values = "";
 //						System.out.println("Meine Tab ist: " + myselectedTab);
@@ -169,18 +197,18 @@ public class APIPanel {
 									"'" + r.getTimestamp() + "'," +
 									"'" + r.getSize() + "'," +
 									"'" + r.isMinorchange() + "'";
-									stmt = mysql.setInsertInto(values,myselectedTab);
+									stmt = SQLPanel.con.setInsertInto(values,myselectedTab);
 									break;
 							case "rechte":
 								values +=
 								"'" + r.getUserid() + "'," +
 								"'" + r.isMinorchange() + "'";
-								stmt = mysql.setInsertInto(values,myselectedTab);
+								stmt = SQLPanel.con.setInsertInto(values,myselectedTab);
 								break;
 							case "weitereTabellen":
 								break;
 							default:
-								resultField.append("Tabelle nicht gefunden" + "\n");		
+								resultArea.append("Tabelle nicht gefunden" + "\n");		
 						}
 					}
 				}
@@ -212,23 +240,21 @@ public class APIPanel {
 		preferencesContainer.add(revisionField);
 		preferencesContainer.add(new JLabel("Kategorie: "), "gapright 30");
 		preferencesContainer.add(categoryField, "wrap");
-		preferencesContainer.add(new JLabel("Datum: "));
-		preferencesContainer.add(dateField);
-		preferencesContainer.add(new JLabel("Uhrzeit: "));
-		preferencesContainer.add(timeField, "wrap");
 		preferencesContainer.add(new JLabel("Tables: "));
 		preferencesContainer.add(tbnamesComboBox);
 
 		resultsContainer.add(new JLabel("<html><b>Ergebnis: </html>"), "wrap");
-		resultsContainer.add(resultField, "span 3");
-		resultsContainer.add(execBt, "wrap");
-		resultsContainer.add(sendBt, "wrap");
+		resultsContainer.add(resultField, "wrap");
+		resultsContainer.add(execBt, "span 2");
+		resultsContainer.add(sendBt,"span");
+		resultsContainer.add(clearBt,"wrap");
+		resultsContainer.revalidate();
 		
 
 		// Add Subcontainers to the Maincontainer
-		panel.add(loginInfoContainer, "span");
-		panel.add(preferencesContainer, "span");
-		panel.add(resultsContainer, "span");
+		panel.add(loginInfoContainer, "wrap");
+		panel.add(preferencesContainer, "wrap");
+		panel.add(resultsContainer, "wrap");
 
 		initData();
 	}
@@ -237,7 +263,7 @@ public class APIPanel {
 		userField.setText("wissensmanagement");
 		passwordField.setText("asdasd");
 		starturl = "http://de.wikipedia.org/w/";
-		articleField.setText("Berlin");
+		categoryField.setText("Berlin");
 		loginBt.doClick();
 		SQLPanel pan = new SQLPanel();;
 		for (String tab : pan.getTables()){
@@ -291,21 +317,13 @@ public class APIPanel {
 	public JTextField getCategoryField() {
 		return this.categoryField;
 	}
-
-	public JTextField getDateField() {
-		return this.dateField;
-	}
-
-	public JTextField getTimeField() {
-		return this.timeField;
-	}
 	
 	public JComboBox getTbnamesComboBox() {
 		return tbnamesComboBox;
 	}
 
 	public JTextArea getResultField() {
-		return this.resultField;
+		return this.resultArea;
 	}
 
 	public JButton getLoginBt() {
@@ -338,6 +356,9 @@ public class APIPanel {
 
 	public void setStarturl(String starturl) {
 		this.starturl = starturl;
+	}
+	public void setResultField(JScrollPane resultField) {
+		this.resultField = resultField;
 	}
 
 }

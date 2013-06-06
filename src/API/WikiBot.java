@@ -88,5 +88,11 @@ private String[] getAllItemsOnce(String text, String anfangstring,
 	}
 	return rtn.toArray(new String[rtn.size()]);
 }
+public String[] getLinks() {
+	Links l = new Links(wikiBot, article.getTitle());
+	
+	return l.getLinks();
+	
+}
 
 }
