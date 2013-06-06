@@ -32,7 +32,7 @@ Termin: Dienstag 21.5 - 20:15 Uhr
 - Revision (Erledigt)
 - Kategorien (Erledigt)
 - Beiträge eines Users (Erledigt)
-- Kann man Datun und Uhrzeit getrennt bekommen?
+- Kann man Datun und Uhrzeit getrennt bekommen? (Erledigt)
 
 3. Vergleiche werden folgendermassen:
 - Revisionen sollen verglichen werden
