@@ -4,8 +4,12 @@ import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.regex.Pattern;
+
 import javax.swing.ButtonGroup;
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -33,23 +37,27 @@ public class SQLPanel {
 	private JPasswordField passwordField = new JPasswordField();
 	private JTextField hostField = new JTextField();
 	private JTextField nameField = new JTextField();
-	// private JTextField tablenameField = new JTextField();
+	private JTextField statusField = new JTextField();
 	private JTextArea statementField = new JTextArea();
 	private JTextArea messageField = new JTextArea();
 	private JTextArea resultField = new JTextArea();
 
 	// ComboBox
 	private JComboBox<String> tbnamesComboBox = new JComboBox<String>();
+	private JComboBox<String> tbnamesComboBoxUser = new JComboBox<String>();
 
 	// Buttons
 	private JButton resultBt = new JButton("Ausführen");
 	private JButton resetBt = new JButton("Reset");
-	private JButton sendBt = new JButton("Senden");
+	private JButton sendBt = new JButton("Send");
+	private JButton createTableBt = new JButton("CreateTable");
 
 	// Radiobuttons
 	private JRadioButton rbSelect = new JRadioButton();
 	private JRadioButton rbOtherSQL = new JRadioButton();
 	private ButtonGroup bg = new ButtonGroup();
+	
+	private JCheckBox cbSQL = new JCheckBox();
 
 	private String message = "SQL-Statement is:";
 	private String sql = "Select * from ";
@@ -116,15 +124,21 @@ public class SQLPanel {
 		loginInfoContainer.add(hostField, "span");
 		loginInfoContainer.add(new JLabel("DB Name: "));
 		loginInfoContainer.add(nameField, "span");
+		loginInfoContainer.add(new JLabel("MySQL-Status: "));
+		loginInfoContainer.add(statusField, "span");
 		loginInfoContainer.add(new JLabel("Tablename: "));
 		loginInfoContainer.add(tbnamesComboBox, "span");
-
-		preferencesContainer.add(new JLabel("<html><b>Statement: </html>"),
-				"wrap");
+		loginInfoContainer.add(new JLabel("User: "));
+		loginInfoContainer.add(tbnamesComboBoxUser, "gapright");
+		loginInfoContainer.add(createTableBt, "wrap");
+		
+		preferencesContainer.add(new JLabel("<html><b>Statement: </html>"), "wrap");
 		preferencesContainer.add(new JLabel("Select"), "gapright 70");
 		preferencesContainer.add(rbSelect, "wrap");
 		preferencesContainer.add(new JLabel("Other"));
 		preferencesContainer.add(rbOtherSQL, "wrap");
+		preferencesContainer.add(new JLabel("Eigener SQL-Befehl ja/nein"));
+		preferencesContainer.add(cbSQL, "wrap");
 		preferencesContainer.add(new JLabel("SQL Statement: "));
 		preferencesContainer.add(statementField, "span 3");
 		preferencesContainer.add(resultBt, "span 2");
@@ -143,6 +157,7 @@ public class SQLPanel {
 
 		resultBt.addActionListener(al);
 		resetBt.addActionListener(resetal);
+		createTableBt.addActionListener(createTabelal);
 		setDefaultDBCon();
 	}
 
@@ -166,10 +181,18 @@ public class SQLPanel {
 	public JTextField getNameField() {
 		return this.nameField;
 	}
-
+	
+	public JTextField getStausField() {
+		return this.statusField;
+	}
+	
 	public JComboBox<String> getTbnamesComboBox() {
 		return tbnamesComboBox;
 	}
+	public JComboBox<String> getTbnamesComboBoxUser() {
+		return tbnamesComboBoxUser;
+	}
+	
 
 	public String[] getTables() {
 		return tables;
@@ -198,13 +221,21 @@ public class SQLPanel {
 	public JButton getSendBt() {
 		return this.sendBt;
 	}
-
+	
+	public JButton getCreateTableBt() {
+		return this.createTableBt;
+	}
+	
 	public JRadioButton getRbSelect() {
 		return this.rbSelect;
 	}
 
 	public JRadioButton getRbOtherSQL() {
 		return this.rbOtherSQL;
+	}
+	
+	public JCheckBox getCbSQL() {
+		return this.cbSQL;
 	}
 
 	// setzen der Default-Einstellungen
@@ -223,21 +254,72 @@ public class SQLPanel {
 				+ tbnamesComboBox.getSelectedItem());
 		this.messageField.setText(message);
 		this.rbSelect.setSelected(true);
+		this.getStausField().setText("off");
 	}
 
 	// ActionListener
 	private ActionListener resetal = new ActionListener() {
 		public void actionPerformed(ActionEvent e) {
-			setDefaultDBCon();
+			SQLPanel.con = new Mysql_connect(getHostField().getText(),
+					getNameField().getText(), getUserField().getText(),
+					String.valueOf(getPasswordField().getPassword()));
+			con.getStateMysql();
+			ArrayList<String> userlist = new ArrayList<String>();
+			userlist = con.getUserName();
+
+//				System.out.println(userlist.get(0).toString());
+//			 String[] username = user.split(Pattern.quote(""));
+//			 getResultField().setText(user);
+			 for (String usernames : userlist) {
+				 tbnamesComboBoxUser.addItem(usernames);
+			 }
+			 
+			 con.mysql_close();
+			 con.getStateMysql();
+			 setDefaultDBCon();
 		}
 	};
+	
+	// ActionListener
+		private ActionListener createTabelal = new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				String myselectedTab = "" + tbnamesComboBox.getSelectedItem();
+				System.out.println(myselectedTab);
+				String sql_revsion=(
+						"CREATE TABLE IF NOT EXISTS revision_test (ID mediumint(8) unsigned NOT NULL AUTO_INCREMENT," +
+						"Artikel varchar(50), RevisionID varchar(50), UserID varchar(50), User varchar(50)," +
+						"DatumUhrzeit varchar(50),Groesse varchar(50),klAenderung varchar(50)," +
+						"PRIMARY KEY (ID)) ENGINE=InnoDB DEFAULT CHARSET=latin1)");
+				String sql_rechte = 
+						"CREATE TABLE IF NOT EXISTS rechte_test (ID mediumint(8) unsigned NOT NULL AUTO_INCREMENT," +
+						"UserID varchar(50), rechte varchar(255)" +
+						"PRIMARY KEY (ID)) ENGINE=InnoDB DEFAULT CHARSET=latin1;";
+				switch(myselectedTab){
+					case "revision":
+							stmt = con.getOtherStatement(sql_revsion);
+							break;
+					case "rechte":
+							stmt = con.getOtherStatement(sql_rechte);
+							break;
+					case "weitereTabellen":
+							break;
+					default:
+						messageField.setText("Bitte eine Tabelle auswählen");		
+				}
+			}
+		};
 
 	private ActionListener al = new ActionListener() {
 		public void actionPerformed(ActionEvent e) {
 			String error_messages = "";
 			String other_messages = "";
-			getStatementField().setText(
-					sql + "" + tbnamesComboBox.getSelectedItem());
+			if (cbSQL.isSelected() == true){
+				getStatementField().setText(
+						getStatementField().getText());
+			}else{
+				getStatementField().setText(
+						sql + "" + tbnamesComboBox.getSelectedItem());
+			}
 			SQLPanel.con = new Mysql_connect(getHostField().getText(),
 					getNameField().getText(), getUserField().getText(),
 					String.valueOf(getPasswordField().getPassword()));
@@ -283,7 +365,7 @@ public class SQLPanel {
 				}
 			}
 			statementField.setText(statementField.getText());
-			con.mysql_close();
+			con.getStateMysql();
 		}
 	};
 }

@@ -18,7 +18,7 @@ import View.SQLPanel;
 public class Mysql_connect {
 
 	// Objekte zur Verbindung erstellen
-	static Connection connect = null;
+	private static Connection connect = null;
 	private static Statement stmt = null;
 	private static ResultSet result = null;
 	private String error_messages = "";
@@ -66,6 +66,21 @@ public class Mysql_connect {
 			error_messages  += "mysql_connect: Treiber nicht gefunden \n";
 		}catch (Exception e){
 			error_messages += "mysql_connect: MySQL-Db nicht erreichbar \n";
+		}
+	}
+	
+	public void getStateMysql(){
+		boolean connected;
+		try {
+			connected = connect.isClosed();
+			if (connected == true){
+				pan.getStausField().setText("off");
+			}else{
+				pan.getStausField().setText("on");
+			}
+		} catch (SQLException e) {
+			System.out.println("getStateMysql: SQL-Fehler");
+			e.printStackTrace();
 		}
 	}
 
@@ -117,8 +132,6 @@ public class Mysql_connect {
 				for(i=0; i<list.size();i++){
 					content += list.get(i).toString();
 				}
-//				messages  += "SQL-Statement: erfolgreich";
-//				Update wikiinfos set IP="192.168.8.83" WHERE ID="6"
 			}else{
 				error_messages  += "getRS: Keine Datensätze in der Tabelle vorhanden ";
 			}
@@ -200,6 +213,28 @@ public class Mysql_connect {
 		return stmt;
 	}
 	
+	public ArrayList<String> getUserName(){
+		ArrayList<String> userlist = new ArrayList<String>();
+		try {
+			String sql = "Select DISTINCT TRIM(User) from revision ORDER BY User";
+			stmt = connect.createStatement();
+			result = stmt.executeQuery(sql);
+			System.out.println(result);
+			if(result != null){
+				while (result.next()) {
+					userlist.add(result.getString(1));
+				}
+			}
+		} catch (SQLException sqle) {
+			error_messages  += error;
+		}catch (Exception e){
+			error_messages += "getUserName: MySQL-Db nicht erreichbar \n" +
+					"oder SQL-Statement falsch"; 
+		;
+		}
+		return userlist;
+	}
+	
 	public Statement getOtherStatement(String sql){		
 		// Weitere DDL-Befehle - Upade,Create,Delete
 		try {
@@ -210,8 +245,10 @@ public class Mysql_connect {
 		} catch (SQLException sqle) {
 			error_messages  += "getOtherStatement: MySQL-Db nicht erreichbar \n" +
 					"oder SQL-Statement falsch";
-		} // Ausführen des angegeben SQL-Statements
-//		Update wikiinfos set IP="192.168.8.72" WHERE ID="13"
+			error_messages  += "getOtherStatement: " + sqle.getMessage();
+			error_messages  += "getOtherStatement: " + sqle.getSQLState();
+			error_messages  += "getOtherStatement: " + sqle.getErrorCode();
+		} 
 		return stmt;
 	}
 }
