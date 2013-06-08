@@ -37,8 +37,6 @@
 	<classpathentry kind="lib" path="lib/gnujaxp.jar"/>
 	<classpathentry kind="lib" path="lib/iText-2.1.5.jar"/>
 	<classpathentry kind="lib" path="lib/jcommon-1.0.17.jar"/>
-	<classpathentry kind="lib" path="lib/jfreechart-1.0.14-experimental.jar"/>
-	<classpathentry kind="lib" path="lib/jfreechart-1.0.14-swt.jar"/>
 	<classpathentry kind="lib" path="lib/jfreechart-1.0.14.jar"/>
 	<classpathentry kind="lib" path="lib/junit.jar"/>
 	<classpathentry kind="lib" path="lib/servlet.jar"/>
