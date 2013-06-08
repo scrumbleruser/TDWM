@@ -3,11 +3,8 @@ package View;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.sql.Connection;
 import java.sql.Statement;
 import java.util.ArrayList;
-import java.util.regex.Pattern;
-
 import javax.swing.ButtonGroup;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
@@ -18,7 +15,6 @@ import javax.swing.JPasswordField;
 import javax.swing.JRadioButton;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
-
 import SQL.Mysql_connect;
 
 import net.miginfocom.swing.MigLayout;
@@ -57,16 +53,15 @@ public class SQLPanel {
 	private JRadioButton rbSelect = new JRadioButton();
 	private JRadioButton rbOtherSQL = new JRadioButton();
 	private ButtonGroup bg = new ButtonGroup();
-	
+
 	private JCheckBox cbSQL = new JCheckBox();
 
 	private String message = "SQL-Statement is:";
 	private String sql = "Select * from ";
 
 	private static Statement stmt = null;
-	private static Connection connect = null;
 	private String[] tables = { "revision", "rechte", "kategorien", "artikel" };
-	
+
 	private String error_messages = "";
 	private String other_messages = "";
 
@@ -87,11 +82,11 @@ public class SQLPanel {
 		panel.setOpaque(false);
 
 		// Subcontainers
-		loginInfoContainer.setPreferredSize(new Dimension(800,
+		loginInfoContainer.setPreferredSize(new Dimension(1000,
 				loginInfoContainer.getHeight()));
-		preferencesContainer.setPreferredSize(new Dimension(800,
+		preferencesContainer.setPreferredSize(new Dimension(1000,
 				preferencesContainer.getHeight()));
-		resultsContainer.setPreferredSize(new Dimension(800, 300));
+		resultsContainer.setPreferredSize(new Dimension(1000, 300));
 
 		// Login
 		userField.setPreferredSize(new Dimension(150, userField.getHeight()));
@@ -114,7 +109,7 @@ public class SQLPanel {
 		bg.add(rbOtherSQL);
 
 		// Result
-		resultField.setPreferredSize(new Dimension(450, 300));
+		resultField.setPreferredSize(new Dimension(550, 300));
 		resultField.setLineWrap(true);
 		resultField.setWrapStyleWord(true);
 
@@ -136,8 +131,9 @@ public class SQLPanel {
 		loginInfoContainer.add(new JLabel("User: "));
 		loginInfoContainer.add(tbnamesComboBoxUser, "gapright");
 		loginInfoContainer.add(createTableBt, "wrap");
-		
-		preferencesContainer.add(new JLabel("<html><b>Statement: </html>"), "wrap");
+
+		preferencesContainer.add(new JLabel("<html><b>Statement: </html>"),
+				"wrap");
 		preferencesContainer.add(new JLabel("Select"), "gapright 70");
 		preferencesContainer.add(rbSelect, "wrap");
 		preferencesContainer.add(new JLabel("Other"));
@@ -186,18 +182,18 @@ public class SQLPanel {
 	public JTextField getNameField() {
 		return this.nameField;
 	}
-	
+
 	public JTextField getStatusField() {
 		return this.statusField;
 	}
-	
+
 	public JComboBox<String> getTbnamesComboBox() {
 		return tbnamesComboBox;
 	}
+
 	public JComboBox<String> getTbnamesComboBoxUser() {
 		return tbnamesComboBoxUser;
 	}
-	
 
 	public String[] getTables() {
 		return tables;
@@ -226,11 +222,11 @@ public class SQLPanel {
 	public JButton getSendBt() {
 		return this.sendBt;
 	}
-	
+
 	public JButton getCreateTableBt() {
 		return this.createTableBt;
 	}
-	
+
 	public JRadioButton getRbSelect() {
 		return this.rbSelect;
 	}
@@ -238,18 +234,136 @@ public class SQLPanel {
 	public JRadioButton getRbOtherSQL() {
 		return this.rbOtherSQL;
 	}
-	
+
 	public JCheckBox getCbSQL() {
 		return this.cbSQL;
 	}
 
-	// setzen der Default-Einstellungen
+	// MySQL-Verbindung mit den Logindaten
+	public void con_mysql() {
+		SQLPanel.con = new Mysql_connect(getHostField().getText(),
+				getNameField().getText(), getUserField().getText(),
+				String.valueOf(getPasswordField().getPassword()));
+	}
+
+	// hier wird, falls benötigt, die Tabelle/Tabellen erstellt
+	public void createTable(String myselectedTab) {
+		con_mysql();
+		String sql_revsion = "CREATE TABLE revision_test (ID mediumint(8) unsigned NOT NULL AUTO_INCREMENT,"
+				+ "Artikel varchar(50), RevisionID varchar(50), UserID varchar(50), User varchar(50),"
+				+ "DatumUhrzeit varchar(50),Groesse varchar(50),klAenderung varchar(50),"
+				+ "PRIMARY KEY (ID))";
+		String sql_rechte = "CREATE TABLE rechte_test (ID mediumint(8) unsigned NOT NULL AUTO_INCREMENT,"
+				+ "UserID varchar(50), rechte varchar(255),"
+				+ "PRIMARY KEY (ID))";
+		switch (myselectedTab) {
+		case "revision":
+			stmt = SQLPanel.con.getOtherStatement(sql_revsion);
+			error_messages = con.getErrorMessages();
+			other_messages = con.getOtherMessage();
+			if (error_messages == "") {
+				// alles ok
+				messageField.setText(other_messages);
+			} else {
+				messageField.setText(error_messages);
+				con.mysql_close();
+			}
+			break;
+		case "rechte":
+			stmt = SQLPanel.con.getOtherStatement(sql_rechte);
+			error_messages = con.getErrorMessages();
+			other_messages = con.getOtherMessage();
+			if (error_messages == "") {
+				// alles ok
+				messageField.setText(other_messages);
+			} else {
+				messageField.setText(error_messages);
+				con.mysql_close();
+			}
+			break;
+		case "weitereTabellen":
+			break;
+		default:
+			messageField.setText("Bitte eine Tabelle auswählen");
+		}
+	}
+
+	// Beispielimplementierung: getUsername
+	public void createUserBox() {
+		con_mysql();
+		statusField.setText(SQLPanel.con.getStateMysql());
+		ArrayList<String> userlist = new ArrayList<String>();
+		userlist = con.getUserName();
+		for (String usernames : userlist) {
+			tbnamesComboBoxUser.addItem(usernames);
+		}
+		// con.mysql_close();
+		statusField.setText(SQLPanel.con.getStateMysql());
+	}
+
+	// SQL-Befehle an die DB stellen und Ausgabe im Resultfeld
+	public void getResult() {
+		if (cbSQL.isSelected() == true && rbSelect.isSelected() == true) {
+			getStatementField().setText(getStatementField().getText());
+		}
+		if (cbSQL.isSelected() == false && rbSelect.isSelected() == true) {
+			getStatementField().setText(
+					sql + "" + tbnamesComboBox.getSelectedItem());
+		}
+		con_mysql();
+
+		// Select Befehle
+		if (rbSelect.isSelected() == true) {
+			String content = con.getSelectStatement(statementField.getText());
+			error_messages = SQLPanel.con.getErrorMessages();
+			other_messages = SQLPanel.con.getOtherMessage();
+			if (error_messages == "") {
+				// alles ok
+				String rows = SQLPanel.con
+						.getRowCount(statementField.getText());
+				messageField.setText(other_messages);
+				getStatementField().setText(getStatementField().getText());
+				getResultField().setText(
+						rows + " Datensätze vorhanden \n" + content);
+			} else {
+				messageField.setText(error_messages);
+				getResultField().setText("");
+				SQLPanel.con.mysql_close();
+			}
+		}
+		// Other SQL-Befehle
+		if (rbOtherSQL.isSelected() == true) {
+			stmt = con.getOtherStatement(statementField.getText());
+			error_messages = SQLPanel.con.getErrorMessages();
+			other_messages = SQLPanel.con.getOtherMessage();
+			if (error_messages == "") {
+				messageField.setText(other_messages);
+				String sql = getStatementField().getText();
+				String content = SQLPanel.con.getSelectStatement(sql);
+				getResultField().setText(content);
+
+			} else {
+				messageField.setText(error_messages);
+				getResultField().setText("");
+				SQLPanel.con.mysql_close();
+			}
+		}
+		statementField.setText(statementField.getText());
+		SQLPanel.con.getStateMysql();
+	}
+
+	// setzen der Default-Einstellungen und erstellen der Auswahlbox
 	public void setDefaultDBCon() {
+		// Localhost
+//		this.getUserField().setText("root");
+//		this.getPasswordField().setText("usbw");
+//		this.getHostField().setText("localhost:3307/");
+//		this.getNameField().setText("wikiinfos");
+		// Webhoster
 		this.getUserField().setText("y9r106037");
 		this.getPasswordField().setText("basilius789063");
 		this.getHostField().setText("134.0.26.187:3306/");
 		this.getNameField().setText("y9r106037_usr_web27_2");
-		// this.tablenameField.setText("revision");
 		for (String tab : tables) {
 			tbnamesComboBox.addItem(tab);
 		}
@@ -265,129 +379,22 @@ public class SQLPanel {
 	// ActionListener
 	private ActionListener resetal = new ActionListener() {
 		public void actionPerformed(ActionEvent e) {
-			SQLPanel.con = new Mysql_connect(getHostField().getText(),
-					getNameField().getText(), getUserField().getText(),
-					String.valueOf(getPasswordField().getPassword()));
-			con.getStateMysql();
-			ArrayList<String> userlist = new ArrayList<String>();
-			userlist = con.getUserName();
-			for (String usernames : userlist) {
-				tbnamesComboBoxUser.addItem(usernames);
-			}
-
-			con.mysql_close();
-			con.getStateMysql();
+			createUserBox();
 			setDefaultDBCon();
 		}
 	};
-	
+
 	// ActionListener
-		private ActionListener createTabelal = new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				SQLPanel.con = new Mysql_connect(getHostField().getText(),
-						getNameField().getText(), getUserField().getText(),
-						String.valueOf(getPasswordField().getPassword()));
-				String myselectedTab = "" + tbnamesComboBox.getSelectedItem();
-//				System.out.println(myselectedTab);
-				String sql_revsion=
-						"CREATE TABLE revision_test (ID mediumint(8) unsigned NOT NULL AUTO_INCREMENT," +
-						"Artikel varchar(50), RevisionID varchar(50), UserID varchar(50), User varchar(50)," +
-						"DatumUhrzeit varchar(50),Groesse varchar(50),klAenderung varchar(50)," +
-						"PRIMARY KEY (ID))";
-				String sql_rechte = 
-						"CREATE TABLE rechte_test (ID mediumint(8) unsigned NOT NULL AUTO_INCREMENT," +
-						"UserID varchar(50), rechte varchar(255)," +
-						"PRIMARY KEY (ID))";
-				switch(myselectedTab){
-					case "revision":
-							stmt = SQLPanel.con.getOtherStatement(sql_revsion);
-							error_messages = con.getErrorMessages();
-							other_messages = con.getOtherMessage();
-							if (error_messages == "") {
-								// alles ok
-								messageField.setText(other_messages);
-							} else {
-								messageField.setText(error_messages);
-								con.mysql_close();
-							}
-							break;
-					case "rechte":
-							stmt = SQLPanel.con.getOtherStatement(sql_rechte);
-							error_messages = con.getErrorMessages();
-							other_messages = con.getOtherMessage();
-							if (error_messages == "") {
-								// alles ok
-								messageField.setText(other_messages);
-							} else {
-								messageField.setText(error_messages);
-								con.mysql_close();
-							}
-							break;
-					case "weitereTabellen":
-							break;
-					default:
-						messageField.setText("Bitte eine Tabelle auswählen");		
-				}
-			}
-		};
+	private ActionListener createTabelal = new ActionListener() {
+		public void actionPerformed(ActionEvent e) {
+			String myselectedTab = "" + tbnamesComboBox.getSelectedItem();
+			createTable(myselectedTab);
+		}
+	};
 
 	private ActionListener al = new ActionListener() {
 		public void actionPerformed(ActionEvent e) {
-			if (cbSQL.isSelected() == true && rbSelect.isSelected() == true){
-				getStatementField().setText(
-						getStatementField().getText());
-			}
-			if (cbSQL.isSelected() == false && rbSelect.isSelected() == true){
-				getStatementField().setText(
-						sql + "" + tbnamesComboBox.getSelectedItem());
-			}
-			SQLPanel.con = new Mysql_connect(getHostField().getText(),
-					getNameField().getText(), getUserField().getText(),
-					String.valueOf(getPasswordField().getPassword()));
-
-			// ArrayList<String> listColumn = new ArrayList<String>();
-			// listColumn = con.getColumnName(tablenameField.getText());
-			// for(int i=0; i<listColumn.size();i++){
-			// System.out.println("Das ist der: " + i + "Datensatz");
-			// System.out.println(listColumn.get(i).toString());
-			// }
-
-			// Select Befehle
-			if (rbSelect.isSelected() == true) {
-				String content = con.getSelectStatement(statementField
-						.getText());
-				error_messages = con.getErrorMessages();
-				other_messages = con.getOtherMessage();
-				if (error_messages == "") {
-					// alles ok
-					messageField.setText(other_messages);
-					getStatementField().setText(getStatementField().getText());
-					getResultField().setText(content);
-				} else {
-					messageField.setText(error_messages);
-					getResultField().setText("");
-					con.mysql_close();
-				}
-			}
-			// Other SQL-Befehle
-			if (rbOtherSQL.isSelected() == true) {
-				stmt = con.getOtherStatement(statementField.getText());
-				error_messages = con.getErrorMessages();
-				other_messages = con.getOtherMessage();
-				if (error_messages == "") {
-					messageField.setText(other_messages);
-					String sql = getStatementField().getText();
-					String content = con.getSelectStatement(sql);
-					getResultField().setText(content);
-
-				} else {
-					messageField.setText(error_messages);
-					getResultField().setText("");
-					con.mysql_close();
-				}
-			}
-			statementField.setText(statementField.getText());
-			con.getStateMysql();
+			getResult();
 		}
 	};
 }

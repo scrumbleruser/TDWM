@@ -29,7 +29,7 @@ public class Mysql_connect {
 	SQLPanel pan = new SQLPanel();
 	
 	// Zur Mysql-Db eine Verbindung aufbauen
-	public Mysql_connect() {
+	public void Mysql_connectWithLogin() {
 		try {
 			Class.forName("sun.jdbc.odbc.JdbcOdbcDriver").newInstance(); // Instanz der Treiberklasse laden
 			Enumeration allDrivers = DriverManager.getDrivers();
@@ -47,6 +47,10 @@ public class Mysql_connect {
 		}catch (Exception e){
 			error_messages += "mysql_connect: MySQL-Db nicht erreichbar \n";
 		}
+	}
+	
+	public Mysql_connect(){
+		
 	}
 	
 	public Mysql_connect(String dbhost, String dbname, String dbuser,
@@ -68,28 +72,22 @@ public class Mysql_connect {
 			error_messages += "mysql_connect: MySQL-Db nicht erreichbar \n";
 		}
 	}
-	
-	public void getStateMysql(){
+
+	public String getStateMysql(){
 		boolean connected;
+		String state = "";
 		try {
 			connected = connect.isClosed();
 			if (connected == true){
-				pan.getStausField().setText("off");
+				state = "off";
 			}else{
-				pan.getStausField().setText("on");
+				state = "on";
 			}
 		} catch (SQLException e) {
-			System.out.println("getStateMysql: SQL-Fehler");
-			e.printStackTrace();
+			error_messages  += "getStateMysql: " + e.getMessage() + "\n";
+			error_messages  += "getStateMysql: " + e.getErrorCode() + "\n";
 		}
-	}
-
-	public String getErrorMessages(){
-		return this.error_messages;
-	}
-	
-	public String getOtherMessage(){
-		return this.other_message;
+		return state;
 	}
 
 	public void mysql_close() {
@@ -97,8 +95,9 @@ public class Mysql_connect {
 			stmt.close();
 			connect.close();
 		} catch (SQLException e) {
-			error_messages  += "mysql_close: Verbindung kann nicht geschlossen werden ";
-//			e.printStackTrace();
+//			error_messages  += "mysql_close: Verbindung kann nicht geschlossen werden ";
+			error_messages  += "mysql_close: " + e.getMessage() + "\n";
+			error_messages  += "mysql_close: " + e.getErrorCode() + "\n";
 		} catch (NullPointerException npe){
 			error_messages += "mysql_close: Null Pointer. Bitte DB-Verbindung prüfen";
 		}
@@ -136,11 +135,14 @@ public class Mysql_connect {
 				error_messages  += "getRS: Keine Datensätze in der Tabelle vorhanden ";
 			}
 		} catch (SQLException sqle) {
-			error_messages  += "getRS: " + error;
+//			error_messages  += "getRS: " + error;
+			error_messages  += "getRS: " + sqle.getMessage() + "\n";
+			error_messages  += "getRS: " + sqle.getErrorCode() + "\n";
 		}
 		return content;
 	}
 	
+	// ab hier nur Select
 	public String getSelectStatement(String sql){
 		String myContent = "";
 		try {
@@ -152,65 +154,13 @@ public class Mysql_connect {
 		    	other_message += "SQL-Statement: erfolgreich";
     		}
 		} catch (SQLException sqle) {
-			error_messages  += error;
+			error_messages  += "getSelectStatement: " + sqle.getMessage() + "\n";
+			error_messages  += "getSelectStatement: " + sqle.getErrorCode() + "\n";
 		}catch (Exception e){
 			error_messages += "getSelectionStatement: MySQL-Db nicht erreichbar \n" +
 					"oder SQL-Statement falsch"; 
-		;
 		}
 		return myContent;
-	}
-	
-	public ArrayList<String> getColumnName(String tablename){
-		ArrayList<String> list = new ArrayList<String>();
-		int i;
-		String columnName = "";
-		String count ="";
-		try {
-			stmt = connect.createStatement();
-			result = stmt.executeQuery("Select * from " + tablename);
-			result.last();
-			if(result != null){
-				int getcolumnncount = result.getMetaData().getColumnCount();
-				count = Integer.toString(getcolumnncount);
-				list.add(0, count);
-				// Dynamische Erstellung von Spaltennamen
-				for(i=2;i<getcolumnncount;i++){
-					columnName += result.getMetaData().getColumnName(i);
-					columnName += ",";
-				}
-					columnName += result.getMetaData().getColumnName(getcolumnncount);
-					list.add(1,columnName);
-			}else{
-				error_messages  += "getRS: Keine Datensätze in der Tabelle vorhanden ";
-			}
-		} catch (SQLException sqle) {
-			error_messages  += "getRS: " + error;
-		}
-		return list;
-		
-	}
-	
-	public Statement setInsertInto(String myvalues, String tabname)
-	{
-		ArrayList<String> list = new ArrayList<String>();
-		list = getColumnName(tabname);
-		String rows = list.get(1).toString();
-
-		String sql = "Insert into "+tabname +
-				" (" +rows+ ")" + "VALUES("+myvalues+")";
-//		System.out.println(sql);
-//		SELECT Artikel, Count(*) FROM `revision` group by Artikel
-//		Delete from revision WHERE Artikel="Deutschland"
-		try {
-			stmt = connect.createStatement();
-			stmt.executeUpdate(sql);
-			
-		} catch (SQLException sqle) {
-			error_messages  += "getOtherStatement: MySQL-Db nicht erreichbar \n" +
-					"oder SQL-Statement falsch";
-		}
-		return stmt;
 	}
 	
 	public ArrayList<String> getUserName(){
@@ -226,13 +176,83 @@ public class Mysql_connect {
 				}
 			}
 		} catch (SQLException sqle) {
-			error_messages  += error;
-		}catch (Exception e){
-			error_messages += "getUserName: MySQL-Db nicht erreichbar \n" +
-					"oder SQL-Statement falsch"; 
-		;
+//			error_messages  += error;
+			error_messages  += "getUserName: " + sqle.getMessage() + "\n";
+			error_messages  += "getUserName: " + sqle.getErrorCode() + "\n";
 		}
 		return userlist;
+	}
+	
+	public String getRowCount(String sql){
+		String rows = "";
+		try {
+			stmt = connect.createStatement();
+			result = stmt.executeQuery(sql);
+			result.last();
+			if(result != null){
+				rows += Integer.toString(result.getRow());
+			}else{
+				error_messages  += "getRS: Keine Datensätze in der Tabelle vorhanden \n";
+			}
+		} catch (SQLException sqle) {
+//			error_messages  += "getRS: " + error;
+			error_messages  += "getColumnName: " + sqle.getMessage() + "\n";
+			error_messages  += "getColumnName: " + sqle.getErrorCode() + "\n";
+		}
+		return rows;
+	}
+	
+	public ArrayList<String> getColumnName(String tablename){
+		ArrayList<String> list = new ArrayList<String>();
+		int i;
+		String columnName = "";
+		String count ="";
+		try {
+			stmt = connect.createStatement();
+			result = stmt.executeQuery("Select * from " + tablename);
+			if(result != null){
+				int getcolumnncount = result.getMetaData().getColumnCount();
+				count = Integer.toString(getcolumnncount);
+				list.add(0, count);
+				// Dynamische Erstellung von Spaltennamen
+				for(i=2;i<getcolumnncount;i++){
+					columnName += result.getMetaData().getColumnName(i);
+					columnName += ",";
+				}
+					columnName += result.getMetaData().getColumnName(getcolumnncount);
+					list.add(1,columnName);
+			}else{
+				error_messages  += "getRS: Keine Datensätze in der Tabelle vorhanden \n";
+			}
+		} catch (SQLException sqle) {
+//			error_messages  += "getRS: " + error;
+			error_messages  += "getColumnName: " + sqle.getMessage() + "\n";
+			error_messages  += "getColumnName: " + sqle.getErrorCode() + "\n";
+		}
+		return list;
+	}
+	
+	// ab hier kein Select mehr
+	public Statement setInsertInto(String myvalues, String tabname)
+	{
+		ArrayList<String> list = new ArrayList<String>();
+		list = getColumnName(tabname);
+		String rows = list.get(1).toString();
+//		System.out.println(myvalues);
+		String sql = "Insert into "+tabname +
+				" (" +rows+ ")" + "VALUES("+myvalues+")";
+//		System.out.println(sql);
+//		SELECT Artikel, Count(*) FROM `revision` group by Artikel
+//		Delete from revision WHERE Artikel="Deutschland"
+		try {
+			stmt = connect.createStatement();
+			stmt.executeUpdate(sql);
+			
+		} catch (SQLException sqle) {
+			error_messages  += "setInsertInto: " + sqle.getMessage() + "\n";
+			error_messages  += "setInsertInto: " + sqle.getErrorCode() + "\n";
+		}
+		return stmt;
 	}
 	
 	public Statement getOtherStatement(String sql){		
@@ -243,12 +263,17 @@ public class Mysql_connect {
 			other_message += "SQL-Statement: erfolgreich";
 //			getResult(con);
 		} catch (SQLException sqle) {
-			error_messages  += "getOtherStatement: MySQL-Db nicht erreichbar \n" +
-					"oder SQL-Statement falsch";
-			error_messages  += "getOtherStatement: " + sqle.getMessage();
-			error_messages  += "getOtherStatement: " + sqle.getSQLState();
-			error_messages  += "getOtherStatement: " + sqle.getErrorCode();
+			error_messages  += "getOtherStatement: " + sqle.getMessage() + "\n";
+			error_messages  += "getOtherStatement: " + sqle.getErrorCode() + "\n";
 		} 
 		return stmt;
+	}
+	
+	public String getErrorMessages(){
+		return this.error_messages;
+	}
+	
+	public String getOtherMessage(){
+		return this.other_message;
 	}
 }

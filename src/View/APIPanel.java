@@ -24,6 +24,8 @@ import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.text.DefaultCaret;
 
+import SQL.Mysql_connect;
+
 import API.Revision;
 import API.UserInfo;
 import API.WikiBot;
@@ -31,7 +33,8 @@ import API.WikiBot;
 import net.miginfocom.swing.MigLayout;
 
 public class APIPanel {
-
+	private Mysql_connect con = new Mysql_connect();
+	
 	private WikiBot wikiBot;
 	private String starturl;
 
@@ -179,6 +182,7 @@ public class APIPanel {
 //					int i=0;
 					JComboBox<String> cb = initComboBox(tbnamesComboBox);
 					String myselectedTab = ""+cb.getSelectedItem();
+					con.Mysql_connectWithLogin();
 					for(Revision r : wikiBot.getAllRevisions())
 					{
 //						i++;
@@ -197,20 +201,24 @@ public class APIPanel {
 									"'" + r.getTimestamp() + "'," +
 									"'" + r.getSize() + "'," +
 									"'" + r.isMinorchange() + "'";
-									stmt = SQLPanel.con.setInsertInto(values,myselectedTab);
+									con.Mysql_connectWithLogin();
+									stmt = con.setInsertInto(values,myselectedTab);
 									break;
 							case "rechte":
 								values +=
 								"'" + r.getUserid() + "'," +
 								"'" + r.isMinorchange() + "'";
-								stmt = SQLPanel.con.setInsertInto(values,myselectedTab);
+								con.Mysql_connectWithLogin();
+								stmt = con.setInsertInto(values,myselectedTab);
 								break;
 							case "weitereTabellen":
 								break;
 							default:
 								resultArea.append("Tabelle nicht gefunden" + "\n");		
 						}
+						con.mysql_close();
 					}
+					
 				}
 			}
 		});
