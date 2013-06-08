@@ -26,29 +26,6 @@ public class Mysql_connect {
 	private String error = "SQL-Statement falsch\n" +
 					"oder Button Other ist nicht angeklickt worden ";
 	
-//	SQLPanel pan = new SQLPanel();
-//	
-//	// Zur Mysql-Db eine Verbindung aufbauen
-//	public void Mysql_connectWithLogin() {
-//		try {
-//			Class.forName("sun.jdbc.odbc.JdbcOdbcDriver").newInstance(); // Instanz der Treiberklasse laden
-//			Enumeration allDrivers = DriverManager.getDrivers();
-//			allDrivers.hasMoreElements();
-//			other_message  += "Treiber kann geladen werden und lautet: \n" + allDrivers.nextElement() + "\n";
-//			connect = DriverManager.getConnection(
-//			"jdbc:mysql://" +pan.getHostField().getText()+pan.getNameField().getText(),""
-//							+pan.getUserField().getText(), pan.getPasswordField().getText());
-//		} catch (InstantiationException ine) {
-//			error_messages  += "mysql_connect: Instanz nicht ausführbar \n";
-//		} catch (IllegalAccessException iae) {
-//			error_messages  += "mysql_connect: Zugriff zur DB nicht möglich \n";
-//		} catch (ClassNotFoundException cnfe) {
-//			error_messages  += "mysql_connect: Treiber nicht gefunden \n";
-//		}catch (Exception e){
-//			error_messages += "mysql_connect: MySQL-Db nicht erreichbar \n";
-//		}
-//	}
-	
 	public Mysql_connect(){
 		
 	}
