@@ -13,6 +13,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JRadioButton;
+import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import SQL.Mysql_connect;
@@ -37,7 +38,9 @@ public class SQLPanel {
 	private JTextField statusField = new JTextField();
 	private JTextArea statementField = new JTextArea();
 	private JTextArea messageField = new JTextArea();
-	private JTextArea resultField = new JTextArea();
+	private JTextArea resultArea = new JTextArea();
+	private JScrollPane resultField = new JScrollPane(resultArea);
+
 
 	// ComboBox
 	private JComboBox<String> tbnamesComboBox = new JComboBox<String>();
@@ -110,8 +113,8 @@ public class SQLPanel {
 
 		// Result
 		resultField.setPreferredSize(new Dimension(550, 300));
-		resultField.setLineWrap(true);
-		resultField.setWrapStyleWord(true);
+		resultArea.setLineWrap(true);
+		resultArea.setWrapStyleWord(true);
 
 		// Add components to Subcontainer
 		loginInfoContainer.add(new JLabel("<html><b>Datenbank: </html>"),
@@ -208,7 +211,7 @@ public class SQLPanel {
 	}
 
 	public JTextArea getResultField() {
-		return this.resultField;
+		return this.resultArea;
 	}
 
 	public JButton getresultBt() {
@@ -240,8 +243,8 @@ public class SQLPanel {
 	}
 
 	// MySQL-Verbindung mit den Logindaten
-	public void con_mysql() {
-		SQLPanel.con = new Mysql_connect(getHostField().getText(),
+	public Mysql_connect con_mysql() {
+		return new Mysql_connect(getHostField().getText(),
 				getNameField().getText(), getUserField().getText(),
 				String.valueOf(getPasswordField().getPassword()));
 	}
@@ -374,6 +377,8 @@ public class SQLPanel {
 		this.messageField.setText(message);
 		this.rbSelect.setSelected(true);
 		this.getStatusField().setText("off");
+		
+		con = con_mysql();
 	}
 
 	// ActionListener

@@ -51,6 +51,7 @@ public class View {
 		tabbedPane.addTab("Datenbank", new JScrollPane(new SQLPanel().getSQLPanel()));
 		tabbedPane.addTab("Vergleichen", new JScrollPane(new ComparisonPanel().getComparisonPanel()));
 		tabbedPane.addTab("Expertensuche", new JScrollPane( /** hier soll ein Panel rein*/ ));
+		tabbedPane.addTab("Graph", new Graph().getGraph() /** hier soll ein Panel rein*/ );
 		
 		
 		frame.getContentPane().add(tabbedPane, BorderLayout.CENTER);
