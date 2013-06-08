@@ -56,8 +56,8 @@ public class Mysql_connect {
 	public Mysql_connect(String dbhost, String dbname, String dbuser,
 			String dbpass) {
 		try {
-			Class.forName("sun.jdbc.odbc.JdbcOdbcDriver").newInstance(); // Instanz der Treiberklasse laden
-			Enumeration allDrivers = DriverManager.getDrivers();
+			Class.forName("com.mysql.jdbc.Driver").newInstance(); // Instanz der Treiberklasse laden
+			Enumeration<Driver> allDrivers = DriverManager.getDrivers();
 			allDrivers.hasMoreElements();
 			other_message  += "Treiber kann geladen werden und lautet: \n" + allDrivers.nextElement() + "\n";
 			connect = DriverManager.getConnection(
