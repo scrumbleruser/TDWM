@@ -27,7 +27,6 @@ public class Mysql_connect {
 					"oder Button Other ist nicht angeklickt worden ";
 	
 	public Mysql_connect(){
-		
 	}
 	
 	public Mysql_connect(String dbhost, String dbname, String dbuser,
@@ -76,17 +75,24 @@ public class Mysql_connect {
 			error_messages  += "mysql_close: " + e.getMessage() + "\n";
 			error_messages  += "mysql_close: " + e.getErrorCode() + "\n";
 		} catch (NullPointerException npe){
-			error_messages += "mysql_close: Null Pointer. Bitte DB-Verbindung prüfen";
+			error_messages += "mysql_close: Null Pointer. Bitte DB-Verbindung prüfen\n";
 		}
 	}
 	
 	public String getRS(ResultSet result){
 		ArrayList<String> list = new ArrayList<String>();
 		int i;
+		String rows ="";
 		String content = "";
 		String column ="";
 		try {
-			if (result.first() == true){  // nur wenn Datensätze vorhanden sind ausführen
+			result.last();
+			if(result != null){
+				rows += "" + result.getRow() + " Datensätze vorhanden";
+			}
+			list.add(rows);
+			list.add("\n");
+			if (result.first() == true){  // nur wenn DatensÃ¤tze vorhanden sind ausfÃ¼hren
 				int getcolumnncount = result.getMetaData().getColumnCount();
 				for(i=1;i<getcolumnncount+1;i++){
 					column += result.getMetaData().getColumnName(i);
@@ -104,12 +110,12 @@ public class Mysql_connect {
 					}
 					list.add("\n");
 				}
-//				content += ((list.size()/7)) + " Datensätze vorhanden \n";
+//				content += ((list.size()/7)) + " DatensÃ¤tze vorhanden \n";
 				for(i=0; i<list.size();i++){
 					content += list.get(i).toString();
 				}
 			}else{
-				error_messages  += "getRS: Keine Datensätze in der Tabelle vorhanden ";
+				error_messages  += "getRS: Keine DatensÃ¤tze in der Tabelle vorhanden \n";
 			}
 		} catch (SQLException sqle) {
 //			error_messages  += "getRS: " + error;
@@ -127,8 +133,9 @@ public class Mysql_connect {
 			result = stmt.executeQuery(sql);
 			if(result != null){
 //    			System.out.println(result);
+				
 		    	myContent = getRS(result);
-		    	other_message += "SQL-Statement: erfolgreich";
+		    	other_message += "getSelectStatement: SQL-Statement: erfolgreich\n";
     		}
 		} catch (SQLException sqle) {
 			error_messages  += "getSelectStatement: " + sqle.getMessage() + "\n";
@@ -159,26 +166,7 @@ public class Mysql_connect {
 		}
 		return userlist;
 	}
-	
-	public String getRowCount(String sql){
-		String rows = "";
-		try {
-			stmt = connect.createStatement();
-			result = stmt.executeQuery(sql);
-			result.last();
-			if(result != null){
-				rows += Integer.toString(result.getRow());
-			}else{
-				error_messages  += "getRS: Keine Datensätze in der Tabelle vorhanden \n";
-			}
-		} catch (SQLException sqle) {
-//			error_messages  += "getRS: " + error;
-			error_messages  += "getColumnName: " + sqle.getMessage() + "\n";
-			error_messages  += "getColumnName: " + sqle.getErrorCode() + "\n";
-		}
-		return rows;
-	}
-	
+		
 	public ArrayList<String> getColumnName(String tablename){
 		ArrayList<String> list = new ArrayList<String>();
 		int i;
@@ -199,7 +187,7 @@ public class Mysql_connect {
 					columnName += result.getMetaData().getColumnName(getcolumnncount);
 					list.add(1,columnName);
 			}else{
-				error_messages  += "getRS: Keine Datensätze in der Tabelle vorhanden \n";
+				error_messages  += "getColumnName: Keine Datensätze in der Tabelle vorhanden \n";
 			}
 		} catch (SQLException sqle) {
 //			error_messages  += "getRS: " + error;
@@ -237,7 +225,7 @@ public class Mysql_connect {
 		try {
 			stmt = connect.createStatement();
 			stmt.executeUpdate(sql);
-			other_message += "SQL-Statement: erfolgreich";
+			other_message += "getOtherStatement: SQL-Statement: erfolgreich\n";
 //			getResult(con);
 		} catch (SQLException sqle) {
 			error_messages  += "getOtherStatement: " + sqle.getMessage() + "\n";

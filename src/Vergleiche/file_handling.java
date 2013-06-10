@@ -9,10 +9,12 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 
+import SQL.Mysql_connect;
+
 public class file_handling {
 	
-	ArrayList<String> aList = new ArrayList<String>();
-	ArrayList<String> bList = new ArrayList<String>();
+	private ArrayList<String> aList = new ArrayList<String>();
+	private ArrayList<String> bList = new ArrayList<String>();
 
 	public void compareFiles(String f1, String f2){
 		
@@ -52,12 +54,13 @@ public class file_handling {
 		myString = myString.replaceAll("\\t", "");
 		return myString;
 	}
-	
-	public void compareMyFiles(String f1, String f2){
-		aList = readFile(f1);
-		bList = readFile(f2);
 
-		for(int i=0; i<aList.size();i++){
+	// Methode funktuniert nicht vollständig - besser 
+	public void compareMyFiles(String f1, String f2){
+//		aList = readFile(f1);
+//		bList = readFile(f2);
+
+		for(int i=1; i<aList.size();i++){
 				String a = aList.get(i).toString();
 				String b = bList.get(i).toString();
 				if (a.equals(b)){
@@ -89,32 +92,73 @@ public class file_handling {
 		}
 	}
 	
-	@SuppressWarnings("resource")
-	public ArrayList<String> readFile(String fn){
+	public void writeInFileSQLStatement(String fn, String text){
 		File f = new File(fn);
-		String str = "";
 		try {
-			BufferedReader br = new BufferedReader(new FileReader(f));
-//			int ch = br.read(); - char
-			if (!br.ready()){
+			System.out.println(text);
+			BufferedWriter bw = new BufferedWriter(new FileWriter(f,true));
+			bw.write(text);
+			System.out.println("Write complete");
+			bw.flush();
+			bw.close();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
+	@SuppressWarnings("resource")
+	public ArrayList<String> readFilesAndcompare(String fn, String fn2){
+//		File f = new File(fn);
+		try {
+			BufferedReader br = new BufferedReader(new FileReader( new File(fn)));
+			BufferedReader br2 = new BufferedReader(new FileReader( new File(fn2)));
+			if ( !br.ready()){
 				throw new IOException(); // wenn nicht lesbar dann Exception schmeissen
 			}
 			String line = br.readLine();
+			String line2 = br2.readLine();
+			int anz = 0;
 			while(line != null){
-//				if (line.isEmpty()) continue;
-//			while(ch != -1){ - char
-//				System.out.println((char)ch); - char
-//				line = formatString(line);
-//				str += line;
+				if (line.isEmpty()) continue;
 				aList.add(line);
-				System.out.println("Mein Wort lautet: " + line);
-				if (line.equals("da")){
+				System.out.println("Mein Wort 1 und 2 lautet: " + line + " - " + line2);
+				if (line.equals(line2)){
 					System.out.println("gleich");
+				}else{
+					System.out.println("ungleich");
+					anz++;
 				}
-//				ch = br.read(); - char
 				line = br.readLine();
+				line2 = br2.readLine();
 			}
-//			aList.add(str);
+			System.out.println(anz + " Veränderungen gefunden");
+			aList.add((anz + " Veränderungen gefunden"));
+			br.close();
+			br2.close();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return aList;
+	}
+	
+	public ArrayList<String> compareFileschar(String fn){
+//		File f = new File(fn);
+		String str = "";
+		try {
+			BufferedReader br = new BufferedReader(new FileReader( new File(fn)));
+//			BufferedReader br2 = new BufferedReader(new FileReader( new File(fn2)));
+			int ch = br.read();
+			String line = br.readLine();	
+//			if (line.isEmpty()) continue;
+				while(ch != -1){
+					System.out.println((char)ch);
+					line = formatString(line);
+					str += line;
+					ch = br.read();
+				}
+			aList.add(str);
 			br.close();
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
@@ -125,15 +169,51 @@ public class file_handling {
 	
 	public static void main(String[] args) {
 		file_handling handling = new file_handling();
-//		handling.compareFiles("C:\\f1.txt", "C:\\f2.txt");
+//		handling.compareFiles("f:\\test.txt", "f:\\testb.txt");
 		String meinwort = "";
 		ArrayList<String> aList = new ArrayList<String>();
+		String text="";
 		aList.add("dan");
 		aList.add("iel");
 //			handling.writeInFile("f:\\test.txt",aList);
+			String user = "y9r106037";
+			String pass = "basilius789063";
+			String host = "134.0.26.187:3306/";
+			String dbname = "y9r106037_usr_web27_2";
+			Mysql_connect con = new Mysql_connect(host,dbname,user,pass);
+			String content = con.getSelectStatement("Select * from revision");
+//			handling.readFilesAndcompare("f:\\test.txt","f:\\testb.txt");
+			handling.writeInFileSQLStatement("f:\\testing.txt", content);
+//			handling.compareFileschar("f:\\test.txt");
+//		handling.compareMyFiles("f:\\test.txt","f:\\testb.txt");
+	}
+	
+	/**
+	 * @return the aList
+	 */
+	public ArrayList<String> getaList() {
+		return aList;
+	}
 
-//			handling.readFile("f:\\test.txt");
-		handling.compareMyFiles("f:\\test.txt","f:\\testb.txt");
+	/**
+	 * @param aList the aList to set
+	 */
+	public void setaList(ArrayList<String> aList) {
+		this.aList = aList;
+	}
+
+	/**
+	 * @return the bList
+	 */
+	public ArrayList<String> getbList() {
+		return bList;
+	}
+
+	/**
+	 * @param bList the bList to set
+	 */
+	public void setbList(ArrayList<String> bList) {
+		this.bList = bList;
 	}
 
 }
