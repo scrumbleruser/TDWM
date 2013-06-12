@@ -65,7 +65,7 @@ public class SQLPanel {
 
 	private static Statement stmt = null;
 
-	private String[] tables = { "revision", "rechte", "kategorien", "artikel" };
+	private String[] tables = { "revision", "rechte", "kategorien" };
 
 	private String error_messages = "";
 	private String other_messages = "";
@@ -173,18 +173,15 @@ public class SQLPanel {
 
 	// hier wird, falls benötigt, die Tabelle/Tabellen erstellt
 	public void createTable(String myselectedTab) {
-		String sql_revision = "CREATE TABLE revision_test (ID mediumint(8) unsigned NOT NULL AUTO_INCREMENT,"
+		String sql_revision = "CREATE TABLE revision (ID mediumint(8) unsigned NOT NULL AUTO_INCREMENT,"
 				+ "Artikel varchar(50), RevisionID varchar(50), UserID varchar(50), User varchar(50),"
-				+ "DatumUhrzeit varchar(50),"
+				+ "DatumUhrzeit varchar(50), Groesse varchar(50),klAenderung varchar(50),"
 				+ "PRIMARY KEY (ID))";
-		String sql_rechte = "CREATE TABLE rechte_test (ID mediumint(8) unsigned NOT NULL AUTO_INCREMENT,"
-				+ "UserID varchar(50), rechte varchar(255),"
+		String sql_rechte = "CREATE TABLE rechte (ID mediumint(8) unsigned NOT NULL AUTO_INCREMENT,"
+				+ "User varchar(50), rechte varchar(255),"
 				+ "PRIMARY KEY (ID))";
 		String sql_kateorien = "CREATE TABLE kategorie (ID mediumint(8) unsigned NOT NULL AUTO_INCREMENT,"
 				+ "Kategorie varchar(50), Artikel varchar(255),"
-				+ "PRIMARY KEY (ID))";
-		String sql_artikel ="CREATE TABLE artikel (ID mediumint(8) unsigned NOT NULL AUTO_INCREMENT,"
-				+ "Artikel varchar(50), Groesse varchar(50),klAenderung varchar(50),"
 				+ "PRIMARY KEY (ID))";
 		switch (myselectedTab) {
 		case "revision":
@@ -223,18 +220,6 @@ public class SQLPanel {
 				con.mysql_close();
 			}
 			break;
-		case "artikel":
-			stmt = con_mysql().getOtherStatement(sql_artikel);
-			error_messages = con.getErrorMessages();
-			other_messages = con.getOtherMessage();
-			if (error_messages == "") {
-				// alles ok
-				messageField.setText(other_messages);
-			} else {
-				messageField.setText(error_messages);
-				con.mysql_close();
-			}
-			break;
 		default:
 			messageField.setText("Bitte eine Tabelle auswählen");
 		}
@@ -250,17 +235,19 @@ public class SQLPanel {
 		}
 		// con.mysql_close();
 		statusField.setText(con_mysql().getStateMysql());
-		con.mysql_close();
+		con_mysql().mysql_close();
 	}
 
 	// SQL-Befehle an die DB stellen und Ausgabe im Resultfeld
 	public void getResult() {
 		if (cbSQL.isSelected() == true && rbSelect.isSelected() == true) {
 			getStatementField().setText(getStatementField().getText());
+			messageField.setText("");
 		}
 		if (cbSQL.isSelected() == false && rbSelect.isSelected() == true) {
 			getStatementField().setText(
 					sql + "" + tbnamesComboBox.getSelectedItem());
+			messageField.setText("");
 		}
 
 		// Select Befehle
@@ -278,7 +265,7 @@ public class SQLPanel {
 			} else {
 				messageField.setText(error_messages);
 				getResultField().setText("");
-				con.mysql_close();
+				con_mysql().mysql_close();
 			}
 		}
 		// Other SQL-Befehle

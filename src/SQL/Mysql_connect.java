@@ -26,9 +26,6 @@ public class Mysql_connect {
 	private String error = "SQL-Statement falsch\n" +
 					"oder Button Other ist nicht angeklickt worden ";
 	
-	public Mysql_connect(){
-	}
-	
 	public Mysql_connect(String dbhost, String dbname, String dbuser,
 			String dbpass) {
 		try {
@@ -133,7 +130,6 @@ public class Mysql_connect {
 			result = stmt.executeQuery(sql);
 			if(result != null){
 //    			System.out.println(result);
-				
 		    	myContent = getRS(result);
 		    	other_message += "getSelectStatement: SQL-Statement: erfolgreich\n";
     		}
@@ -206,7 +202,7 @@ public class Mysql_connect {
 //		System.out.println(myvalues);
 		String sql = "Insert into "+tabname +
 				" (" +rows+ ")" + "VALUES("+myvalues+")";
-//		System.out.println(sql);
+		System.out.println(sql);
 //		SELECT Artikel, Count(*) FROM `revision` group by Artikel
 //		Delete from revision WHERE Artikel="Deutschland"
 		try {

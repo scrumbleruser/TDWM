@@ -11,6 +11,7 @@ import java.awt.event.ItemListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.sql.Statement;
+import java.util.ArrayList;
 
 import javax.swing.ButtonGroup;
 import javax.swing.JButton;
@@ -162,11 +163,28 @@ public class APIPanel {
 			
 			@Override
 			public void actionPerformed(ActionEvent e) {
+				SQLPanel pan = new SQLPanel();
+				String cat = categoryField.getText();
+				String values = "";
+				ArrayList<String> catarray = new ArrayList<String>();
 				if(!categoryField.getText().equals(""))
 				{
-					wikiBot.setArticle(categoryField.getText());
-					for(String s: wikiBot.getLinks())
+					wikiBot.setArticle(cat);
+					int i=0;
+					for(String s: wikiBot.getLinks()){
 						resultArea.append(s + "\n");
+						catarray.add(s);
+						System.out.println(i+ " " + s);
+						i++;
+					}
+					for(int f=0;f<catarray.size();f++)
+					{
+//						values +=
+//								"'" + catarray.get(f).toString() + "'," +
+//								"'" + cat + "'";
+//								stmt = pan.con_mysql().setInsertInto(values,"kategorie");
+					}
+					
 				}
 				if(!usernameField.getText().equals(""))	
 				{
@@ -178,16 +196,16 @@ public class APIPanel {
 				{
 					wikiBot.setArticle(articleField.getText());
 					resultArea.append(wikiBot.getArticle().getTitle());
-//					int i=0;
+					int i=0;
 					JComboBox<String> cb = initComboBox(tbnamesComboBox);
 					String myselectedTab = ""+cb.getSelectedItem();
 					for(Revision r : wikiBot.getAllRevisions())
 					{
-//						i++;
-//						if(i == 15) break;
+						if(i == 15) break;
+						i++;
 						resultArea.append(r.toString() + "\n");
 	//					stmt = mysql.setInsertInto(r.getName(), r.getRevid() + "", r.getUserid() + "", r.getUser(), r.getTimestamp(), r.getSize() +"" , r.isMinorchange()+"");
-						String values = "";
+						
 //						System.out.println("Meine Tab ist: " + myselectedTab);
 						switch(myselectedTab){
 							case "revision":
@@ -199,13 +217,13 @@ public class APIPanel {
 									"'" + r.getTimestamp() + "'," +
 									"'" + r.getSize() + "'," +
 									"'" + r.isMinorchange() + "'";
-									stmt = SQLPanel.con.setInsertInto(values,myselectedTab);
+									stmt = pan.con_mysql().setInsertInto(values,myselectedTab);
 									break;
 							case "rechte":
 								values +=
-								"'" + r.getUserid() + "'," +
+								"'" + r.getUser() + "'," +
 								"'" + r.isMinorchange() + "'";
-								stmt = SQLPanel.con.setInsertInto(values,myselectedTab);
+								stmt = pan.con_mysql().setInsertInto(values,myselectedTab);
 								break;
 							case "weitereTabellen":
 								break;
@@ -273,7 +291,7 @@ public class APIPanel {
 		for (String tab : pan.getTables()){
 			tbnamesComboBox.addItem(tab);
 		}
-		tbnamesComboBox.setSelectedItem("rechte");
+		tbnamesComboBox.setSelectedItem("revision");
 	}
 	
 	public JComboBox<String> initComboBox(final JComboBox<String> combobox){
