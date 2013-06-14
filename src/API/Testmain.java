@@ -65,7 +65,12 @@ public class Testmain {
 	   GetRevision grr = new GetRevision(wb.getWikiBot(), 1986);
 	   
 	   System.out.println(grr.getRevision().toString());
-	
+	   GetUserContribs uc = new GetUserContribs(wb.getWikiBot(), "Catrope");
+	   
+	  for (UserContribs u : uc.getUserContribs()) {
+		System.out.println(u.toString());
+	}
+	   
       
 	  
    }

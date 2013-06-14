@@ -112,7 +112,7 @@ public class UserInfo extends MWAction {
 		return msg;
 	}
 
-	public String[] getarticless() {
+	public String[] getArticless() {
 		try {
 			bot.performAction(this);
 		} catch (ProcessException e) {
