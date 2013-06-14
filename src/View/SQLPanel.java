@@ -243,6 +243,7 @@ public class SQLPanel {
 
 	// SQL-Befehle an die DB stellen und Ausgabe im Resultfeld
 	public void getResult() {
+		con_mysql();
 		if (cbSQL.isSelected() == true && rbSelect.isSelected() == true) {
 			getStatementField().setText(getStatementField().getText());
 			messageField.setText("");
@@ -252,7 +253,8 @@ public class SQLPanel {
 					sql + "" + tbnamesComboBox.getSelectedItem());
 			messageField.setText("");
 		}
-
+		
+		
 		// Select Befehle
 		if (rbSelect.isSelected() == true) {
 			String content = con_mysql().getSelectStatement(statementField.getText());
@@ -260,8 +262,6 @@ public class SQLPanel {
 			other_messages = con.getOtherMessage();
 			if (error_messages == "") {
 				// alles ok
-//				String rows = con_mysql()
-//						.getRowCount(statementField.getText());
 				messageField.setText(other_messages);
 				getStatementField().setText(getStatementField().getText());
 				getResultField().setText(content);
@@ -290,7 +290,7 @@ public class SQLPanel {
 		}
 		statementField.setText(statementField.getText());
 		con.getStateMysql();
-		//con.mysql_close();
+//		con.mysql_close();
 	}
 
 	// setzen der Default-Einstellungen und erstellen der Auswahlbox
@@ -322,7 +322,7 @@ public class SQLPanel {
 	// ActionListener
 	private ActionListener resetal = new ActionListener() {
 		public void actionPerformed(ActionEvent e) {
-			createUserBox();
+			//createUserBox();
 			con.mysql_close();
 			con = null;
 			setDefaultDBCon();
