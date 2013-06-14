@@ -1,15 +1,10 @@
 package View;
 
 import java.awt.Dimension;
-import java.awt.TextField;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.InputMethodEvent;
-import java.awt.event.InputMethodListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
 import java.sql.Statement;
 import java.util.ArrayList;
 
@@ -25,8 +20,6 @@ import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.text.DefaultCaret;
 
-import SQL.Mysql_connect;
-
 import API.Revision;
 import API.UserInfo;
 import API.WikiBot;
@@ -34,7 +27,7 @@ import API.WikiBot;
 import net.miginfocom.swing.MigLayout;
 
 public class APIPanel {
-	
+
 	private WikiBot wikiBot;
 	private String starturl;
 
@@ -52,7 +45,6 @@ public class APIPanel {
 	private JTextArea resultArea = new JTextArea();
 	private JScrollPane resultField = new JScrollPane(resultArea);
 
-
 	private JComboBox<String> tbnamesComboBox = new JComboBox<String>();
 
 	private JRadioButton rbWikiDE = new JRadioButton();
@@ -63,7 +55,7 @@ public class APIPanel {
 	private JButton sendBt = new JButton("Speichern");
 	private JButton execBt = new JButton("Ausführen");
 	private JButton clearBt = new JButton("Text Löschen");
-	
+
 	private static Statement stmt = null;
 
 	/**
@@ -72,6 +64,80 @@ public class APIPanel {
 	public APIPanel() {
 		init();
 	}
+
+	private ActionListener execBTAL = new ActionListener() {
+
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			String cat = categoryField.getText();
+			String values = "";
+			ArrayList<String> catarray = new ArrayList<String>();
+			if (!categoryField.getText().equals("")) {
+				wikiBot.setArticle(cat);
+				int i = 0;
+				for (String s : wikiBot.getLinks()) {
+					resultArea.append(s + "\n");
+					catarray.add(s);
+					System.out.println(i + " " + s);
+					i++;
+				}
+				for (int f = 0; f < catarray.size(); f++) {
+					values = "'" + cat + "','"
+							+ catarray.get(f).toString() +"'" ;
+					stmt = SQLPanel.con.setInsertInto(values, "kategorie");
+
+				}
+				
+			}
+			if (!usernameField.getText().equals("")) {
+				UserInfo ui = new UserInfo(wikiBot.getWikiBot(),
+						usernameField.getText());
+				resultArea.append(ui.getUsername());
+			}
+
+			if (!articleField.getText().equals("")) {
+				wikiBot.setArticle(articleField.getText());
+				resultArea.append(wikiBot.getArticle().getTitle());
+				int i = 0;
+				JComboBox<String> cb = initComboBox(tbnamesComboBox);
+				String myselectedTab = "" + cb.getSelectedItem();
+				for (Revision r : wikiBot.getAllRevisions()) {
+					if (i == 15)
+						break;
+					i++;
+					resultArea.append(r.toString() + "\n");
+					// stmt = mysql.setInsertInto(r.getName(), r.getRevid() +
+					// "", r.getUserid() + "", r.getUser(), r.getTimestamp(),
+					// r.getSize() +"" , r.isMinorchange()+"");
+
+					// System.out.println("Meine Tab ist: " + myselectedTab);
+					switch (myselectedTab) {
+					case "revision":
+						values += "'" + r.getName() + "'," + "'" + r.getRevid()
+								+ "'," + "'" + r.getUserid() + "'," + "'"
+								+ r.getUser() + "'," + "'" + r.getTimestamp()
+								+ "'," + "'" + r.getSize() + "'," + "'"
+								+ r.isMinorchange() + "'";
+						stmt = SQLPanel.con
+								.setInsertInto(values, myselectedTab);
+						break;
+					case "rechte":
+						values += "'" + r.getUser() + "'," + "'"
+								+ r.isMinorchange() + "'";
+						stmt = SQLPanel.con
+								.setInsertInto(values, myselectedTab);
+						break;
+					case "weitereTabellen":
+						break;
+					default:
+						resultArea.append("Tabelle nicht gefunden" + "\n");
+					}
+					// SQLPanel.con.mysql_close();
+				}
+
+			}
+		}
+	};
 
 	/**
 	 * Initialize the contents of the panel.
@@ -94,26 +160,23 @@ public class APIPanel {
 		userField.setPreferredSize(new Dimension(150, userField.getHeight()));
 		passwordField.setPreferredSize(new Dimension(150, passwordField
 				.getHeight()));
-		
+
 		rbWikiDE.addActionListener(new ActionListener() {
 			@Override
-			public void actionPerformed(ActionEvent e) {			
+			public void actionPerformed(ActionEvent e) {
 				setStarturl("http://de.wikipedia.org/w/");
 			}
 		});
-		
+
 		rbWikiEN.addActionListener(new ActionListener() {
 			@Override
-			public void actionPerformed(ActionEvent e) {			
+			public void actionPerformed(ActionEvent e) {
 				setStarturl("http://en.wikipedia.org/w/");
 			}
 		});
-		
 
-		
 		bg.add(rbWikiDE);
 		bg.add(rbWikiEN);
-		
 
 		// Preferences
 		usernameField
@@ -126,25 +189,25 @@ public class APIPanel {
 				.setPreferredSize(new Dimension(150, userField.getHeight()));
 
 		// Results
-		resultField.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+		resultField
+				.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
 		resultField.setPreferredSize(new Dimension(500, 300));
 		resultArea.setLineWrap(true);
 		resultArea.setAutoscrolls(true);
 		resultArea.setWrapStyleWord(true);
-		
-		
-		DefaultCaret caret = (DefaultCaret)resultArea.getCaret();
+
+		DefaultCaret caret = (DefaultCaret) resultArea.getCaret();
 		caret.setUpdatePolicy(DefaultCaret.ALWAYS_UPDATE);
 
 		clearBt.addActionListener(new ActionListener() {
-			
+
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
 				resultArea.setText("");
-				
+
 			}
 		});
-		
+
 		// LoginButton
 		loginBt.addActionListener(new ActionListener() {
 			@Override
@@ -154,88 +217,11 @@ public class APIPanel {
 						.getPassword().toString());
 				wikiBot.setWiki(starturl);
 				resultArea.append("Connected" + "\n");
-				
-				
-			}
-		});
-		
-		execBt.addActionListener(new ActionListener() {
-			
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				SQLPanel pan = new SQLPanel();
-				String cat = categoryField.getText();
-				String values = "";
-				ArrayList<String> catarray = new ArrayList<String>();
-				if(!categoryField.getText().equals(""))
-				{
-					wikiBot.setArticle(cat);
-					int i=0;
-					for(String s: wikiBot.getLinks()){
-						resultArea.append(s + "\n");
-						catarray.add(s);
-						System.out.println(i+ " " + s);
-						i++;
-					}
-					for(int f=0;f<catarray.size();f++)
-					{
-//						values +=
-//								"'" + catarray.get(f).toString() + "'," +
-//								"'" + cat + "'";
-//								stmt = pan.con_mysql().setInsertInto(values,"kategorie");
-					}
-					
-				}
-				if(!usernameField.getText().equals(""))	
-				{
-					UserInfo ui = new UserInfo(wikiBot.getWikiBot(), usernameField.getText());
-					resultArea.append(ui.getUsername());
-				}
 
-				if(!articleField.getText().equals(""))	
-				{
-					wikiBot.setArticle(articleField.getText());
-					resultArea.append(wikiBot.getArticle().getTitle());
-					int i=0;
-					JComboBox<String> cb = initComboBox(tbnamesComboBox);
-					String myselectedTab = ""+cb.getSelectedItem();
-					for(Revision r : wikiBot.getAllRevisions())
-					{
-						if(i == 15) break;
-						i++;
-						resultArea.append(r.toString() + "\n");
-	//					stmt = mysql.setInsertInto(r.getName(), r.getRevid() + "", r.getUserid() + "", r.getUser(), r.getTimestamp(), r.getSize() +"" , r.isMinorchange()+"");
-						
-//						System.out.println("Meine Tab ist: " + myselectedTab);
-						switch(myselectedTab){
-							case "revision":
-								values +=
-									"'" + r.getName() + "'," +
-									"'" + r.getRevid() + "'," +
-									"'" + r.getUserid() + "'," +
-									"'" + r.getUser() + "'," +
-									"'" + r.getTimestamp() + "'," +
-									"'" + r.getSize() + "'," +
-									"'" + r.isMinorchange() + "'";
-									stmt = pan.con_mysql().setInsertInto(values,myselectedTab);
-									break;
-							case "rechte":
-								values +=
-								"'" + r.getUser() + "'," +
-								"'" + r.isMinorchange() + "'";
-								stmt = pan.con_mysql().setInsertInto(values,myselectedTab);
-								break;
-							case "weitereTabellen":
-								break;
-							default:
-								resultArea.append("Tabelle nicht gefunden" + "\n");		
-						}
-						SQLPanel.con.mysql_close();
-					}
-					
-				}
 			}
 		});
+
+		execBt.addActionListener(execBTAL);
 
 		// Add components to the Subcontainers
 		loginInfoContainer.add(new JLabel("<html><b>Wikipedia: </html>"),
@@ -268,10 +254,9 @@ public class APIPanel {
 		resultsContainer.add(new JLabel("<html><b>Ergebnis: </html>"), "wrap");
 		resultsContainer.add(resultField, "wrap");
 		resultsContainer.add(execBt, "span 2");
-		resultsContainer.add(sendBt,"span");
-		resultsContainer.add(clearBt,"wrap");
+		resultsContainer.add(sendBt, "span");
+		resultsContainer.add(clearBt, "wrap");
 		resultsContainer.revalidate();
-		
 
 		// Add Subcontainers to the Maincontainer
 		panel.add(loginInfoContainer, "wrap");
@@ -287,24 +272,25 @@ public class APIPanel {
 		starturl = "http://de.wikipedia.org/w/";
 		categoryField.setText("Berlin");
 		loginBt.doClick();
-		SQLPanel pan = new SQLPanel();;
-		for (String tab : pan.getTables()){
+		SQLPanel pan = new SQLPanel();
+		;
+		for (String tab : pan.getTables()) {
 			tbnamesComboBox.addItem(tab);
 		}
 		tbnamesComboBox.setSelectedItem("revision");
 	}
-	
-	public JComboBox<String> initComboBox(final JComboBox<String> combobox){
-		
-		combobox.addItemListener(new ItemListener(){
+
+	public JComboBox<String> initComboBox(final JComboBox<String> combobox) {
+
+		combobox.addItemListener(new ItemListener() {
 			@SuppressWarnings("unchecked")
-			public void itemStateChanged( ItemEvent e ) {
-				JComboBox<String> selectedChoice = (JComboBox<String>)e.getItemSelectable();
-		        }
-		     } 
-		);
-			return combobox;
-		
+			public void itemStateChanged(ItemEvent e) {
+				JComboBox<String> selectedChoice = (JComboBox<String>) e
+						.getItemSelectable();
+			}
+		});
+		return combobox;
+
 	}
 
 	/**
@@ -327,7 +313,6 @@ public class APIPanel {
 		return this.usernameField;
 	}
 
-
 	public JTextField getArticleField() {
 		return this.articleField;
 	}
@@ -339,7 +324,7 @@ public class APIPanel {
 	public JTextField getCategoryField() {
 		return this.categoryField;
 	}
-	
+
 	public JComboBox getTbnamesComboBox() {
 		return tbnamesComboBox;
 	}
@@ -379,6 +364,7 @@ public class APIPanel {
 	public void setStarturl(String starturl) {
 		this.starturl = starturl;
 	}
+
 	public void setResultField(JScrollPane resultField) {
 		this.resultField = resultField;
 	}

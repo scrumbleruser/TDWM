@@ -70,7 +70,7 @@ public class Revision {
 
 	public String toString() {
 		return "Article : " + name + " RevisionID: " + revid + " UserID:" + userid + " User: " + user
-				+ " TimeSpamp: " + timestamp +  " Size: " +size+ " Minor change: " + minorchange;
+				+ " TimeSpamp: " + timestamp +  " Size: " +size+ " Minor change: " + minorchange + " content: " + content;
 	}
 	
 	public String getDateString() {

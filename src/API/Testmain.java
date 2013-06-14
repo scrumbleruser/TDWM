@@ -62,7 +62,9 @@ public class Testmain {
 //		   System.out.println(r);
 //	   for(String r : aaou.getArticlesNames())
 //	   System.out.println(r);
+	   GetRevision grr = new GetRevision(wb.getWikiBot(), 1986);
 	   
+	   System.out.println(grr.getRevision().toString());
 	
       
 	  

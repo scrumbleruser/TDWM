@@ -13,8 +13,6 @@ package SQL;
 import java.sql.*;
 import java.util.*;
 
-import View.SQLPanel;
-
 public class Mysql_connect {
 
 	// Objekte zur Verbindung erstellen

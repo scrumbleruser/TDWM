@@ -37,7 +37,7 @@ public class GetRevision extends MWAction {
 				MediaWiki.URL_API
 						+ "?action=query&revids="
 						+ id
-						+ "&prop=revisions&rvprop=ids%7Ctimestamp%7Cuser%7Cuserid%7Cflags%7Csize&format=xml");
+						+ "&prop=revisions&rvprop=ids%7Ctimestamp%7Cuser%7Cuserid%7Cflags%7Csize%7Ccontent&format=xml");
 		try {
 			bot.performAction(this);
 		} catch (ProcessException e) {
@@ -81,7 +81,7 @@ public class GetRevision extends MWAction {
 				revision.setTimeStamp(element.getAttributeValue("timestamp"));
 				revision.setMinorchange(element.getAttributeValue("minor"));
 				revision.setSize(element.getAttributeValue("size"));
-				revision.setContent(element.getAttributeValue("content"));
+				revision.setContent(element.getText());
 			} else {
 				findContent(element);
 			}

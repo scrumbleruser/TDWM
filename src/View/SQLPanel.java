@@ -65,7 +65,7 @@ public class SQLPanel {
 
 	private static Statement stmt = null;
 
-	private String[] tables = { "revision", "rechte", "kategorien" };
+	private String[] tables = { "revision", "rechte", "kategorie" };
 
 	private String error_messages = "";
 	private String other_messages = "";
@@ -166,6 +166,9 @@ public class SQLPanel {
 
 	// MySQL-Verbindung mit den Logindaten
 	public Mysql_connect con_mysql() {
+		if(SQLPanel.con != null)
+			return SQLPanel.con;
+		
 		return new Mysql_connect(getHostField().getText(),
 				getNameField().getText(), getUserField().getText(),
 				String.valueOf(getPasswordField().getPassword()));
@@ -193,7 +196,7 @@ public class SQLPanel {
 				messageField.setText(other_messages);
 			} else {
 				messageField.setText(error_messages);
-				con.mysql_close();
+				//con.mysql_close();
 			}
 			break;
 		case "rechte":
@@ -205,7 +208,7 @@ public class SQLPanel {
 				messageField.setText(other_messages);
 			} else {
 				messageField.setText(error_messages);
-				con.mysql_close();
+				//con.mysql_close();
 			}
 			break;
 		case "kategorien":
@@ -217,7 +220,7 @@ public class SQLPanel {
 				messageField.setText(other_messages);
 			} else {
 				messageField.setText(error_messages);
-				con.mysql_close();
+				//con.mysql_close();
 			}
 			break;
 		default:
@@ -235,7 +238,7 @@ public class SQLPanel {
 		}
 		// con.mysql_close();
 		statusField.setText(con_mysql().getStateMysql());
-		con_mysql().mysql_close();
+		//con_mysql().mysql_close();
 	}
 
 	// SQL-Befehle an die DB stellen und Ausgabe im Resultfeld
@@ -264,8 +267,8 @@ public class SQLPanel {
 				getResultField().setText(content);
 			} else {
 				messageField.setText(error_messages);
-				getResultField().setText("");
-				con_mysql().mysql_close();
+				//getResultField().setText("");
+				//con_mysql().mysql_close();
 			}
 		}
 		// Other SQL-Befehle
@@ -282,12 +285,12 @@ public class SQLPanel {
 			} else {
 				messageField.setText(error_messages);
 				getResultField().setText("");
-				con.mysql_close();
+				//con.mysql_close();
 			}
 		}
 		statementField.setText(statementField.getText());
 		con.getStateMysql();
-		con.mysql_close();
+		//con.mysql_close();
 	}
 
 	// setzen der Default-Einstellungen und erstellen der Auswahlbox
@@ -416,5 +419,9 @@ public class SQLPanel {
 	
 	public static Statement getStmt() {
 		return stmt;
+	}
+	protected void finalize()
+	{
+	  //SQLPanel.con.mysql_close();
 	}
 }
