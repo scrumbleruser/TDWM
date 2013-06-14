@@ -5,6 +5,7 @@ import java.awt.Dimension;
 
 import javax.swing.ButtonGroup;
 import javax.swing.JButton;
+import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JPasswordField;
@@ -21,10 +22,10 @@ public class ComparisonPanel {
 	private JPanel preferencesContainer = new JPanel(new MigLayout());
 	private JPanel resultsContainer = new JPanel(new MigLayout());
 
-	private JTextField userField1 = new JTextField();
-	private JTextField userField2 = new JTextField();
+	private JComboBox userField1 = new JComboBox();
+	private JComboBox userField2 = new JComboBox();
 
-	private JTextField categoryField = new JTextField();
+	private JComboBox categoryField = new JComboBox();
 
 	private JTextArea resultField = new JTextArea();
 
@@ -102,15 +103,15 @@ public class ComparisonPanel {
 	}
 
 	// Getter
-	public JTextField getUserField1() {
+	public JComboBox getUserField1() {
 		return this.userField1;
 	}
 
-	public JTextField getUserField2() {
+	public JComboBox getUserField2() {
 		return this.userField2;
 	}
 
-	public JTextField getCategoryField() {
+	public JComboBox getCategoryField() {
 		return this.categoryField;
 	}
 
