@@ -1,7 +1,5 @@
 package View;
 
-import java.awt.BasicStroke;
-import java.awt.Component;
 import java.awt.Dimension;
 
 import javax.swing.JPanel;
@@ -39,7 +37,7 @@ public class Graph {
 		final CategoryDataset dataset = createDataset();
         final JFreeChart chart = createChart(dataset);
         final ChartPanel chartPanel = new ChartPanel(chart);
-        chartPanel.setPreferredSize(new Dimension(500, 270));
+        //chartPanel.setPreferredSize(new Dimension(500, 270));
 		
         panel.add(chartPanel);
 	}
@@ -61,7 +59,7 @@ public class Graph {
 
 	        dataset.addValue(1.0, series1, type1);
 	        
-	        String sql = "Select RevisionID,Groesse from revision where Artikel='Berlin'";
+	        String sql = "Select RevisionID,Groesse from revision where Artikel='Klothoide'";
 	        
 	        
 	      
@@ -69,6 +67,20 @@ public class Graph {
 	        
 	        ArrayList<Integer> größe = new ArrayList<Integer>();
 	        ArrayList<String> revid = new ArrayList<String>();
+	        
+	        String[] line = content.split("\n");
+	        
+	        for (int i = 2; i < line.length; i++) {
+				System.out.println(line[i]);
+				String[] split = line[i].split("  ");
+				revid.add(split[0]);
+				größe.add(Integer.parseInt(split[1]));
+			}
+	        
+	        for (int i = größe.size() -1 ; i >= 0 ; --i) {
+	        	dataset.addValue(größe.get(i), series1, revid.get(i));
+			}
+	        
 	        
 	        return dataset;
 	                

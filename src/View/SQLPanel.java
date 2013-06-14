@@ -323,6 +323,8 @@ public class SQLPanel {
 	private ActionListener resetal = new ActionListener() {
 		public void actionPerformed(ActionEvent e) {
 			createUserBox();
+			con.mysql_close();
+			con = null;
 			setDefaultDBCon();
 		}
 	};

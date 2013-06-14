@@ -102,36 +102,20 @@ public class APIPanel {
 				JComboBox<String> cb = initComboBox(tbnamesComboBox);
 				String myselectedTab = "" + cb.getSelectedItem();
 				for (Revision r : wikiBot.getAllRevisions()) {
-					if (i == 15)
-						break;
-					i++;
 					resultArea.append(r.toString() + "\n");
 					// stmt = mysql.setInsertInto(r.getName(), r.getRevid() +
 					// "", r.getUserid() + "", r.getUser(), r.getTimestamp(),
 					// r.getSize() +"" , r.isMinorchange()+"");
 
 					// System.out.println("Meine Tab ist: " + myselectedTab);
-					switch (myselectedTab) {
-					case "revision":
-						values += "'" + r.getName() + "'," + "'" + r.getRevid()
+						values = "'" + r.getName() + "'," + "'" + r.getRevid()
 								+ "'," + "'" + r.getUserid() + "'," + "'"
 								+ r.getUser() + "'," + "'" + r.getTimestamp()
 								+ "'," + "'" + r.getSize() + "'," + "'"
 								+ r.isMinorchange() + "'";
 						stmt = SQLPanel.con
 								.setInsertInto(values, myselectedTab);
-						break;
-					case "rechte":
-						values += "'" + r.getUser() + "'," + "'"
-								+ r.isMinorchange() + "'";
-						stmt = SQLPanel.con
-								.setInsertInto(values, myselectedTab);
-						break;
-					case "weitereTabellen":
-						break;
-					default:
-						resultArea.append("Tabelle nicht gefunden" + "\n");
-					}
+					
 					// SQLPanel.con.mysql_close();
 				}
 
