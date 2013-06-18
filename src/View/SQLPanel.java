@@ -38,14 +38,12 @@ public class SQLPanel {
 	private JTextField statusField = new JTextField();
 	private JTextArea statementField = new JTextArea();
 	private JTextArea messageField = new JTextArea();
-//	private JScrollPane messageScrollPane = new JScrollPane(messageField);
 	private JTextArea resultArea = new JTextArea();
 	private JScrollPane resultField = new JScrollPane(resultArea);
 
 
 	// ComboBox
 	private JComboBox<String> tbnamesComboBox = new JComboBox<String>();
-	private JComboBox<String> tbnamesComboBoxUser = new JComboBox<String>();
 
 	// Buttons
 	private JButton resultBt = new JButton("Ausführen");
@@ -69,6 +67,7 @@ public class SQLPanel {
 
 	private String error_messages = "";
 	private String other_messages = "";
+	private String mysql_messages = "";
 
 	/**
 	 * Create the application.
@@ -130,9 +129,7 @@ public class SQLPanel {
 		loginInfoContainer.add(statusField, "span");
 		loginInfoContainer.add(new JLabel("Tablename: "));
 		loginInfoContainer.add(tbnamesComboBox, "span");
-		loginInfoContainer.add(new JLabel("User: "));
-		loginInfoContainer.add(tbnamesComboBoxUser, "gapright");
-		loginInfoContainer.add(createTableBt, "wrap");
+		loginInfoContainer.add(createTableBt, "span 2");
 
 		preferencesContainer.add(new JLabel("<html><b>Statement: </html>"),
 				"wrap");
@@ -161,11 +158,26 @@ public class SQLPanel {
 		resultBt.addActionListener(al);
 		resetBt.addActionListener(resetal);
 		createTableBt.addActionListener(createTabelal);
+		for (String tab : tables) {
+			tbnamesComboBox.addItem(tab);
+		}
+		tbnamesComboBox.setSelectedItem("revision");
 		setDefaultDBCon();
 	}
 
 	// MySQL-Verbindung mit den Logindaten
 	public Mysql_connect con_mysql() {
+		// Localhost
+//		this.getUserField().setText("root");
+//		this.getPasswordField().setText("usbw");
+//		this.getHostField().setText("localhost:3307/");
+//		this.getNameField().setText("wikiinfos");
+		// Webhoster
+		this.getUserField().setText("y9r106037");
+		this.getPasswordField().setText("basilius789063");
+		this.getHostField().setText("134.0.26.187:3306/");
+		this.getNameField().setText("y9r106037_usr_web27_2");
+		
 		if(SQLPanel.con != null)
 			return SQLPanel.con;
 		
@@ -230,11 +242,10 @@ public class SQLPanel {
 
 	// Beispielimplementierung: getUsername
 	public void createUserBox() {
-		statusField.setText(con.getStateMysql());
 		ArrayList<String> userlist = new ArrayList<String>();
 		userlist = con_mysql().getUserName();
 		for (String usernames : userlist) {
-			tbnamesComboBoxUser.addItem(usernames);
+//			tbnamesComboBoxUser.addItem(usernames);
 		}
 		// con.mysql_close();
 		statusField.setText(con_mysql().getStateMysql());
@@ -243,7 +254,7 @@ public class SQLPanel {
 
 	// SQL-Befehle an die DB stellen und Ausgabe im Resultfeld
 	public void getResult() {
-		con_mysql();
+		
 		if (cbSQL.isSelected() == true && rbSelect.isSelected() == true) {
 			getStatementField().setText(getStatementField().getText());
 			messageField.setText("");
@@ -254,21 +265,22 @@ public class SQLPanel {
 			messageField.setText("");
 		}
 		
-		
 		// Select Befehle
 		if (rbSelect.isSelected() == true) {
-			String content = con_mysql().getSelectStatement(statementField.getText());
+			String content = con.getSelectStatement(statementField.getText());
 			error_messages = con.getErrorMessages();
 			other_messages = con.getOtherMessage();
+			mysql_messages = con.getmysqlMesage();
+			con_mysql();
 			if (error_messages == "") {
 				// alles ok
-				messageField.setText(other_messages);
+				messageField.setText(mysql_messages + other_messages);
 				getStatementField().setText(getStatementField().getText());
 				getResultField().setText(content);
 			} else {
-				messageField.setText(error_messages);
+				messageField.setText(mysql_messages + error_messages);
 				//getResultField().setText("");
-				//con_mysql().mysql_close();
+//				con.mysql_close();
 			}
 		}
 		// Other SQL-Befehle
@@ -276,47 +288,31 @@ public class SQLPanel {
 			stmt = con_mysql().getOtherStatement(statementField.getText());
 			error_messages = con.getErrorMessages();
 			other_messages = con.getOtherMessage();
+			mysql_messages = con.getmysqlMesage();
 			if (error_messages == "") {
-				messageField.setText(other_messages);
+				messageField.setText(mysql_messages + other_messages);
 				String sql = getStatementField().getText();
 				String content = con_mysql().getSelectStatement(sql);
 				getResultField().setText(content);
 
 			} else {
-				messageField.setText(error_messages);
+				messageField.setText(mysql_messages + error_messages);
 				getResultField().setText("");
-				//con.mysql_close();
+//				con.mysql_close();
 			}
 		}
 		statementField.setText(statementField.getText());
-		con.getStateMysql();
-//		con.mysql_close();
+		getStatusField().setText(con.getStateMysql());
 	}
 
 	// setzen der Default-Einstellungen und erstellen der Auswahlbox
 	public void setDefaultDBCon() {
-		// Localhost
-//		this.getUserField().setText("root");
-//		this.getPasswordField().setText("usbw");
-//		this.getHostField().setText("localhost:3307/");
-//		this.getNameField().setText("wikiinfos");
-		// Webhoster
-		this.getUserField().setText("y9r106037");
-		this.getPasswordField().setText("basilius789063");
-		this.getHostField().setText("134.0.26.187:3306/");
-		this.getNameField().setText("y9r106037_usr_web27_2");
-		for (String tab : tables) {
-			tbnamesComboBox.addItem(tab);
-		}
-		tbnamesComboBox.setSelectedItem("revision");
-
 		this.statementField.setText("Select * from " + ""
 				+ tbnamesComboBox.getSelectedItem());
 		this.messageField.setText(message);
 		this.rbSelect.setSelected(true);
-		this.getStatusField().setText("off");
-		
 		con = con_mysql();
+		getStatusField().setText(con.getStateMysql());
 	}
 
 	// ActionListener
@@ -338,6 +334,7 @@ public class SQLPanel {
 
 	private ActionListener al = new ActionListener() {
 		public void actionPerformed(ActionEvent e) {
+			SQLPanel.con.deleteMessages();
 			getResult();
 		}
 	};
@@ -370,11 +367,7 @@ public class SQLPanel {
 	public JComboBox<String> getTbnamesComboBox() {
 		return tbnamesComboBox;
 	}
-
-	public JComboBox<String> getTbnamesComboBoxUser() {
-		return tbnamesComboBoxUser;
-	}
-
+	
 	public String[] getTables() {
 		return tables;
 	}

@@ -170,7 +170,7 @@ public class file_handling {
 			s1[j] = aList.get(j).toString();
 			s2[j] = bList.get(j).toString();
 			if (!s1[j].equals(s2[j])){  // nur ungleiche sind relevant
-				if( (s1[j].equals("")) || (s2[j].equals("")) ){
+				if( (s1[j].equals("")) && (s2[j].equals("")) ){
 					j++;
 				}else{
 					info += (j+1)+", ";
@@ -222,7 +222,7 @@ public class file_handling {
 			String dbname = "y9r106037_usr_web27_2";
 			Mysql_connect con = new Mysql_connect(host,dbname,user,pass);
 			String content = con.getSelectStatement("Select * from revision");*/
-			String meineungleichenzeilen = handling.readFilesAndcompare("f:\\test.txt","f:\\testb.txt");
+			String meineungleichenzeilen = handling.readFilesAndcompare("res/test.txt","res/testb.txt");
 			System.out.println(meineungleichenzeilen);
 //			handling.writeInFileSQLStatement("f:\\testing.txt", content);
 //			handling.compareFileschar("f:\\test.txt");

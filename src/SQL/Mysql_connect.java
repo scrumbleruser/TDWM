@@ -19,28 +19,29 @@ public class Mysql_connect {
 	private static Connection connect = null;
 	private static Statement stmt = null;
 	private static ResultSet result = null;
+	private String mysql_message = "";
 	private String error_messages = "";
 	private String other_message = "";
-	private String error = "SQL-Statement falsch\n" +
-					"oder Button Other ist nicht angeklickt worden ";
-	
+//	private String error = "SQL-Statement falsch\n" +
+//					"oder Button Other ist nicht angeklickt worden ";
+
 	public Mysql_connect(String dbhost, String dbname, String dbuser,
 			String dbpass) {
 		try {
 			Class.forName("com.mysql.jdbc.Driver").newInstance(); // Instanz der Treiberklasse laden
 			Enumeration<Driver> allDrivers = DriverManager.getDrivers();
 			allDrivers.hasMoreElements();
-			other_message  += "Treiber kann geladen werden und lautet: \n" + allDrivers.nextElement() + "\n";
+			mysql_message  += "Treiber kann geladen werden und lautet: \n" + allDrivers.nextElement() + "\n";
 			connect = DriverManager.getConnection(
 			"jdbc:mysql://" +dbhost+dbname,dbuser, dbpass);
 		} catch (InstantiationException ine) {
-			error_messages  += "mysql_connect: Instanz nicht ausführbar \n";
+			mysql_message  += "mysql_connect: Instanz nicht ausführbar \n";
 		} catch (IllegalAccessException iae) {
-			error_messages  += "mysql_connect: Zugriff zur DB nicht möglich \n";
+			mysql_message  += "mysql_connect: Zugriff zur DB nicht möglich \n";
 		} catch (ClassNotFoundException cnfe) {
-			error_messages  += "mysql_connect: Treiber nicht gefunden \n";
+			mysql_message  += "mysql_connect: Treiber nicht gefunden \n";
 		}catch (Exception e){
-			error_messages += "mysql_connect: MySQL-Db nicht erreichbar \n";
+			mysql_message += "mysql_connect: MySQL-Db nicht erreichbar \n";
 		}
 	}
 
@@ -110,7 +111,7 @@ public class Mysql_connect {
 					content += list.get(i).toString();
 				}
 			}else{
-				error_messages  += "getRS: Keine DatensÃ¤tze in der Tabelle vorhanden \n";
+				error_messages  += "getRS: Keine Datensätze in der Tabelle vorhanden \n";
 			}
 		} catch (SQLException sqle) {
 //			error_messages  += "getRS: " + error;
@@ -134,9 +135,6 @@ public class Mysql_connect {
 		} catch (SQLException sqle) {
 			error_messages  += "getSelectStatement: " + sqle.getMessage() + "\n";
 			error_messages  += "getSelectStatement: " + sqle.getErrorCode() + "\n";
-		}catch (Exception e){
-			error_messages += "getSelectionStatement: MySQL-Db nicht erreichbar \n" +
-					"oder SQL-Statement falsch"; 
 		}
 		return myContent;
 	}
@@ -234,5 +232,26 @@ public class Mysql_connect {
 	
 	public String getOtherMessage(){
 		return this.other_message;
+	}
+	
+	public String getmysqlMesage(){
+		return this.mysql_message;
+	}
+	
+	public void setmysql_messages(String mysql_message) {
+		this.mysql_message = mysql_message;
+	}
+	
+	public void setError_messages(String error_messages) {
+		this.error_messages = error_messages;
+	}
+	
+	public void setOther_message(String other_message) {
+		this.other_message = other_message;
+	}
+	
+	public void deleteMessages(){
+		this.other_message = "";
+		this.error_messages = "";
 	}
 }
