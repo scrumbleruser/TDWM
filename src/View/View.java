@@ -50,8 +50,8 @@ public class View {
 //		tabbedPane.setMnemonicAt(0, KeyEvent.VK_1);
 		tabbedPane.addTab("Datenbank", new JScrollPane(new SQLPanel().getSQLPanel()));
 		tabbedPane.addTab("Vergleichen", new JScrollPane(new ComparisonPanel().getComparisonPanel()));
-		tabbedPane.addTab("Expertensuche", new JScrollPane( /** hier soll ein Panel rein*/ ));
-		tabbedPane.addTab("Graph", new Graph().getGraph() /** hier soll ein Panel rein*/ );
+		tabbedPane.addTab("Expertensuche", new JScrollPane(new ExpertenPanel().getExpertenPanel()));
+		tabbedPane.addTab("Graph", new JScrollPane(new Graph().getGraph()) );
 		
 		
 		frame.getContentPane().add(tabbedPane, BorderLayout.CENTER);
