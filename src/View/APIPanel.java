@@ -3,14 +3,10 @@ package View;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
-import java.sql.Statement;
 import java.util.ArrayList;
 
 import javax.swing.ButtonGroup;
 import javax.swing.JButton;
-import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JPasswordField;
@@ -45,18 +41,15 @@ public class APIPanel {
 	private JTextArea resultArea = new JTextArea();
 	private JScrollPane resultField = new JScrollPane(resultArea);
 
-	private JComboBox<String> tbnamesComboBox = new JComboBox<String>();
+//	private JComboBox<String> tbnamesComboBox = new JComboBox<String>();
 
 	private JRadioButton rbWikiDE = new JRadioButton();
 	private JRadioButton rbWikiEN = new JRadioButton();
 	private ButtonGroup bg = new ButtonGroup();
 
 	private JButton loginBt = new JButton("Login");
-	private JButton sendBt = new JButton("Speichern");
 	private JButton execBt = new JButton("Ausführen");
 	private JButton clearBt = new JButton("Text Löschen");
-
-	private static Statement stmt = null;
 
 	/**
 	 * Create the application.
@@ -82,12 +75,12 @@ public class APIPanel {
 					i++;
 				}
 				for (int f = 0; f < catarray.size(); f++) {
-					values = "'" + cat + "','"
-							+ catarray.get(f).toString() +"'" ;
-					stmt = SQLPanel.con.setInsertInto(values, "kategorie");
+					values = "'" + cat + "','" + catarray.get(f).toString()
+							+ "'";
+					SQLPanel.con.setInsertInto(values, "kategorie");
 
 				}
-				
+
 			}
 			if (!usernameField.getText().equals("")) {
 				UserInfo ui = new UserInfo(wikiBot.getWikiBot(),
@@ -98,9 +91,8 @@ public class APIPanel {
 			if (!articleField.getText().equals("")) {
 				wikiBot.setArticle(articleField.getText());
 				resultArea.append(wikiBot.getArticle().getTitle());
-				int i = 0;
-				JComboBox<String> cb = initComboBox(tbnamesComboBox);
-				String myselectedTab = "" + cb.getSelectedItem();
+//				JComboBox<String> cb = initComboBox(tbnamesComboBox);
+//				String myselectedTab = "" + cb.getSelectedItem();
 				for (Revision r : wikiBot.getAllRevisions()) {
 					resultArea.append(r.toString() + "\n");
 					// stmt = mysql.setInsertInto(r.getName(), r.getRevid() +
@@ -108,14 +100,13 @@ public class APIPanel {
 					// r.getSize() +"" , r.isMinorchange()+"");
 
 					// System.out.println("Meine Tab ist: " + myselectedTab);
-						values = "'" + r.getName() + "'," + "'" + r.getRevid()
-								+ "'," + "'" + r.getUserid() + "'," + "'"
-								+ r.getUser() + "'," + "'" + r.getTimestamp()
-								+ "'," + "'" + r.getSize() + "'," + "'"
-								+ r.isMinorchange() + "'";
-						stmt = SQLPanel.con
-								.setInsertInto(values, myselectedTab);
-					
+					values = "'" + r.getName() + "'," + "'" + r.getRevid()
+							+ "'," + "'" + r.getUserid() + "'," + "'"
+							+ r.getUser() + "'," + "'" + r.getTimestamp()
+							+ "'," + "'" + r.getSize() + "'," + "'"
+							+ r.isMinorchange() + "'";
+					SQLPanel.con.setInsertInto(values, "revision");
+
 					// SQLPanel.con.mysql_close();
 				}
 
@@ -233,12 +224,11 @@ public class APIPanel {
 		preferencesContainer.add(new JLabel("Kategorie: "), "gapright 30");
 		preferencesContainer.add(categoryField, "wrap");
 		preferencesContainer.add(new JLabel("Tables: "));
-		preferencesContainer.add(tbnamesComboBox);
+//		preferencesContainer.add(tbnamesComboBox);
 
 		resultsContainer.add(new JLabel("<html><b>Ergebnis: </html>"), "wrap");
-		resultsContainer.add(resultField, "wrap");
+		resultsContainer.add(resultField, "span");
 		resultsContainer.add(execBt, "span 2");
-		resultsContainer.add(sendBt, "span");
 		resultsContainer.add(clearBt, "wrap");
 		resultsContainer.revalidate();
 
@@ -256,26 +246,24 @@ public class APIPanel {
 		starturl = "http://de.wikipedia.org/w/";
 		categoryField.setText("Berlin");
 		loginBt.doClick();
-		SQLPanel pan = new SQLPanel();
-		;
-		for (String tab : pan.getTables()) {
-			tbnamesComboBox.addItem(tab);
-		}
-		tbnamesComboBox.setSelectedItem("revision");
+//		for (String tab : pan.getTables()) {
+//			tbnamesComboBox.addItem(tab);
+//		}
+//		tbnamesComboBox.setSelectedItem("revision");
 	}
 
-	public JComboBox<String> initComboBox(final JComboBox<String> combobox) {
-
-		combobox.addItemListener(new ItemListener() {
-			@SuppressWarnings("unchecked")
-			public void itemStateChanged(ItemEvent e) {
-				JComboBox<String> selectedChoice = (JComboBox<String>) e
-						.getItemSelectable();
-			}
-		});
-		return combobox;
-
-	}
+//	public JComboBox<String> initComboBox(final JComboBox<String> combobox) {
+//
+//		combobox.addItemListener(new ItemListener() {
+//			@SuppressWarnings("unchecked")
+//			public void itemStateChanged(ItemEvent e) {
+//				JComboBox<String> selectedChoice = (JComboBox<String>) e
+//						.getItemSelectable();
+//			}
+//		});
+//		return combobox;
+//
+//	}
 
 	/**
 	 * Return the panel.
@@ -309,9 +297,9 @@ public class APIPanel {
 		return this.categoryField;
 	}
 
-	public JComboBox getTbnamesComboBox() {
-		return tbnamesComboBox;
-	}
+//	public JComboBox getTbnamesComboBox() {
+//		return tbnamesComboBox;
+//	}
 
 	public JTextArea getResultField() {
 		return this.resultArea;
@@ -319,10 +307,6 @@ public class APIPanel {
 
 	public JButton getLoginBt() {
 		return this.loginBt;
-	}
-
-	public JButton getSendBt() {
-		return this.sendBt;
 	}
 
 	public JRadioButton getRbWikiDE() {
