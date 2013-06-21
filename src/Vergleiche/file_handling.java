@@ -108,79 +108,39 @@ public class file_handling {
 	}
 	
 	@SuppressWarnings("resource")
-	public ArrayList<String> getFileContent(String fn){
-		ArrayList<String> list = new ArrayList<String>();
+	public ArrayList<String> readFilesAndcompare(String fn, String fn2){
+//		File f = new File(fn);
 		try {
 			BufferedReader br = new BufferedReader(new FileReader( new File(fn)));
+			BufferedReader br2 = new BufferedReader(new FileReader( new File(fn2)));
 			if ( !br.ready()){
 				throw new IOException(); // wenn nicht lesbar dann Exception schmeissen
 			}
-				String line = br.readLine();
-				while(line != null){
-//					if (line.isEmpty()) list.add("leereZeile");
-					list.add(line);
-					line = br.readLine();
-				}
-			br.close();	
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		return list;
-	}
-	
-	@SuppressWarnings("resource")
-	public String readFilesAndcompare(String fn, String fn2){
-		aList = getFileContent(fn);
-		bList = getFileContent(fn2);
-		System.out.println("A ist: " + aList.size() + "\nB ist: " + bList.size());
-		int asize = aList.size();
-		int bsize = bList.size();
-		int siz = 0;
-		int diff = 0;
-		int i=0;
-		String info = "";
-		
-		// passe beide ArrayLists an Zeilenanzahl an
-		if(asize > bsize){
-			siz = asize; // a ist grösser
-			diff = asize - bsize;
-			while(i<diff){
-				bList.add("leereZeile");
-				i++;
-			}
-		}else{
-			siz = bsize;  // b ist grösser
-			diff = bsize - asize;
-			while(i<diff){
-				aList.add("leereZeile");
-				i++;
-			}	
-		}
-		// Anpassung beendet
-		
-		// Prüfung wird gestartet
-//		System.out.println("A ist: " + aList.size() + "\nB ist: " + bList.size());
-//		System.out.println("ich nehme: " + siz);
-//		System.out.println("Differenz beträgt: " + diff);
-		String[] s1 = new String[siz];
-		String[] s2 = new String[siz];
-		info += "Zeile: ";
-		for(int j=0;j<siz;j++){
-			s1[j] = aList.get(j).toString();
-			s2[j] = bList.get(j).toString();
-			if (!s1[j].equals(s2[j])){  // nur ungleiche sind relevant
-				if( (s1[j].equals("")) && (s2[j].equals("")) ){
-					j++;
+			String line = br.readLine();
+			String line2 = br2.readLine();
+			int anz = 0;
+			while(line != null){
+				if (line.isEmpty()) continue;
+				aList.add(line);
+				System.out.println("Mein Wort 1 und 2 lautet: " + line + " - " + line2);
+				if (line.equals(line2)){
+					System.out.println("gleich");
 				}else{
-					info += (j+1)+", ";
-					System.out.println("Datei1: " + s1[j]);
-					System.out.println("Datei2: " + s2[j]);
+					System.out.println("ungleich");
+					anz++;
 				}
+				line = br.readLine();
+				line2 = br2.readLine();
 			}
+			System.out.println(anz + " Veränderungen gefunden");
+			aList.add((anz + " Veränderungen gefunden"));
+			br.close();
+			br2.close();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
-		info += "sind ungleich";
-		return info;
+		return aList;
 	}
 	
 	public ArrayList<String> compareFileschar(String fn){
@@ -216,15 +176,14 @@ public class file_handling {
 		aList.add("dan");
 		aList.add("iel");
 //			handling.writeInFile("f:\\test.txt",aList);
-			/*String user = "y9r106037";
+			String user = "y9r106037";
 			String pass = "basilius789063";
 			String host = "134.0.26.187:3306/";
 			String dbname = "y9r106037_usr_web27_2";
 			Mysql_connect con = new Mysql_connect(host,dbname,user,pass);
-			String content = con.getSelectStatement("Select * from revision");*/
-			String meineungleichenzeilen = handling.readFilesAndcompare("res/test.txt","res/testb.txt");
-			System.out.println(meineungleichenzeilen);
-//			handling.writeInFileSQLStatement("f:\\testing.txt", content);
+			String content = con.getSelectStatement("Select * from revision");
+//			handling.readFilesAndcompare("f:\\test.txt","f:\\testb.txt");
+			handling.writeInFileSQLStatement("f:\\testing.txt", content);
 //			handling.compareFileschar("f:\\test.txt");
 //		handling.compareMyFiles("f:\\test.txt","f:\\testb.txt");
 	}

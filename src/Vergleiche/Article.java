@@ -5,14 +5,14 @@ import java.util.ArrayList;
 public class Article {
 
 	String title;
-	ArrayList<User> authors;
+//	ArrayList<User> authors;
 	Category category;
 	ArrayList<Revision> revisions;
 	ArrayList<TypeOfChange> typeOfChange;
 	
-	public Article(String title, ArrayList<User> authors, Category category, ArrayList<Revision> revisions) {
+	public Article(String title, Category category, ArrayList<Revision> revisions) {
 		this.title = title;
-		this.authors = authors;
+//		this.authors = authors;
 		this.category = category;
 		this.revisions = revisions;
 	}
@@ -21,9 +21,9 @@ public class Article {
 		return this.title;
 	}
 	
-	public ArrayList<User> getAuthor() {
-		return this.authors;
-	}
+//	public ArrayList<User> getAuthor() {
+//		return this.authors;
+//	}
 	
 	public Category getCategory() {
 		return this.category;
