@@ -29,7 +29,7 @@ public class View {
 	}
 
 	/**
-	 * Create the application.
+	 * Initialisierung der View
 	 */
 	public View() {
 		initialize();
@@ -37,6 +37,7 @@ public class View {
 
 	/**
 	 * Initialize the contents of the frame.
+	 * add PanelTabs to GUI
 	 */
 	private void initialize() {
 		frame = new JFrame();
@@ -52,8 +53,7 @@ public class View {
 		tabbedPane.addTab("Vergleichen", new JScrollPane(new ComparisonPanel().getComparisonPanel()));
 		tabbedPane.addTab("Expertensuche", new JScrollPane(new ExpertenPanel().getExpertenPanel()));
 		tabbedPane.addTab("Graph", new JScrollPane(new Graph().getGraph()) );
-		
-		
+			
 		frame.getContentPane().add(tabbedPane, BorderLayout.CENTER);
 
 	}

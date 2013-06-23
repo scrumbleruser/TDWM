@@ -1,13 +1,3 @@
-/**
- * Author: Daniel Fay
- * 
- * Java Klasse die folgende Funktionalit�ten besitzt
- * - MySQL-Verbindung er�ffnen
- * - diversen Daten auslesen
- * - Hinzuf�gen von neuen Daten in die DB-Tabelle
- * - L�schen von Datens�zen
- */
-
 package SQL;
 
 import java.sql.*;
@@ -19,12 +9,13 @@ public class Mysql_connect {
 	private static Connection connect = null;
 	private static Statement stmt = null;
 	private static ResultSet result = null;
+	
+	// Messages
 	private String mysql_message = "";
 	private String error_messages = "";
 	private String other_message = "";
-//	private String error = "SQL-Statement falsch\n" +
-//					"oder Button Other ist nicht angeklickt worden ";
-
+	
+	// Verbindung mit MySQL-DB aufnehmen / Treiber laden
 	public Mysql_connect(String dbhost, String dbname, String dbuser,
 			String dbpass) {
 		try {
@@ -44,7 +35,8 @@ public class Mysql_connect {
 			mysql_message += "mysql_connect: MySQL-Db nicht erreichbar \n";
 		}
 	}
-
+	
+	// Status der MySQL-Verbindung übergeben
 	public String getStateMysql(){
 		boolean connected;
 		String state = "";
@@ -61,13 +53,13 @@ public class Mysql_connect {
 		}
 		return state;
 	}
-
+	
+	// Bei Bedarf die DB-Verbindung schließen
 	public void mysql_close() {
 		try {
 			stmt.close();
 			connect.close();
 		} catch (SQLException e) {
-//			error_messages  += "mysql_close: Verbindung kann nicht geschlossen werden ";
 			error_messages  += "mysql_close: " + e.getMessage() + "\n";
 			error_messages  += "mysql_close: " + e.getErrorCode() + "\n";
 		} catch (NullPointerException npe){
@@ -75,6 +67,8 @@ public class Mysql_connect {
 		}
 	}
 	
+	// Ergebnis des SQL-Befehl übergeben +  / Tabellenspalten auslesen und abspeichern / 
+	// Anzahl der Datensätze zum SQL-Befehl abspeichern 
 	public String getRS(ResultSet result){
 		ArrayList<String> list = new ArrayList<String>();
 		int i;
@@ -88,7 +82,7 @@ public class Mysql_connect {
 			}
 			list.add(rows);
 			list.add("\n");
-			if (result.first() == true){  // nur wenn DatensÃ¤tze vorhanden sind ausfÃ¼hren
+			if (result.first() == true){  // nur wenn Datensätze vorhanden sind ausführen
 				int getcolumnncount = result.getMetaData().getColumnCount();
 				for(i=1;i<getcolumnncount+1;i++){
 					column += result.getMetaData().getColumnName(i);
@@ -114,14 +108,13 @@ public class Mysql_connect {
 				error_messages  += "getRS: Keine Datensätze in der Tabelle vorhanden \n";
 			}
 		} catch (SQLException sqle) {
-//			error_messages  += "getRS: " + error;
 			error_messages  += "getRS: " + sqle.getMessage() + "\n";
 			error_messages  += "getRS: " + sqle.getErrorCode() + "\n";
 		}
 		return content;
 	}
 	
-	// ab hier nur Select
+	// Select Befehl an die DB stellen und Ergebnis weitergeben
 	public String getSelectStatement(String sql){
 		String myContent = "";
 		try {
@@ -139,6 +132,7 @@ public class Mysql_connect {
 		return myContent;
 	}
 	
+	// Liefert alle Benutzernamen zurück
 	public ArrayList<String> getUserName(){
 		ArrayList<String> userlist = new ArrayList<String>();
 		try {
@@ -158,7 +152,8 @@ public class Mysql_connect {
 		}
 		return userlist;
 	}
-		
+	
+	// Gibt alle Tabellenspalten einer DB-Tabelle zurück
 	public ArrayList<String> getColumnName(String tablename){
 		ArrayList<String> list = new ArrayList<String>();
 		int i;
@@ -167,11 +162,10 @@ public class Mysql_connect {
 		try {
 			stmt = connect.createStatement();
 			result = stmt.executeQuery("Select * from " + tablename);
-			if(result != null){
+			if(result != null){ // Tabelle enthält Datensätze
 				int getcolumnncount = result.getMetaData().getColumnCount();
 				count = Integer.toString(getcolumnncount);
 				list.add(0, count);
-				// Dynamische Erstellung von Spaltennamen
 				for(i=2;i<getcolumnncount;i++){
 					columnName += result.getMetaData().getColumnName(i);
 					columnName += ",";
@@ -182,14 +176,13 @@ public class Mysql_connect {
 				error_messages  += "getColumnName: Keine Datensätze in der Tabelle vorhanden \n";
 			}
 		} catch (SQLException sqle) {
-//			error_messages  += "getRS: " + error;
 			error_messages  += "getColumnName: " + sqle.getMessage() + "\n";
 			error_messages  += "getColumnName: " + sqle.getErrorCode() + "\n";
 		}
 		return list;
 	}
 	
-	// ab hier kein Select mehr
+	// Neue Datensätzen in einer DB-Tabelle einfügen
 	public Statement setInsertInto(String myvalues, String tabname)
 	{
 		ArrayList<String> list = new ArrayList<String>();
@@ -212,13 +205,13 @@ public class Mysql_connect {
 		return stmt;
 	}
 	
+	// andere SQL-Befehle an die DB stellen
 	public Statement getOtherStatement(String sql){		
-		// Weitere DDL-Befehle - Upade,Create,Delete
+		// Weitere DDL-Befehle - Update,Create,Delete
 		try {
 			stmt = connect.createStatement();
 			stmt.executeUpdate(sql);
 			other_message += "getOtherStatement: SQL-Statement: erfolgreich\n";
-//			getResult(con);
 		} catch (SQLException sqle) {
 			error_messages  += "getOtherStatement: " + sqle.getMessage() + "\n";
 			error_messages  += "getOtherStatement: " + sqle.getErrorCode() + "\n";
@@ -226,6 +219,7 @@ public class Mysql_connect {
 		return stmt;
 	}
 	
+	// ab hier nur noch getter/setter
 	public String getErrorMessages(){
 		return this.error_messages;
 	}

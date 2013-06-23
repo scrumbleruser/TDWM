@@ -4,7 +4,6 @@ import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.sql.Statement;
-import java.util.ArrayList;
 import javax.swing.ButtonGroup;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
@@ -48,7 +47,6 @@ public class SQLPanel {
 	// Buttons
 	private JButton resultBt = new JButton("Ausführen");
 	private JButton resetBt = new JButton("Reset");
-	private JButton sendBt = new JButton("Send");
 	private JButton createTableBt = new JButton("CreateTable");
 
 	// Radiobuttons
@@ -57,25 +55,26 @@ public class SQLPanel {
 	private ButtonGroup bg = new ButtonGroup();
 
 	private JCheckBox cbSQL = new JCheckBox();
-
+	
+	// Messages
 	private String message = "SQL-Statement is:";
 	private String sql = "Select * from ";
-
 	private static Statement stmt = null;
-
-	private String[] tables = { "revision", "rechte", "kategorie" };
-
 	private String error_messages = "";
 	private String other_messages = "";
 	private String mysql_messages = "";
 
+	// Vordefinierte Tabellen
+	private String[] tables = { "revision", "rechte", "kategorie" };
+
 	/**
-	 * Create the application.
+	 * Panel initalisieren
 	 */
 	public SQLPanel() {
 		init();
 	}
-
+	
+	// Initialisierung des Panels mit den Komponenten / Layout
 	private void init() {
 
 		// Maincontainer
@@ -106,6 +105,7 @@ public class SQLPanel {
 		//Message
 		messageField.setPreferredSize(new Dimension(340, 500));
 		
+		//RadioButtons
 		bg.add(rbSelect);
 		bg.add(rbOtherSQL);
 
@@ -141,22 +141,24 @@ public class SQLPanel {
 		preferencesContainer.add(cbSQL, "wrap");
 		preferencesContainer.add(new JLabel("SQL Statement: "));
 		preferencesContainer.add(statementField, "span 3");
-		preferencesContainer.add(resultBt, "span 2");
-		preferencesContainer.add(resetBt, "wrap");
+		preferencesContainer.add(resultBt, "wrap");
 		preferencesContainer.add(new JLabel("Message: "));
 		preferencesContainer.add(messageField, "span 3");
+		preferencesContainer.add(resetBt, "wrap");
 
 		resultsContainer.add(new JLabel("<html><b>Ergebnis: </html>"), "wrap");
 		resultsContainer.add(resultField, "span 3");
-		resultsContainer.add(sendBt, "wrap");
 
 		// Add Subcontainers to Maincontainer
 		panel.add(loginInfoContainer, "span");
 		panel.add(preferencesContainer, "span");
 		panel.add(resultsContainer, "span");
-
+		
+		// add ActionListener to Buttons
 		resultBt.addActionListener(al);
 		resetBt.addActionListener(resetal);
+		
+		// Selectbox befüllen - Vorauswahl treffen
 		createTableBt.addActionListener(createTabelal);
 		for (String tab : tables) {
 			tbnamesComboBox.addItem(tab);
@@ -186,7 +188,7 @@ public class SQLPanel {
 				String.valueOf(getPasswordField().getPassword()));
 	}
 
-	// hier wird, falls benötigt, die Tabelle/Tabellen erstellt
+	// benötigte Tabelle/Tabellen erstellen
 	public void createTable(String myselectedTab) {
 		String sql_revision = "CREATE TABLE revision (ID mediumint(8) unsigned NOT NULL AUTO_INCREMENT,"
 				+ "Artikel varchar(50), RevisionID varchar(50), UserID varchar(50), User varchar(50),"
@@ -240,21 +242,9 @@ public class SQLPanel {
 		}
 	}
 
-	// Beispielimplementierung: getUsername
-	public void createUserBox() {
-		ArrayList<String> userlist = new ArrayList<String>();
-		userlist = con_mysql().getUserName();
-		for (String usernames : userlist) {
-//			tbnamesComboBoxUser.addItem(usernames);
-		}
-		// con.mysql_close();
-		statusField.setText(con_mysql().getStateMysql());
-		//con_mysql().mysql_close();
-	}
-
-	// SQL-Befehle an die DB stellen und Ausgabe im Resultfeld
+	// SQL-Befehle an die DB richten / Ausgabe im Resultfeld / Nötige Prüfungen vorher durchführen
 	public void getResult() {
-		
+		// Eigene SQL-Befehl absetzen
 		if (cbSQL.isSelected() == true && rbSelect.isSelected() == true) {
 			getStatementField().setText(getStatementField().getText());
 			messageField.setText("");
@@ -283,7 +273,7 @@ public class SQLPanel {
 //				con.mysql_close();
 			}
 		}
-		// Other SQL-Befehle
+		// andere SQL-Befehle
 		if (rbOtherSQL.isSelected() == true) {
 			stmt = con_mysql().getOtherStatement(statementField.getText());
 			error_messages = con.getErrorMessages();
@@ -318,7 +308,6 @@ public class SQLPanel {
 	// ActionListener
 	private ActionListener resetal = new ActionListener() {
 		public void actionPerformed(ActionEvent e) {
-			//createUserBox();
 			con.mysql_close();
 			con = null;
 			setDefaultDBCon();
@@ -390,10 +379,6 @@ public class SQLPanel {
 
 	public JButton getResetBt() {
 		return this.resetBt;
-	}
-
-	public JButton getSendBt() {
-		return this.sendBt;
 	}
 
 	public JButton getCreateTableBt() {
