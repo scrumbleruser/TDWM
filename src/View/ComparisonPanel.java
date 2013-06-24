@@ -36,11 +36,11 @@ public class ComparisonPanel {
 	private JPanel preferencesContainer = new JPanel(new MigLayout());
 	private JPanel resultsContainer = new JPanel(new MigLayout());
 
-	private JComboBox userField1 = new JComboBox();
+	private JComboBox<String> userField1 = new JComboBox<String>();
 	private JComboBox userField2 = new JComboBox();
 	private JTextArea resultUser1 = new JTextArea();
 	private JTextArea resultUser2 = new JTextArea();
-	
+
 	private JComboBox userField3 = new JComboBox();
 	private JTextArea resultUser3 = new JTextArea();
 
@@ -53,7 +53,7 @@ public class ComparisonPanel {
 
 	private JButton userCompareBt = new JButton("Vergleichen");
 	private JButton categoryCompareBt = new JButton("Vergleichen");
-	
+
 	private final ArrayList<Article> articles = new ArrayList<Article>();
 	private DB db = new DB();
 
@@ -74,20 +74,27 @@ public class ComparisonPanel {
 	private void init() throws IOException {
 
 		ArrayList<TempArticle> articlesInDB = db.getArticlesInDB();
-		ArrayList<Article> articles = new ArrayList<Article>();
-		
-		for(int i=0; i<articlesInDB.size(); i++) {
+		final ArrayList<Article> articles = new ArrayList<Article>();
+
+		for (int i = 0; i < articlesInDB.size(); i++) {
 			Category cat = new Category(articlesInDB.get(i).getCategory());
 			ArrayList<Revision> revisions = new ArrayList<Revision>();
 			// For efficiency we reduce the size of revisions
-			for(int j=0; j<(articlesInDB.get(i).getRevisions().size()/50); j++) {
-				User user = new User(articlesInDB.get(i).getRevisions().get(j).getAuthor());
-				File file = new File("res/" + articlesInDB.get(i).getTitle().replaceAll(" ", "") + "_Revision_" + articlesInDB.get(i).getRevisions().get(j).getID().replaceAll(" ", "") + ".txt");
-				revisions.add(new Revision(user, file));				
+			for (int j = 0; j < (articlesInDB.get(i).getRevisions().size() / 50); j++) {
+				User user = new User(articlesInDB.get(i).getRevisions().get(j)
+						.getAuthor());
+				File file = new File("res/"
+						+ articlesInDB.get(i).getTitle().replaceAll(" ", "")
+						+ "_Revision_"
+						+ articlesInDB.get(i).getRevisions().get(j).getID()
+								.replaceAll(" ", "") + ".txt");
+				revisions.add(new Revision(user, file));
 			}
-			articles.add(new Article(articlesInDB.get(i).getTitle(), cat, revisions));
+			articles.add(new Article(articlesInDB.get(i).getTitle(), cat,
+					revisions));
 		}
-
+		System.out.println("User vom Artikel: "
+				+ articles.get(0).getRevisions().get(0).getAuthor().getName());
 		// Maincontainer
 		panel.setLayout(new MigLayout("", "[]", "[]"));
 		panel.setOpaque(false);
@@ -101,7 +108,7 @@ public class ComparisonPanel {
 
 		// User result fields
 		userField1.setPreferredSize(new Dimension(150, userField1.getHeight()));
-		
+
 		resultUser1.setColumns(20);
 		resultUser1.setRows(20);
 		resultUser1.setLineWrap(true);
@@ -111,31 +118,59 @@ public class ComparisonPanel {
 		resultUser2.setRows(20);
 		resultUser2.setLineWrap(true);
 		resultUser2.setWrapStyleWord(true);
-		
+
 		resultUser3.setColumns(20);
 		resultUser3.setRows(20);
 		resultUser3.setLineWrap(true);
 		resultUser3.setWrapStyleWord(true);
-		
+
 		for (int i = 0; i < articles.size(); i++) {
 			String article = articles.get(i).getTitle();
-			articlesBox.setSelectedItem(null);			
+			articlesBox.setSelectedItem(null);
 			articlesBox.addItem(article);
 		}
-		
+
+		userField1.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				try {
+					final AnalyzeArticle analyze = new AnalyzeArticle(articles);
+					int artID = articlesBox.getSelectedIndex();
+					String user = userField1.getSelectedItem().toString();
+					for (int j = 0; j < articles.get(artID).getRevisions()
+							.size(); j++) {
+						resultUser3.setText(analyze.getArticlesOfOneUser(user)
+								.get(j).getTitle());
+					}
+
+				} catch (Exception io) {
+
+				}
+
+			}
+		});
+
 		articlesBox.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				try{
+				try {
+					int artID = articlesBox.getSelectedIndex();
+					for (int i = 0; i < articles.get(artID).getRevisions()
+							.size(); i++) {
+						String aa = articles.get(artID).getRevisions().get(i)
+								.getAuthor().getName();
+						userField1.addItem(aa);
+					}
 					changesByUser(articlesBox.getSelectedIndex());
-				} catch(Exception ex) {
-					resultField.setText("An " + articlesBox.getSelectedItem() + " wurden keine Änderungen durchgeführt!");
+				} catch (Exception ex) {
+					resultField.setText("An " + articlesBox.getSelectedItem()
+							+ " wurden keine Änderungen durchgeführt!");
 				}
-				
+
 			}
 		});
-		
-//		changesOnArticleByUser(articlesBox.getSelectedIndex(), userField3.getSelectedItem().toString());
+
+		// changesOnArticleByUser(articlesBox.getSelectedIndex(),
+		// userField3.getSelectedItem().toString());
 
 		// Preferences
 		userField2.setPreferredSize(new Dimension(150, userField2.getHeight()));
@@ -148,7 +183,8 @@ public class ComparisonPanel {
 		resultField.setWrapStyleWord(true);
 
 		// Add components to the Subcontainers
-		loginInfoContainer.add(new JLabel("<html><b>User verlgeichen: </html>"), "span");
+		loginInfoContainer.add(
+				new JLabel("<html><b>User verlgeichen: </html>"), "span");
 		loginInfoContainer.add(new JLabel("Artikel: "), "gapright 64");
 		loginInfoContainer.add(articlesBox, "wrap");
 		loginInfoContainer.add(new JLabel("Autoren: "), "gapright 64");
@@ -298,58 +334,82 @@ public class ComparisonPanel {
 	public void setCategoryCompareBt(JButton categoryCompareBt) {
 		this.categoryCompareBt = categoryCompareBt;
 	}
-	
+
 	private void changesByUser(int selectedArticle) throws IOException {
-		final AnalyzeRevisionsOf change = new AnalyzeRevisionsOf((Article) articles.get(selectedArticle));
+		final AnalyzeRevisionsOf change = new AnalyzeRevisionsOf(
+				(Article) articles.get(selectedArticle));
 		change.execute();
 		for (int i = 0; i < articles.size(); i++) {
-			for(int j=0; j<articles.get(i).getRevisions().size(); i++) {
-				userField1.addItem(articles.get(i).getRevisions().get(j).getAuthor().getName());
-				userField2.addItem(articles.get(i).getRevisions().get(j).getAuthor().getName());
-				userField3.addItem(articles.get(i).getRevisions().get(j).getAuthor().getName());
+			for (int j = 0; j < articles.get(i).getRevisions().size(); i++) {
+
+				System.out.println();
+				resultField.setText(articles.get(i).getRevisions().get(j)
+						.getAuthor().getName());
+				// userField1.addItem(articles.get(i).getRevisions().get(j).getAuthor().getName());
+				// userField2.addItem(articles.get(i).getRevisions().get(j).getAuthor().getName());
+				// userField3.addItem(articles.get(i).getRevisions().get(j).getAuthor().getName());
 			}
 			userField1.addActionListener(new ActionListener() {
 
 				@Override
 				public void actionPerformed(ActionEvent e) {
-					try{
-						for (int j = 0; j < change.getAllTypeOfChangesOf((String) userField1.getSelectedItem()).size(); j++) {
-							resultUser1.setText(change.getAllTypeOfChangesOf(userField1.getSelectedItem().toString()).get(j).toString());
+					try {
+						for (int j = 0; j < change.getAllTypeOfChangesOf(
+								(String) userField1.getSelectedItem()).size(); j++) {
+							resultUser1.setText(change
+									.getAllTypeOfChangesOf(
+											userField1.getSelectedItem()
+													.toString()).get(j)
+									.toString());
 						}
-					} catch(Exception ex) {
-						resultUser1.setText(userField1.getSelectedItem().toString() + " hat keine Änderungen durchgeführt!");
+					} catch (Exception ex) {
+						resultUser1.setText(userField1.getSelectedItem()
+								.toString()
+								+ " hat keine Änderungen durchgeführt!");
 					}
 				}
 			});
 			userField2.addActionListener(new ActionListener() {
 				@Override
 				public void actionPerformed(ActionEvent e) {
-					try{
+					try {
 						for (int j = 0; j < change.getAllTypeOfChangesOf(
 								(String) userField2.getSelectedItem()).size(); j++) {
-							resultUser2.setText(change.getAllTypeOfChangesOf(userField2.getSelectedItem().toString()).get(j).toString());
+							resultUser2.setText(change
+									.getAllTypeOfChangesOf(
+											userField2.getSelectedItem()
+													.toString()).get(j)
+									.toString());
 						}
-					} catch(Exception ex) {
-						resultUser2.setText(userField2.getSelectedItem().toString() + " hat keine Änderungen durchgeführt!");
+					} catch (Exception ex) {
+						resultUser2.setText(userField2.getSelectedItem()
+								.toString()
+								+ " hat keine Änderungen durchgeführt!");
 					}
 				}
 			});
 		}
 	}
-	
-	private void changesOnArticleByUser(final int selectedArticle, final String user) throws IOException {
+
+	private void changesOnArticleByUser(final int selectedArticle,
+			final String user) throws IOException {
 		final AnalyzeArticle aa = new AnalyzeArticle(articles);
-		for (int i = 0; i < aa.getUserTypOfChangesForOneArticle(articles.get(selectedArticle), user).size(); i++) {	
+		for (int i = 0; i < aa.getUserTypOfChangesForOneArticle(
+				articles.get(selectedArticle), user).size(); i++) {
 			userField3.addActionListener(new ActionListener() {
 
 				@Override
 				public void actionPerformed(ActionEvent e) {
-					try{
-						for(int j=0; j<articles.get(selectedArticle).getRevisions().size(); j++) {
-							resultUser3.setText(aa.getArticlesOfOneUser(user).get(j).getTitle());
+					try {
+						for (int j = 0; j < articles.get(selectedArticle)
+								.getRevisions().size(); j++) {
+							resultUser3.setText(aa.getArticlesOfOneUser(user)
+									.get(j).getTitle());
 						}
-					} catch(Exception ex) {
-						resultUser3.setText(userField3.getSelectedItem().toString() + " hat keine Änderungen durchgeführt!");
+					} catch (Exception ex) {
+						resultUser3.setText(userField3.getSelectedItem()
+								.toString()
+								+ " hat keine Änderungen durchgeführt!");
 					}
 				}
 			});
