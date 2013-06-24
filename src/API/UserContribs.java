@@ -1,5 +1,10 @@
 package API;
 
+/**
+ * 
+ * @author Bernhard Hermes
+ * Strucktur einer UserContribution
+ */
 public class UserContribs {
 private String user;
 private String title;

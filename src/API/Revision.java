@@ -5,6 +5,11 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+/**
+ * 
+ * @author Bernhard Hermes
+ * Strucktur einer Revision
+ */
 public class Revision {
 
 	private int revid;

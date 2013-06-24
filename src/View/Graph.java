@@ -3,9 +3,9 @@ package View;
 import java.awt.Dimension;
 
 import javax.swing.JButton;
+import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.JTextField;
 
 import net.miginfocom.swing.MigLayout;
 
@@ -15,7 +15,6 @@ import org.jfree.chart.JFreeChart;
 import org.jfree.chart.axis.NumberAxis;
 import org.jfree.chart.plot.CategoryPlot;
 import org.jfree.chart.plot.PlotOrientation;
-import org.jfree.chart.renderer.category.LineAndShapeRenderer;
 import org.jfree.data.category.CategoryDataset;
 import org.jfree.data.category.DefaultCategoryDataset;
 
@@ -23,12 +22,16 @@ import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
-
+/**
+ * 
+ * @author Bernhard Hermes
+ * Gibt Information über den Verlauf der Größe eines Artikels wieder.
+ */
 public class Graph {
 	private JPanel panel = new JPanel();
 	private JLabel label = new JLabel("Artikel:");
 	private JButton button = new JButton("Go");
-	private JTextField article = new JTextField("Klothoide");
+	private JComboBox<String> article = new JComboBox<String>(getArticles());
 	private DefaultCategoryDataset dataset = new DefaultCategoryDataset();
 	private JFreeChart chart;
 	private ChartPanel chartPanel;
@@ -48,6 +51,7 @@ public class Graph {
 		// Maincontainer
 		panel.setLayout(new MigLayout("", "[]", "[]"));
 		panel.setOpaque(false);
+		
 
 		createDataset(dataset);
 		chart = createChart(dataset);
@@ -68,6 +72,25 @@ public class Graph {
 		panel.add(article);
 		panel.add(button);
 	}
+	
+	private String[] getArticles()
+	{
+		String sql = "Select Artikel from revision group by Artikel";
+
+		String content = SQLPanel.con.getSelectStatement(sql);
+		
+		ArrayList<String> rtn = new ArrayList<String>();
+		
+		for (String s: content.split("\n" ))
+		{
+			rtn.add(s.trim());
+		}
+		
+		rtn.remove(0);
+		rtn.remove(0);
+		
+		return rtn.toArray(new String[rtn.size()]);
+	}
 
 	public JPanel getGraph() {
 		return panel;
@@ -76,14 +99,14 @@ public class Graph {
 	private void createDataset(DefaultCategoryDataset dataset) {
 
 		// row keys...
-		final String series1 = article.getText();
+		final String series1 = (String) article.getSelectedItem();
 
 		String type1 = "Artikel";
 
 		dataset.addValue(1.0, series1, type1);
 
 		String sql = "Select RevisionID,Groesse from revision where Artikel='"
-				+ article.getText() + "'";
+				+ article.getSelectedItem() + "'";
 
 		String content = SQLPanel.con.getSelectStatement(sql);
 
@@ -151,8 +174,8 @@ public class Graph {
 		// ****************************************************************************
 
 		// customise the renderer...
-		final LineAndShapeRenderer renderer = (LineAndShapeRenderer) plot
-				.getRenderer();
+//		final LineAndShapeRenderer renderer = (LineAndShapeRenderer) plot
+//				.getRenderer();
 		// renderer.setDrawShapes(true);
 
 		// OPTIONAL CUSTOMISATION COMPLETED.

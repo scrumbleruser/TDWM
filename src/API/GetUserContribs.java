@@ -17,6 +17,11 @@ import net.sourceforge.jwbf.mediawiki.actions.util.MWAction;
 import net.sourceforge.jwbf.mediawiki.actions.util.SupportedBy;
 import net.sourceforge.jwbf.mediawiki.bots.MediaWikiBot;
 
+/**
+ * 
+ * @author Bernhard Hermes
+ * Sucht alle Beiträge die ein Nutzer 
+ */
 @SupportedBy({ MW1_18, MW1_19, MW1_20 })
 public class GetUserContribs extends MWAction {
 

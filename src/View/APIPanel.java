@@ -22,6 +22,11 @@ import API.WikiBot;
 
 import net.miginfocom.swing.MigLayout;
 
+/**
+ * 
+ * @author Bernhard Hermes
+ * Panel mit dem Informionen vom Wiki gesammelt und in die Datenbank geschrieben werden können.
+ */
 public class APIPanel {
 
 	private WikiBot wikiBot;
@@ -36,7 +41,7 @@ public class APIPanel {
 	private JPasswordField passwordField = new JPasswordField();
 	private JTextField usernameField = new JTextField();
 	private JTextField articleField = new JTextField();
-	private JTextField revisionField = new JTextField();
+//	private JTextField revisionField = new JTextField();
 	private JTextField categoryField = new JTextField();
 	private JTextArea resultArea = new JTextArea();
 	private JScrollPane resultField = new JScrollPane(resultArea);
@@ -58,6 +63,7 @@ public class APIPanel {
 		init();
 	}
 
+	//ActionListener der aufgerufen wird, wenn Ausführen gedrückt wird.
 	private ActionListener execBTAL = new ActionListener() {
 
 		@Override
@@ -158,8 +164,8 @@ public class APIPanel {
 				.setPreferredSize(new Dimension(150, userField.getHeight()));
 		articleField
 				.setPreferredSize(new Dimension(150, userField.getHeight()));
-		revisionField
-				.setPreferredSize(new Dimension(150, userField.getHeight()));
+//		revisionField
+//				.setPreferredSize(new Dimension(150, userField.getHeight()));
 		categoryField
 				.setPreferredSize(new Dimension(150, userField.getHeight()));
 
@@ -219,11 +225,11 @@ public class APIPanel {
 		preferencesContainer.add(usernameField);
 		preferencesContainer.add(new JLabel("Artikel: "));
 		preferencesContainer.add(articleField, "wrap");
-		preferencesContainer.add(new JLabel("Revision: "));
-		preferencesContainer.add(revisionField);
+//		preferencesContainer.add(new JLabel("Revision: "));
+//		preferencesContainer.add(revisionField);
 		preferencesContainer.add(new JLabel("Kategorie: "), "gapright 30");
 		preferencesContainer.add(categoryField, "wrap");
-		preferencesContainer.add(new JLabel("Tables: "));
+//		preferencesContainer.add(new JLabel("Tables: "));
 //		preferencesContainer.add(tbnamesComboBox);
 
 		resultsContainer.add(new JLabel("<html><b>Ergebnis: </html>"), "wrap");
@@ -239,7 +245,9 @@ public class APIPanel {
 
 		initData();
 	}
-
+	/**
+	 * Initialize Data
+	 */
 	private void initData() {
 		userField.setText("wissensmanagement");
 		passwordField.setText("asdasd");
@@ -265,9 +273,7 @@ public class APIPanel {
 //
 //	}
 
-	/**
-	 * Return the panel.
-	 */
+	// Getter und Setter
 	public JPanel getAPIPanel() {
 		return this.panel;
 	}
@@ -289,9 +295,9 @@ public class APIPanel {
 		return this.articleField;
 	}
 
-	public JTextField getRevisionField() {
-		return this.revisionField;
-	}
+//	public JTextField getRevisionField() {
+//		return this.revisionField;
+//	}
 
 	public JTextField getCategoryField() {
 		return this.categoryField;

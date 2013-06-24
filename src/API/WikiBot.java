@@ -1,14 +1,15 @@
 package API;
 
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
 import net.sourceforge.jwbf.core.contentRep.Article;
 import net.sourceforge.jwbf.mediawiki.bots.MediaWikiBot;
 
+/**
+ * 
+ * @author Bernhard Hermes
+ * Wrapper Klasse der einige Funktionen zur einfacheren Verwändung vereint. 
+ */
 public class WikiBot {
 	
 	MediaWikiBot wikiBot = new MediaWikiBot("http://de.wikipedia.org/w/");

@@ -5,6 +5,11 @@ import net.sourceforge.jwbf.core.contentRep.Article;
 import net.sourceforge.jwbf.mediawiki.actions.MediaWiki;
 import net.sourceforge.jwbf.mediawiki.bots.MediaWikiBot;
 
+/**
+ * 
+ * @author Bernhard Hermes
+ * Tests usw.
+ */
 public class Testmain {
 	
    public static void main(String[] args) throws Exception {
