@@ -6,6 +6,7 @@ import javax.swing.JFrame;
 import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
 import java.awt.BorderLayout;
+import java.io.IOException;
 
 
 public class View {
@@ -30,16 +31,18 @@ public class View {
 
 	/**
 	 * Initialisierung der View
+	 * @throws IOException 
 	 */
-	public View() {
+	public View() throws IOException {
 		initialize();
 	}
 
 	/**
 	 * Initialize the contents of the frame.
 	 * add PanelTabs to GUI
+	 * @throws IOException 
 	 */
-	private void initialize() {
+	private void initialize() throws IOException {
 		frame = new JFrame();
 		frame.setBounds(100, 100, 700, 800);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);

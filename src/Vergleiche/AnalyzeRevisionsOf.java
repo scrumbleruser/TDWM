@@ -22,15 +22,16 @@ public class AnalyzeRevisionsOf {
 	public AnalyzeRevisionsOf(Article article) {
 		this.article = article;
 	}
+	public AnalyzeRevisionsOf() {
+	}
 
 	public void execute() throws IOException {
 
-		for (int i = 0; i < article.getRevisions().size(); i++) {
-			revisionToList(article.getRevisions().get(i));
-		}
-
 		for (int i = 1; i < article.getRevisions().size(); i++) {
-			if (differentFileSize(article.getRevisions().get(i - 1).getFile(),
+			revisionToList(article.getRevisions().get(i-1));
+			revisionToList(article.getRevisions().get(i));
+			
+			if (differentFileSize(article.getRevisions().get(i-1).getFile(),
 					article.getRevisions().get(i).getFile())) {
 
 				splitStringsToWordsAndCountMaxWords(article.getRevisions().get(
@@ -38,7 +39,7 @@ public class AnalyzeRevisionsOf {
 				splitStringsToWordsAndCountMaxWords(article.getRevisions().get(
 						i));
 
-				checkLines(article.getRevisions().get(i - 1), article
+				checkLines(article.getRevisions().get(i-1), article
 						.getRevisions().get(i));
 				splitStringsToWords(article.getRevisions().get(i - 1), article
 						.getRevisions().get(i));
@@ -52,53 +53,53 @@ public class AnalyzeRevisionsOf {
 				// ///////////////////////////////////////
 				// Ausgaben Beginn //
 				// ///////////////////////////////////////
-				System.out
+/**				System.out
 						.println("-------------------------------------------------\n"
-								+ "Dissimilar lines: "
+								+ "Dissimilar lines: " + article.getRevisions().get(i-1).getFile().getPath() + ": "
 								+ article.getRevisions().get(i-1).getLines()
 										.size()
 								+ "\n-------------------------------------------------");
 				for (int m = 0; m < article.getRevisions().get(i-1)
 						.getLines().size(); m++) {
 					System.out.println(m
-							+ ". Dissimilar line: "
+							+ ". Dissimilar line: " + article.getRevisions().get(i-1).getFile().getPath() + ": "
 							+ article.getRevisions().get(i - 1).getLines()
 									.get(m));
 				}
 
 				System.out
 						.println("-------------------------------------------------\n"
-								+ "Dissimilar lines: "
+								+ "Dissimilar lines: " + article.getRevisions().get(i).getFile().getPath() + ": " 
 								+ article.getRevisions().get(i).getLines()
 										.size()
 								+ "\n-------------------------------------------------");
 
 				for (int m = 0; m < article.getRevisions().get(i).getLines()
 						.size(); m++) {
-					System.out.println(m + ". Dissimilar line: "
+					System.out.println(m + ". Dissimilar line: " + article.getRevisions().get(i).getFile().getPath() + ": "
 							+ article.getRevisions().get(i).getLines().get(m));
 				}
-
+*/
 				System.out
 						.println("###################################################################################");
 
-				System.out.println("Revisions " + (i - 1) + ": Zeilenanzahl: "
+				System.out.println("Revisions " + (i - 1) + ": Zeilenanzahl: " + article.getRevisions().get(i-1).getFile().getPath() + ": "
 						+ article.getRevisions().get(i - 1).getLines().size());
 				System.out.println("Revisions "
 						+ (i - 1)
-						+ ": Anzahl Unique words: "
+						+ ": Anzahl Unique words: " + article.getRevisions().get(i-1).getFile().getPath() + ": "
 						+ article.getRevisions().get(i - 1).getUniqueWords()
 								.size());
 
 				System.out
 						.println("###################################################################################");
 
-				System.out.println("Revisions " + i + ": Zeilenanzahl: "
+				System.out.println("Revisions " + i + ": Zeilenanzahl: " + article.getRevisions().get(i).getFile().getPath() + ": "
 						+ article.getRevisions().get(i).getLines().size());
 				System.out
 						.println("Revisions "
 								+ i
-								+ " Anzahl Unique words: "
+								+ " Anzahl Unique words: " + article.getRevisions().get(i).getFile().getPath() + ": "
 								+ article.getRevisions().get(i)
 										.getUniqueWords().size());
 
@@ -206,15 +207,17 @@ public class AnalyzeRevisionsOf {
 	 * @param revisions
 	 */
 	private void checkLines(Revision revision1, Revision revision2) {
+	ArrayList<String> list = new ArrayList<String>();
+	
 		for (int j = 0; j < revision1.getLines().size(); j++) {
 			for (int k = 0; k < revision2.getLines().size(); k++) {
 				if (revision1.getLines().get(j).equals(revision2.getLines().get(k))) {
-					revision1.getLines().remove(j);
-					revision2.getLines().remove(k);
-					k--;
+					list.add(revision1.getLines().get(j));
 				}
 			}
 		}
+		revision1.getLines().removeAll(list);
+		revision2.getLines().removeAll(list);		
 	} // Ende checkLines
 
 	/**
@@ -242,6 +245,7 @@ public class AnalyzeRevisionsOf {
 	private void checkWords(Revision revision1, Revision revision2) {
 		ArrayList<String> list1 = new ArrayList<String>();
 		ArrayList<String> list2 = new ArrayList<String>();
+		ArrayList<String> similar = new ArrayList<String>();
 		for (int j = 0; j < revision1.getWords().size(); j++) {
 			for (int k = 0; k < revision1.getWords().get(j).length; k++) {
 				list1.add(revision1.getWords().get(j)[k]);
@@ -255,12 +259,14 @@ public class AnalyzeRevisionsOf {
 		for (int k = 0; k < list1.size(); k++) {
 			for (int l = 0; l < list2.size(); l++) {
 				if (list1.get(k).equals(list2.get(l))) {
-					list1.remove(k);
-					list2.remove(l);
-					l--;
+					similar.add(list1.get(k)); //list1.remove(k);
+//					list2.remove(l);
+//					l--;
 				}
 			}
 		}
+		list1.removeAll(similar);
+		list2.removeAll(similar);
 		revision1.setUniqueWords(list1);
 		revision2.setUniqueWords(list2);
 
@@ -297,7 +303,8 @@ public class AnalyzeRevisionsOf {
 
 	private void analyze(Revision revision1, Revision revision2) {
 		if (differentListSize(revision1.getLines(), revision2.getLines())) {
-
+			
+			if(revision1.getLines().size() != 0) {
 			if (correctKnowledgeChange(revision1.getLines(),
 					revision2.getLines())) {
 				revision2.setTypeOfChange(TypeOfChange.CORRECT_KNOWLEDGE);
@@ -335,16 +342,20 @@ public class AnalyzeRevisionsOf {
 				revision2.setTypeOfChange(TypeOfChange.MODERATE_NEW_KNOWLEDGE);
 //				article.getTypeOfChange().add(TypeOfChange.MODERATE_NEW_KNOWLEDGE);
 			}
-			if (newKnowledge100pChange(revision1.getLines(),
-					revision2.getLines(), revision1.getUniqueWords(),
-					revision2.getUniqueWords())) {
-				revision2.setTypeOfChange(TypeOfChange.BIG_NEW_KNOWLEDGE);
-//				article.getTypeOfChange().add(TypeOfChange.BIG_NEW_KNOWLEDGE);
-			}
+//			if (newKnowledge100pChange(revision1.getLines(),
+//					revision2.getLines(), revision1.getUniqueWords(),
+//					revision2.getUniqueWords())) {
+//				revision2.setTypeOfChange(TypeOfChange.BIG_NEW_KNOWLEDGE);
+////				article.getTypeOfChange().add(TypeOfChange.BIG_NEW_KNOWLEDGE);
+//			}
+			
 
 		} else {
 			revision2.setTypeOfChange(TypeOfChange.NO_CHANGE);
 //			article.getTypeOfChange().add(TypeOfChange.NO_CHANGE);
+		}
+		} else {
+			revision2.setTypeOfChange(TypeOfChange.BIG_NEW_KNOWLEDGE);
 		}
 	}
 
@@ -456,7 +467,8 @@ public class AnalyzeRevisionsOf {
 		int improving = 0;
 		int newKnowledge = 0;
 	
-		for (int i = 0; i < userChangeTypes.size(); i++) {
+		for (int i = userChangeTypes.size(); i < 0; i--) {
+				System.out.println("Usertyp size: " + userChangeTypes.size());
 			if (userChangeTypes.get(i).equals(TypeOfChange.CORRECT_KNOWLEDGE))
 				correcting++;
 			if (userChangeTypes.get(i).equals(TypeOfChange.BIG_IMPROVE_KNOWLEDGE))

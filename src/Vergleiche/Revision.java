@@ -9,7 +9,6 @@ public class Revision {
 	private User author;
 	private File file;
 	private ArrayList<String> lines;
-//	private ArrayList<String> uniqueLines;
 	private ArrayList<String[]> words;
 	private ArrayList<String> uniqueWords;
 	private ArrayList<String> chars;
@@ -17,12 +16,10 @@ public class Revision {
 	private int maxWords;
 	private TypeOfChange typeOfChange;
 	
-	public Revision(String id, User author, File file) {
-		this.id = id;
+	public Revision(User author, File file) {
 		this.author = author;
 		this.file = file;
 		this.lines = new ArrayList<String>();
-//		this.uniqueLines = new ArrayList<String>();
 		this.words = new ArrayList<String[]>();
 		this.uniqueWords = new ArrayList<String>();
 		this.chars = new ArrayList<String>();
@@ -48,10 +45,6 @@ public class Revision {
 	public ArrayList<String> getLines() {
 		return this.lines;
 	}
-	
-//	public ArrayList<String> getUniqueLines() {
-//		return this.uniqueLines;
-//	}
 	
 	public ArrayList<String[]> getWords() {
 		return this.words;
@@ -89,10 +82,6 @@ public class Revision {
 		this.lines.add(line);
 	}
 	
-//	public void addUniqueLines(ArrayList<String> uniqueLines) {
-//		this.uniqueLines = uniqueLines;
-//	}
-	
 	public void addWord(String word) {
 		this.lines.add(word);
 	}
@@ -112,14 +101,5 @@ public class Revision {
 	public void setMaxWords(int word) {
 		this.maxWords = word;
 	}
-	
-//	public void setDefaults() {
-//		System.out.println("Geht!!!!!!!!!!!");
-//		this.maxLines = 0;
-//		this.maxWords = 0;
-//		this.lines = new ArrayList<String>();
-//		this.uniqueWords = new ArrayList<String>();
-//		this.words = new ArrayList<String[]>();
-//	}
 
 }
