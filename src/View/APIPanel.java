@@ -23,9 +23,9 @@ import API.WikiBot;
 import net.miginfocom.swing.MigLayout;
 
 /**
- * 
- * @author Bernhard Hermes
  * Panel mit dem Informionen vom Wiki gesammelt und in die Datenbank geschrieben werden können.
+ * @author Bernhard Hermes
+ * 
  */
 public class APIPanel {
 

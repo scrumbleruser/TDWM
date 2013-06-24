@@ -22,9 +22,10 @@ import net.sourceforge.jwbf.mediawiki.actions.util.SupportedBy;
 import net.sourceforge.jwbf.mediawiki.bots.MediaWikiBot;
 
 /**
+ * Sucht zu einer Kategorie alle weiterführenden Links
  * 
  * @author Bernhard Hermes
- * Sucht zu einer Kategorie alle weiterführenden Links
+ * 
  */
 @SupportedBy({ MW1_15, MW1_16, MW1_17, MW1_18, MW1_19, MW1_20 })
 public class Categories extends MWAction {

@@ -18,9 +18,10 @@ import net.sourceforge.jwbf.mediawiki.actions.util.SupportedBy;
 import net.sourceforge.jwbf.mediawiki.bots.MediaWikiBot;
 
 /**
+ * Sucht alle Revisionen die ein Nutzer erstellt hat.
  * 
  * @author Bernhard Hermes
- * Sucht alle Revisionen die ein Nutzer erstellt hat.
+ * 
  * @deprecated
  */
 @SupportedBy({ MW1_18, MW1_19, MW1_20 })

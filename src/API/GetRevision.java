@@ -18,9 +18,10 @@ import net.sourceforge.jwbf.mediawiki.bots.MediaWikiBot;
 
 
 /**
+ * Sammelt Informationen einer Revision anhand der RevisionsID
  * 
  * @author Bernhard Hermes
- * Sammelt Informationen einer Revision anhand der RevisionsID
+ * 
  */
 @SupportedBy({ MW1_18, MW1_19, MW1_20 })
 public class GetRevision extends MWAction {

@@ -1,9 +1,9 @@
 package API;
 
 /**
- * 
- * @author Bernhard Hermes
  * Strucktur einer UserContribution
+ * @author Bernhard Hermes
+ * 
  */
 public class UserContribs {
 private String user;

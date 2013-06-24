@@ -18,9 +18,9 @@ import net.sourceforge.jwbf.mediawiki.actions.util.SupportedBy;
 import net.sourceforge.jwbf.mediawiki.bots.MediaWikiBot;
 
 /**
- * 
- * @author Bernhard Hermes
  * Sammelt alle information die Sich von einem User bekommen lassen zusammen.
+ * @author Bernhard Hermes
+ * 
  */
 @SupportedBy({ MW1_18, MW1_19, MW1_20 })
 public class UserInfo extends MWAction {

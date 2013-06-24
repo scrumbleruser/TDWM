@@ -23,9 +23,9 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 /**
- * 
- * @author Bernhard Hermes
  * Gibt Information über den Verlauf der Größe eines Artikels wieder.
+ * @author Bernhard Hermes
+ * 
  */
 public class Graph {
 	private JPanel panel = new JPanel();

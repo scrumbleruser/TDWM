@@ -6,9 +6,9 @@ import net.sourceforge.jwbf.core.contentRep.Article;
 import net.sourceforge.jwbf.mediawiki.bots.MediaWikiBot;
 
 /**
- * 
- * @author Bernhard Hermes
  * Wrapper Klasse der einige Funktionen zur einfacheren Verwändung vereint. 
+ * @author Bernhard Hermes
+ * 
  */
 public class WikiBot {
 	

@@ -17,10 +17,10 @@ import net.sourceforge.jwbf.mediawiki.actions.util.MWAction;
 import net.sourceforge.jwbf.mediawiki.actions.util.SupportedBy;
 import net.sourceforge.jwbf.mediawiki.bots.MediaWikiBot;
 /**
- * 
+ * Diese Klasse sucht alle Artikel die ein User verändert hat.
  * @author Bernhard Hermes
  * 
- * Diese Klasse sucht alle Artikel die ein User verändert hat.
+ * 
  */
 @SupportedBy({ MW1_18, MW1_19, MW1_20 })
 public class AllArticlesOfUser extends MWAction {

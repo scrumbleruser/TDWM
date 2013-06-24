@@ -23,8 +23,10 @@ import net.sourceforge.jwbf.mediawiki.bots.MediaWikiBot;
 
 /**
  * 
- * @author Bernhard Hermes
  * Sucht alle Links die sich in einem Artikel befinden
+ * 
+ * @author Bernhard Hermes
+ * 
  */
 @SupportedBy({ MW1_15, MW1_16, MW1_17, MW1_18, MW1_19, MW1_20 })
 public class Links extends MWAction {

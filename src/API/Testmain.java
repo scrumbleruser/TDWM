@@ -6,9 +6,9 @@ import net.sourceforge.jwbf.mediawiki.actions.MediaWiki;
 import net.sourceforge.jwbf.mediawiki.bots.MediaWikiBot;
 
 /**
- * 
- * @author Bernhard Hermes
  * Tests usw.
+ * @author Bernhard Hermes
+ * 
  */
 public class Testmain {
 	

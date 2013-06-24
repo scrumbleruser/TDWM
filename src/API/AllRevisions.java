@@ -22,9 +22,10 @@ import net.sourceforge.jwbf.mediawiki.actions.util.SupportedBy;
 import net.sourceforge.jwbf.mediawiki.bots.MediaWikiBot;
 
 /**
+ * Sucht alle Revisionen eines Artikels
  * 
  * @author Bernhard Hermes
- * Sucht alle Revisionen eines Artikels
+ * 
  */
 @SupportedBy({ MW1_18, MW1_19, MW1_20 })
 public class AllRevisions extends MWAction {

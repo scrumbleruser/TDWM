@@ -16,9 +16,9 @@ import javax.swing.JTextArea;
 import net.miginfocom.swing.MigLayout;
 /**
  * 
- * @author Bernhard Hermes
  * Mit diesem Panel lassen sich die Experten eines Artikels suchen.
  * Dafür werden die Anzahlen der Veränderungen eines Nutzers gezählt und sortiert.
+ * @author Bernhard Hermes
  */
 public class ExpertenPanel {
 	

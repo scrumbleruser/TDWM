@@ -7,8 +7,10 @@ import java.util.Date;
 
 /**
  * 
- * @author Bernhard Hermes
  * Strucktur einer Revision
+ * 
+ * @author Bernhard Hermes
+ * 
  */
 public class Revision {
 
