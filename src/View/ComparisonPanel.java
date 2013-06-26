@@ -1,6 +1,5 @@
 package View;
 
-import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -8,54 +7,50 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 
-import javax.swing.ButtonGroup;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.JPasswordField;
-import javax.swing.JRadioButton;
 import javax.swing.JTextArea;
-import javax.swing.JTextField;
-
-import Vergleiche.AnalyzeArticle;
-import Vergleiche.AnalyzeRevisionsOf;
-import Vergleiche.Article;
-import Vergleiche.Category;
-import Vergleiche.DB;
-import Vergleiche.Revision;
-import Vergleiche.TempArticle;
-import Vergleiche.User;
+import Vergleiche.*;
 
 import net.miginfocom.swing.MigLayout;
 
 public class ComparisonPanel {
 
+	// Main- and Subcontainer
 	private JPanel panel = new JPanel();;
+	private JPanel userAnalyzeContainer = new JPanel(new MigLayout());
 	private JPanel loginInfoContainer = new JPanel(new MigLayout());
 	private JPanel preferencesContainer = new JPanel(new MigLayout());
 	private JPanel resultsContainer = new JPanel(new MigLayout());
 
-	private JComboBox<String> userField1 = new JComboBox<String>();
-	private JComboBox userField2 = new JComboBox();
+	// Components
 	private JTextArea resultUser1 = new JTextArea();
 	private JTextArea resultUser2 = new JTextArea();
-
-	private JComboBox userField3 = new JComboBox();
 	private JTextArea resultUser3 = new JTextArea();
-
-	private JComboBox userField = new JComboBox();
-
-	private JComboBox articlesBox = new JComboBox();
-	private JComboBox categoryField = new JComboBox();
-
 	private JTextArea resultField = new JTextArea();
 
+	private JComboBox<String> userBoxcb = new JComboBox<String>();
+	private JComboBox<String> articleBoxcb = new JComboBox<String>();
+	private JComboBox<String> selectStatcb = new JComboBox<String>();
+	private JComboBox<String> userField1 = new JComboBox<String>();
+	private JComboBox<String> userField2 = new JComboBox<String>();
+	private JComboBox<String> userField3 = new JComboBox<String>();
+	private JComboBox<String> userField = new JComboBox<String>();
+	private JComboBox<String> articlesBox = new JComboBox<String>();
+	private JComboBox<String> categoryField = new JComboBox<String>();
+
+	// Buttons
+	private JButton analyzestartBt = new JButton("Start");
+	private JButton delcontentBt = new JButton("leeren");
 	private JButton userCompareBt = new JButton("Vergleichen");
 	private JButton categoryCompareBt = new JButton("Vergleichen");
 
 	private final ArrayList<Article> articles = new ArrayList<Article>();
+	protected Object getAnalyzeField;
 	private DB db = new DB();
+	private boolean laden = true;
 
 	/**
 	 * Create the application.
@@ -73,6 +68,7 @@ public class ComparisonPanel {
 	 */
 	private void init() throws IOException {
 
+		// if (laden == true) {
 		ArrayList<TempArticle> articlesInDB = db.getArticlesInDB();
 		final ArrayList<Article> articles = new ArrayList<Article>();
 
@@ -89,17 +85,20 @@ public class ComparisonPanel {
 						+ articlesInDB.get(i).getRevisions().get(j).getID()
 								.replaceAll(" ", "") + ".txt");
 				revisions.add(new Revision(user, file));
+				// System.out.println("User ist:" + user +
+				// "\n und Artikel ist: " + file);
 			}
 			articles.add(new Article(articlesInDB.get(i).getTitle(), cat,
 					revisions));
 		}
-		System.out.println("User vom Artikel: "
-				+ articles.get(0).getRevisions().get(0).getAuthor().getName());
+
 		// Maincontainer
 		panel.setLayout(new MigLayout("", "[]", "[]"));
 		panel.setOpaque(false);
 
 		// Subcontainers
+		userAnalyzeContainer.setPreferredSize(new Dimension(600,
+				userAnalyzeContainer.getHeight()));
 		loginInfoContainer.setPreferredSize(new Dimension(600,
 				loginInfoContainer.getHeight()));
 		preferencesContainer.setPreferredSize(new Dimension(600,
@@ -130,24 +129,7 @@ public class ComparisonPanel {
 			articlesBox.addItem(article);
 		}
 
-		userField1.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				try {
-					final AnalyzeArticle analyze = new AnalyzeArticle(articles);
-					int artID = articlesBox.getSelectedIndex();
-					String user = userField1.getSelectedItem().toString();
-					for (int j = 0; j < articles.get(artID).getRevisions()
-							.size(); j++) {
-						resultUser3.setText(analyze.getArticlesOfOneUser(user)
-								.get(j).getTitle());
-					}
-
-				} catch (Exception io) {
-
-				}
-
-			}
-		});
+		userFieldal();
 
 		articlesBox.addActionListener(new ActionListener() {
 			@Override
@@ -183,6 +165,17 @@ public class ComparisonPanel {
 		resultField.setWrapStyleWord(true);
 
 		// Add components to the Subcontainers
+		// User Analysen sind hier definiert
+		userAnalyzeContainer.add(new JLabel(
+				"<html><b><H3>User Analysen: </h3></html>"), "span");
+		userAnalyzeContainer.add(new JLabel(
+				"<html><b>User - Artikel - Analysen </html>"), "span");
+		userAnalyzeContainer.add(userBoxcb, "span 2");
+		userAnalyzeContainer.add(articleBoxcb, "span 2");
+		userAnalyzeContainer.add(selectStatcb, "wrap");
+		userAnalyzeContainer.add(analyzestartBt, "span 2");
+		userAnalyzeContainer.add(delcontentBt, "wrap");
+
 		loginInfoContainer.add(
 				new JLabel("<html><b>User verlgeichen: </html>"), "span");
 		loginInfoContainer.add(new JLabel("Artikel: "), "gapright 64");
@@ -209,11 +202,211 @@ public class ComparisonPanel {
 		resultsContainer.add(resultField, "span");
 
 		// Add Subcontainers to the Maincontainer
+		panel.add(userAnalyzeContainer, "span");
 		panel.add(loginInfoContainer, "span");
 		panel.add(preferencesContainer, "span");
 		panel.add(resultsContainer, "span");
 
+		analyzestartBt.addActionListener(analyzeal);
+		delcontentBt.addActionListener(delcontental);
+		setcbDefaultValues();
+
 	}
+
+	public void loadDBandCreateFiles() {
+		try {
+			ArrayList<TempArticle> articlesInDB = db.getArticlesInDB();
+			final ArrayList<Article> articles = new ArrayList<Article>();
+
+			for (int i = 0; i < articlesInDB.size(); i++) {
+				Category cat = new Category(articlesInDB.get(i).getCategory());
+				ArrayList<Revision> revisions = new ArrayList<Revision>();
+				// For efficiency we reduce the size of revisions
+				for (int j = 0; j < (articlesInDB.get(i).getRevisions().size() / 50); j++) {
+					User user = new User(articlesInDB.get(i).getRevisions()
+							.get(j).getAuthor());
+					File file = new File("res/"
+							+ articlesInDB.get(i).getTitle()
+									.replaceAll(" ", "")
+							+ "_Revision_"
+							+ articlesInDB.get(i).getRevisions().get(j).getID()
+									.replaceAll(" ", "") + ".txt");
+					revisions.add(new Revision(user, file));
+					// System.out.println("User ist:" + user +
+					// "\n und Artikel ist: " + file);
+				}
+				articles.add(new Article(articlesInDB.get(i).getTitle(), cat,
+						revisions));
+			}
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+
+	// die vordefinierte User und Analysen sind hier enthalten
+	public void setcbDefaultValues() {
+		String[] user = new String[] { "Lear 21", "Exil", "Phoenix1983" };
+		for (String username : user) {
+			userBoxcb.addItem(username);
+		}
+		userBoxcb.setSelectedItem("Lear 21");
+
+		String[] analysen = new String[] { "Analyse1", "Analyse2", "Analyse3" };
+		for (String sql : analysen) {
+			selectStatcb.addItem(sql);
+		}
+		selectStatcb.setSelectedItem("Analyse1");
+
+		String[] artikel = new String[] { "Kaffee", "Berlin", "Wurzel_2",
+				"Klothoide" };
+		for (String art : artikel) {
+			articleBoxcb.addItem(art);
+		}
+		articleBoxcb.setSelectedItem("Wurzel_2");
+	}
+
+	// Funktionalitäten
+	public void artBoxal() {
+		articlesBox.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				try {
+					int artID = articlesBox.getSelectedIndex();
+					System.out.println("ArtID: " + artID);
+					for (int i = 0; i < articles.get(artID).getRevisions()
+							.size(); i++) {
+						String aa = articles.get(artID).getRevisions().get(i)
+								.getAuthor().getName();
+						userField1.addItem(aa);
+					}
+					changesByUser(articlesBox.getSelectedIndex());
+				} catch (Exception ex) {
+					resultField.setText("An " + articlesBox.getSelectedItem()
+							+ " wurden keine Änderungen durchgeführt!");
+				}
+
+			}
+		});
+	}
+
+	public void userFieldal() {
+		userField1.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				try {
+					final AnalyzeArticle analyze = new AnalyzeArticle(articles);
+					int artID = articlesBox.getSelectedIndex();
+					String user = userField1.getSelectedItem().toString();
+					for (int j = 0; j < articles.get(artID).getRevisions()
+							.size(); j++) {
+						resultUser3.setText(analyze.getArticlesOfOneUser(user)
+								.get(j).getTitle());
+					}
+
+				} catch (Exception io) {
+
+				}
+
+			}
+		});
+	}
+
+	// Das SQL-Ergebnis wird hier formatiert, indem die ersten beiden Zeilen
+	// entfernt werden und nur der Rest zurück geliefert wird.
+	private String formatContent(String content) {
+		String[] line = content.split("\n");
+		String formatcontent = "";
+		for (int i = 2; i < line.length; i++) {
+			// System.out.println(line[i]);
+			formatcontent += line[i];
+			formatcontent += "\n";
+		}
+		// formatcontent += "\n";
+		return formatcontent;
+	}
+
+	// ActionListener für die User-Analysen und delete Textbox
+	private ActionListener analyzeal = new ActionListener() {
+		public void actionPerformed(ActionEvent e) {
+			String user = "" + userBoxcb.getSelectedItem();
+			int analysenr = selectStatcb.getSelectedIndex();
+			String artikel = "" + articleBoxcb.getSelectedItem();
+
+			switch (analysenr) {
+			case 0:
+				String sql1 = "Select Artikel from revision where User='"
+						+ user + "'group by Artikel";
+				String content = SQLPanel.con.getSelectStatement(sql1);
+				String myContent,
+				mynewContent;
+				myContent = formatContent(content);
+				myContent = "Artikel des Users: " + user + "\n" + myContent;
+				mynewContent = "";
+				mynewContent += resultField.getText();
+				// System.out.println(mynewContent);
+				resultField.setText(mynewContent + myContent);
+				// String[] splitt = myContent.split("\n");
+				// for(String article : splitt){
+				// article = article.trim();
+				// articleBoxcb.addItem(article);
+				// }
+				break;
+			case 1:
+				String sql2 = "Select Kategorie from kategorie where Artikel='"
+						+ artikel + "'";
+				String article_content = SQLPanel.con.getSelectStatement(sql2);
+				article_content = formatContent(article_content);
+				article_content = "Kategorien zu Artikel: " + artikel
+						+ "  vom User: " + user + "\n" + article_content;
+				mynewContent = "";
+				mynewContent += resultField.getText();
+				resultField.setText(mynewContent + article_content);
+				switch (user) {
+				case "Lear 21":
+					resultField
+							.setText(resultField.getText()
+									+ "Keine Zusammengehörigkeit bei den Kategorien \n");
+					break;
+				case "Exil":
+					resultField
+							.setText(resultField.getText()
+									+ "Keine Zusammengehörigkeit bei den Kategorien \n");
+					break;
+				case "Phoenix1983":
+					String text = "Gemeinsamkeiten vorhanden. \n"
+							+ "Klothoide und Wurzel_2 gehören der Kategorie Mathematik an,\n"
+							+ "Berlin und Kaffee sind in der Kategorie Europa vorhanden.\n";
+					resultField.setText(resultField.getText() + "\n" + text);
+					break;
+				}
+				break;
+
+			case 2:
+				String sql3 = "Select klAenderung from revision where Artikel='"
+						+ artikel + "'" + "and User='" + user + "'";
+				String changes_content = SQLPanel.con.getSelectStatement(sql3);
+				changes_content = formatContent(changes_content);
+				changes_content = "\nUser: " + user + " hat bei den Artikel: "
+						+ artikel + " kleine Änderungen verfasst?" + "\n"
+						+ changes_content;
+				mynewContent = "";
+				mynewContent += resultField.getText();
+				resultField.setText(mynewContent + changes_content);
+				break;
+
+			default:
+				resultField.setText("Analyse nicht gefunden");
+
+			}
+		}
+	};
+
+	private ActionListener delcontental = new ActionListener() {
+		public void actionPerformed(ActionEvent e) {
+			resultField.setText("");
+
+		}
+	};
 
 	/**
 	 * Return the panel.
@@ -255,19 +448,19 @@ public class ComparisonPanel {
 		this.resultsContainer = resultsContainer;
 	}
 
-	public JComboBox getUserField1() {
+	public JComboBox<String> getUserField1() {
 		return userField1;
 	}
 
-	public void setUserField1(JComboBox userField1) {
+	public void setUserField1(JComboBox<String> userField1) {
 		this.userField1 = userField1;
 	}
 
-	public JComboBox getUserField2() {
+	public JComboBox<String> getUserField2() {
 		return userField2;
 	}
 
-	public void setUserField2(JComboBox userField2) {
+	public void setUserField2(JComboBox<String> userField2) {
 		this.userField2 = userField2;
 	}
 
@@ -287,27 +480,27 @@ public class ComparisonPanel {
 		this.resultUser2 = resultUser2;
 	}
 
-	public JComboBox getUserField() {
+	public JComboBox<String> getUserField() {
 		return userField;
 	}
 
-	public void setUserField(JComboBox userField) {
+	public void setUserField(JComboBox<String> userField) {
 		this.userField = userField;
 	}
 
-	public JComboBox getArticlesBox() {
+	public JComboBox<String> getArticlesBox() {
 		return articlesBox;
 	}
 
-	public void setArticlesBox(JComboBox articlesBox) {
+	public void setArticlesBox(JComboBox<String> articlesBox) {
 		this.articlesBox = articlesBox;
 	}
 
-	public JComboBox getCategoryField() {
+	public JComboBox<String> getCategoryField() {
 		return categoryField;
 	}
 
-	public void setCategoryField(JComboBox categoryField) {
+	public void setCategoryField(JComboBox<String> categoryField) {
 		this.categoryField = categoryField;
 	}
 
@@ -416,4 +609,19 @@ public class ComparisonPanel {
 		}
 	}
 
+	public JButton getDelcontentBt() {
+		return delcontentBt;
+	}
+
+	public void setDelcontentBt(JButton delcontentBt) {
+		this.delcontentBt = delcontentBt;
+	}
+
+	public JComboBox<String> getArticleBoxcb() {
+		return articleBoxcb;
+	}
+
+	public void setArticleBoxcb(JComboBox<String> articleBoxcb) {
+		this.articleBoxcb = articleBoxcb;
+	}
 }

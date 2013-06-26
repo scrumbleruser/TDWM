@@ -35,6 +35,8 @@ public class Graph {
 	private DefaultCategoryDataset dataset = new DefaultCategoryDataset();
 	private JFreeChart chart;
 	private ChartPanel chartPanel;
+	
+	private boolean ja = false;
 
 	public Graph() {
 		init();
@@ -53,7 +55,9 @@ public class Graph {
 		panel.setOpaque(false);
 		
 
-		createDataset(dataset);
+		if(ja == true){
+			createDataset(dataset);
+		}
 		chart = createChart(dataset);
 		chartPanel = new ChartPanel(chart);
 
