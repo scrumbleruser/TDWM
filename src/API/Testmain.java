@@ -40,8 +40,8 @@ public class Testmain {
 //	   for(String s : tmo)
 //		   System.out.println(s);
 	   
-	   Links bl = new Links(wb.getWikiBot(), "Klothoide");
-	   System.out.println(bl.toString());
+//	   Links bl = new Links(wb.getWikiBot(), "Klothoide");
+//	   System.out.println(bl.toString());
 	   
 //	   Categories c = new Categories(wb.getWikiBot(),"Klothoide");
 //	   
@@ -50,13 +50,13 @@ public class Testmain {
 //	   for(String s : tmo)
 //		   System.out.println(s);
 	   
-//	   AllRevisions ar = new AllRevisions(wb.getWikiBot(),"Deutschland");
-//	   
+	   AllRevisions ar = new AllRevisions(wb.getWikiBot(),"Deutschland");
+	   
 //	   for(Revision r : ar.getRevisions())
 //	   System.out.println(r.toString());
 //	   
-	   UserInfo ui = new UserInfo(wb.getWikiBot(), "Reinhard_Dietrich");
-	   System.out.println(ui.toString());
+//	   UserInfo ui = new UserInfo(wb.getWikiBot(), "Reinhard_Dietrich");
+//	   System.out.println(ui.toString());
 //	   for(String r : ui.getArticels())
 //		   System.out.println(r);
 //	   
@@ -67,15 +67,15 @@ public class Testmain {
 //		   System.out.println(r);
 //	   for(String r : aaou.getArticlesNames())
 //	   System.out.println(r);
-	   GetRevision grr = new GetRevision(wb.getWikiBot(), 1986);
-	   
-	   System.out.println(grr.getRevision().toString());
-	   GetUserContribs uc = new GetUserContribs(wb.getWikiBot(), "Catrope");
-	   
-	  for (UserContribs u : uc.getUserContribs()) {
-		System.out.println(u.toString());
-	}
-	   
+//	   GetRevision grr = new GetRevision(wb.getWikiBot(), 1986);
+//	   
+//	   System.out.println(grr.getRevision().toString());
+//	   GetUserContribs uc = new GetUserContribs(wb.getWikiBot(), "Catrope");
+//	   
+//	  for (UserContribs u : uc.getUserContribs()) {
+//		System.out.println(u.toString());
+//	}
+
       
 	  
    }

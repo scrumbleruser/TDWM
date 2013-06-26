@@ -29,26 +29,52 @@ import net.sourceforge.jwbf.mediawiki.bots.MediaWikiBot;
  */
 @SupportedBy({ MW1_18, MW1_19, MW1_20 })
 public class AllRevisions extends MWAction {
-	
-	
 
 	private Get msg = null;
 	private MediaWikiBot bot;
 	private Revision[] revision;
-	
-	
+	private Revision[] revisionold;
+
 	public Revision[] getRevision() {
 		return revision;
 	}
 
 	private String title;
-	
-	public AllRevisions(MediaWikiBot bot, String title)
-	{
+	private String rvcontinue = "0";
+
+	public AllRevisions(MediaWikiBot bot, String title) {
 		super(bot.getVersion());
 		this.bot = bot;
 		this.title = title;
-		msg = new Get(MediaWiki.URL_API + "?action=query&titles=" +MediaWiki.encode(title) + "&prop=revisions&rvlimit=max&rvprop=ids%7Ctimestamp%7Cuser%7Cuserid%7Cflags%7Csize&format=xml");
+		msg = new Get(
+				MediaWiki.URL_API
+						+ "?action=query&titles="
+						+ MediaWiki.encode(title)
+						+ "&prop=revisions&rvlimit=max&rvprop=ids%7Ctimestamp%7Cuser%7Cuserid%7Cflags%7Csize&format=xml");
+		while (rvcontinue != null) {
+			rvcontinue = null;
+			revisionold = revision;
+			try {
+				this.setHasMoreMessages(true);
+				bot.performAction(this);
+			} catch (ProcessException e) {
+				System.out.println("Failed");
+			}
+			
+			if(revisionold != null)
+			{
+				ArrayList<Revision> tmp = new ArrayList<Revision>();
+				
+				for(Revision r: revisionold)
+					tmp.add(r);
+				for(Revision r: revision)
+					tmp.add(r);
+				
+				revisionold = null;
+				
+				revision = tmp.toArray(new Revision[tmp.size()]);
+			}
+		}
 	}
 
 	public String getTitle() {
@@ -63,86 +89,78 @@ public class AllRevisions extends MWAction {
 	public HttpAction getNextMessage() {
 		return msg;
 	}
-	
-	public Revision[] getRevisions()
-	{
-		try {
-	        bot.performAction(this);
-	      } catch (ProcessException e) {
-	        System.out.println("Failed");
-	      }
-		
-		
+
+	public Revision[] getRevisions() {
 		return revision;
-		
 	}
-	
-	public Revision[] getRevisionsFromUser(String name)
-	{
+
+	public Revision[] getRevisionsFromUser(String name) {
 		if (revision == null)
 			return null;
 		ArrayList<Revision> rtn = new ArrayList<Revision>();
-		
-		for(Revision r : revision)
-		{
-			if(r.getUser().equalsIgnoreCase(name))
-			{
+
+		for (Revision r : revision) {
+			if (r.getUser().equalsIgnoreCase(name)) {
 				rtn.add(r);
 			}
 		}
-		
+
 		return rtn.toArray(new Revision[rtn.size()]);
 	}
-	
-	public Revision[] getRevisionsFromUserID(int userid)
-	{
+
+	public Revision[] getRevisionsFromUserID(int userid) {
 		if (revision == null)
 			return null;
 		ArrayList<Revision> rtn = new ArrayList<Revision>();
-		
-		for(Revision r : revision)
-		{
-			if(r.getUserid()== userid)
-			{
+
+		for (Revision r : revision) {
+			if (r.getUserid() == userid) {
 				rtn.add(r);
 			}
 		}
-		
+
 		return rtn.toArray(new Revision[rtn.size()]);
 	}
-	
-	  
+
 	@Override
-	  public String processAllReturningText(String s) {
+	public String processAllReturningText(String s) {
 		Element root = getRootElementWithError(s);
 		ArrayList<Revision> rtn = new ArrayList<Revision>();
-		findContent(root,rtn);
+		findContent(root, rtn);
+			msg = new Get(
+					MediaWiki.URL_API
+							+ "?action=query&titles="
+							+ MediaWiki.encode(title)
+							+ "&prop=revisions&rvlimit=max&rvprop=ids%7Ctimestamp%7Cuser%7Cuserid%7Cflags%7Csize&format=xml&rvstartid="
+							+ rvcontinue);
 		revision = rtn.toArray(new Revision[rtn.size()]);
-	    return "";
-	  }
-	
+		return "";
+	}
+
 	@SuppressWarnings("unchecked")
 	private void findContent(Element root, ArrayList<Revision> rtn) {
 		Iterator<Element> el = root.getChildren().iterator();
-	    while (el.hasNext()) {
-	      Element element = el.next();
-	      if (element.getQualifiedName().equalsIgnoreCase("rev")) {
-	    	Revision rev = new Revision();
-	    	rev.setName(title);
-	    	rev.setRevID(element.getAttributeValue("revid"));
-	    	rev.setUser(element.getAttributeValue("user"));
-	    	rev.setUserID(element.getAttributeValue("userid"));
-	    	rev.setTimeStamp(element.getAttributeValue("timestamp"));
-	    	rev.setMinorchange(element.getAttributeValue("minor"));
-	    	rev.setSize(element.getAttributeValue("size"));
-	        rtn.add(rev);
+		while (el.hasNext()) {
+			Element element = el.next();
+			if (element.getQualifiedName().equalsIgnoreCase("revisions"))
+				if (element.getAttributeValue("rvcontinue") != null)
+					rvcontinue = element.getAttributeValue("rvcontinue");
+			if (element.getQualifiedName().equalsIgnoreCase("rev")) {
+				Revision rev = new Revision();
+				rev.setName(title);
+				rev.setRevID(element.getAttributeValue("revid"));
+				rev.setUser(element.getAttributeValue("user"));
+				rev.setUserID(element.getAttributeValue("userid"));
+				rev.setTimeStamp(element.getAttributeValue("timestamp"));
+				rev.setMinorchange(element.getAttributeValue("minor"));
+				rev.setSize(element.getAttributeValue("size"));
+				rtn.add(rev);
 
-	      } else {
-	        findContent(element,rtn);
-	      }
-	    }
-		
+			} else {
+				findContent(element, rtn);
+			}
+		}
+
 	}
-
 
 }

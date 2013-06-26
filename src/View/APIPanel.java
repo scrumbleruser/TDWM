@@ -112,7 +112,6 @@ public class APIPanel {
 							+ "'," + "'" + r.getSize() + "'," + "'"
 							+ r.isMinorchange() + "'";
 					SQLPanel.con.setInsertInto(values, "revision");
-
 					// SQLPanel.con.mysql_close();
 				}
 
