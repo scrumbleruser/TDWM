@@ -11,6 +11,7 @@ import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import Vergleiche.*;
 
@@ -30,6 +31,7 @@ public class ComparisonPanel {
 	private JTextArea resultUser2 = new JTextArea();
 	private JTextArea resultUser3 = new JTextArea();
 	private JTextArea resultField = new JTextArea();
+	private JScrollPane jScrollPane = new JScrollPane(resultField);
 
 	private JComboBox<String> userBoxcb = new JComboBox<String>();
 	private JComboBox<String> articleBoxcb = new JComboBox<String>();
@@ -49,8 +51,9 @@ public class ComparisonPanel {
 
 	private final ArrayList<Article> articles = new ArrayList<Article>();
 	protected Object getAnalyzeField;
-	private DB db = new DB();
-	private boolean laden = true;
+	// private DB db = new DB();
+	// private boolean laden = true;
+	private ArrayList<String> list = new ArrayList<String>();
 
 	/**
 	 * Create the application.
@@ -67,30 +70,29 @@ public class ComparisonPanel {
 	 * @throws IOException
 	 */
 	private void init() throws IOException {
-
-		// if (laden == true) {
-		ArrayList<TempArticle> articlesInDB = db.getArticlesInDB();
-		final ArrayList<Article> articles = new ArrayList<Article>();
-
-		for (int i = 0; i < articlesInDB.size(); i++) {
-			Category cat = new Category(articlesInDB.get(i).getCategory());
-			ArrayList<Revision> revisions = new ArrayList<Revision>();
-			// For efficiency we reduce the size of revisions
-			for (int j = 0; j < (articlesInDB.get(i).getRevisions().size() / 50); j++) {
-				User user = new User(articlesInDB.get(i).getRevisions().get(j)
-						.getAuthor());
-				File file = new File("res/"
-						+ articlesInDB.get(i).getTitle().replaceAll(" ", "")
-						+ "_Revision_"
-						+ articlesInDB.get(i).getRevisions().get(j).getID()
-								.replaceAll(" ", "") + ".txt");
-				revisions.add(new Revision(user, file));
-				// System.out.println("User ist:" + user +
-				// "\n und Artikel ist: " + file);
-			}
-			articles.add(new Article(articlesInDB.get(i).getTitle(), cat,
-					revisions));
-		}
+		// ArrayList<TempArticle> articlesInDB = db.getArticlesInDB();
+		// final ArrayList<Article> articles = new ArrayList<Article>();
+		//
+		// for (int i = 0; i < articlesInDB.size(); i++) {
+		// Category cat = new Category(articlesInDB.get(i).getCategory());
+		// ArrayList<Revision> revisions = new ArrayList<Revision>();
+		// // For efficiency we reduce the size of revisions
+		// for (int j = 0; j < (articlesInDB.get(i).getRevisions().size() / 50);
+		// j++) {
+		// User user = new User(articlesInDB.get(i).getRevisions().get(j)
+		// .getAuthor());
+		// File file = new File("res/"
+		// + articlesInDB.get(i).getTitle().replaceAll(" ", "")
+		// + "_Revision_"
+		// + articlesInDB.get(i).getRevisions().get(j).getID()
+		// .replaceAll(" ", "") + ".txt");
+		// revisions.add(new Revision(user, file));
+		// // System.out.println("User ist:" + user +
+		// // "\n und Artikel ist: " + file);
+		// }
+		// articles.add(new Article(articlesInDB.get(i).getTitle(), cat,
+		// revisions));
+		// }
 
 		// Maincontainer
 		panel.setLayout(new MigLayout("", "[]", "[]"));
@@ -160,8 +162,11 @@ public class ComparisonPanel {
 				.getHeight()));
 
 		// Results
-		resultField.setPreferredSize(new Dimension(600, 300));
+		jScrollPane
+				.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+		jScrollPane.setPreferredSize(new Dimension(500, 500));
 		resultField.setLineWrap(true);
+		resultField.setAutoscrolls(true);
 		resultField.setWrapStyleWord(true);
 
 		// Add components to the Subcontainers
@@ -199,7 +204,7 @@ public class ComparisonPanel {
 		preferencesContainer.add(categoryCompareBt, "wrap");
 
 		resultsContainer.add(new JLabel("<html><b>Ergebnis: </html>"), "wrap");
-		resultsContainer.add(resultField, "span");
+		resultsContainer.add(jScrollPane, "span");
 
 		// Add Subcontainers to the Maincontainer
 		panel.add(userAnalyzeContainer, "span");
@@ -214,39 +219,41 @@ public class ComparisonPanel {
 	}
 
 	public void loadDBandCreateFiles() {
-		try {
-			ArrayList<TempArticle> articlesInDB = db.getArticlesInDB();
-			final ArrayList<Article> articles = new ArrayList<Article>();
-
-			for (int i = 0; i < articlesInDB.size(); i++) {
-				Category cat = new Category(articlesInDB.get(i).getCategory());
-				ArrayList<Revision> revisions = new ArrayList<Revision>();
-				// For efficiency we reduce the size of revisions
-				for (int j = 0; j < (articlesInDB.get(i).getRevisions().size() / 50); j++) {
-					User user = new User(articlesInDB.get(i).getRevisions()
-							.get(j).getAuthor());
-					File file = new File("res/"
-							+ articlesInDB.get(i).getTitle()
-									.replaceAll(" ", "")
-							+ "_Revision_"
-							+ articlesInDB.get(i).getRevisions().get(j).getID()
-									.replaceAll(" ", "") + ".txt");
-					revisions.add(new Revision(user, file));
-					// System.out.println("User ist:" + user +
-					// "\n und Artikel ist: " + file);
-				}
-				articles.add(new Article(articlesInDB.get(i).getTitle(), cat,
-						revisions));
-			}
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		// try {
+		// ArrayList<TempArticle> articlesInDB = db.getArticlesInDB();
+		// final ArrayList<Article> articles = new ArrayList<Article>();
+		//
+		// for (int i = 0; i < articlesInDB.size(); i++) {
+		// Category cat = new Category(articlesInDB.get(i).getCategory());
+		// ArrayList<Revision> revisions = new ArrayList<Revision>();
+		// // For efficiency we reduce the size of revisions
+		// for (int j = 0; j < (articlesInDB.get(i).getRevisions().size() / 50);
+		// j++) {
+		// User user = new User(articlesInDB.get(i).getRevisions()
+		// .get(j).getAuthor());
+		// File file = new File("res/"
+		// + articlesInDB.get(i).getTitle()
+		// .replaceAll(" ", "")
+		// + "_Revision_"
+		// + articlesInDB.get(i).getRevisions().get(j).getID()
+		// .replaceAll(" ", "") + ".txt");
+		// revisions.add(new Revision(user, file));
+		// // System.out.println("User ist:" + user +
+		// // "\n und Artikel ist: " + file);
+		// }
+		// articles.add(new Article(articlesInDB.get(i).getTitle(), cat,
+		// revisions));
+		// }
+		// } catch (Exception e) {
+		// // TODO Auto-generated catch block
+		// e.printStackTrace();
+		// }
 	}
 
 	// die vordefinierte User und Analysen sind hier enthalten
 	public void setcbDefaultValues() {
-		String[] user = new String[] { "Lear 21", "Exil", "Phoenix1983" };
+		String[] user = new String[] { "AHZ", "Aka", "APPER", "Belsazar",
+				"Kaisersoft" };
 		for (String username : user) {
 			userBoxcb.addItem(username);
 		}
@@ -258,12 +265,19 @@ public class ComparisonPanel {
 		}
 		selectStatcb.setSelectedItem("Analyse1");
 
-		String[] artikel = new String[] { "Kaffee", "Berlin", "Wurzel_2",
-				"Klothoide" };
+		String[] artikel = new String[] { "Berlin-Prenzlauer Berg",
+				"Bundestagswahlkreis Kreuznach", "Christian_Lindner",
+				"Datenschutz", "Deutsche Rentenversicherung Saarland",
+				"Deutschland", "Doubrava u Lipové", "Erfrischungsgetränk",
+				"Eugen Schlachter", "Hacker", "Homöopathie",
+				"Interpretationen der Quantenmechanik", "Oudon",
+				"Physikalisches System", "Prism", "Quantenmaschine",
+				"U2 (Band)" };
+
 		for (String art : artikel) {
 			articleBoxcb.addItem(art);
 		}
-		articleBoxcb.setSelectedItem("Wurzel_2");
+		articleBoxcb.setSelectedItem("Berlin-Prenzlauer Berg");
 	}
 
 	// Funktionalitäten
@@ -325,73 +339,68 @@ public class ComparisonPanel {
 		return formatcontent;
 	}
 
+	private ArrayList<String> getArticle(String user) {
+		String artikeln = "";
+		String sql = "Select Artikel from revision where User='" + user
+				+ "'group by Artikel";
+		artikeln = SQLPanel.con.getSelectStatement(sql);
+		String[] line = artikeln.split("\n");
+		list.removeAll(list);
+		for (int i = 2; i < line.length; i++) {
+			line[i] = line[i].trim();
+			list.add(line[i]);
+		}
+		return list;
+	}
+
+	private String getCategories(String artikelname) {
+		String kategorien = "";
+		String sql = "Select Kategorie from kategorie where Artikel='"
+				+ artikelname + "'";
+		kategorien = SQLPanel.con.getSelectStatement(sql);
+		kategorien = formatContent(kategorien);
+		return kategorien;
+	}
+
 	// ActionListener für die User-Analysen und delete Textbox
 	private ActionListener analyzeal = new ActionListener() {
 		public void actionPerformed(ActionEvent e) {
 			String user = "" + userBoxcb.getSelectedItem();
 			int analysenr = selectStatcb.getSelectedIndex();
 			String artikel = "" + articleBoxcb.getSelectedItem();
-
+			ArrayList<String> listArticle = new ArrayList<String>();
+			listArticle.remove(listArticle);
 			switch (analysenr) {
-			case 0:
-				String sql1 = "Select Artikel from revision where User='"
-						+ user + "'group by Artikel";
-				String content = SQLPanel.con.getSelectStatement(sql1);
-				String myContent,
-				mynewContent;
-				myContent = formatContent(content);
-				myContent = "Artikel des Users: " + user + "\n" + myContent;
-				mynewContent = "";
-				mynewContent += resultField.getText();
-				// System.out.println(mynewContent);
-				resultField.setText(mynewContent + myContent);
-				// String[] splitt = myContent.split("\n");
-				// for(String article : splitt){
-				// article = article.trim();
-				// articleBoxcb.addItem(article);
-				// }
-				break;
-			case 1:
-				String sql2 = "Select Kategorie from kategorie where Artikel='"
-						+ artikel + "'";
-				String article_content = SQLPanel.con.getSelectStatement(sql2);
-				article_content = formatContent(article_content);
-				article_content = "Kategorien zu Artikel: " + artikel
-						+ "  vom User: " + user + "\n" + article_content;
-				mynewContent = "";
-				mynewContent += resultField.getText();
-				resultField.setText(mynewContent + article_content);
-				switch (user) {
-				case "Lear 21":
-					resultField
-							.setText(resultField.getText()
-									+ "Keine Zusammengehörigkeit bei den Kategorien \n");
-					break;
-				case "Exil":
-					resultField
-							.setText(resultField.getText()
-									+ "Keine Zusammengehörigkeit bei den Kategorien \n");
-					break;
-				case "Phoenix1983":
-					String text = "Gemeinsamkeiten vorhanden. \n"
-							+ "Klothoide und Wurzel_2 gehören der Kategorie Mathematik an,\n"
-							+ "Berlin und Kaffee sind in der Kategorie Europa vorhanden.\n";
-					resultField.setText(resultField.getText() + "\n" + text);
-					break;
+			case 0: // Article
+				String article_content = "";
+				listArticle = getArticle(user);
+				for (String lsart : listArticle) {
+					article_content += lsart;
+					article_content += "\n";
 				}
+				String artInfo = "Artikel des Users: " + user + "\n";
+				resultField.setText(resultField.getText() + artInfo
+						+ article_content);
 				break;
-
-			case 2:
+			case 1: // Categories
+				listArticle = getArticle(user);
+				String cats = "";
+				for (int i = 0; i < listArticle.size(); i++) {
+					cats += getCategories(listArticle.get(i).toString());
+				}
+				String catInfo = "Kategorien zu Artikeln vom User: " + user
+						+ "\n";
+				resultField.setText(resultField.getText() + catInfo + cats);
+			case 2: // Minor Changes
 				String sql3 = "Select klAenderung from revision where Artikel='"
 						+ artikel + "'" + "and User='" + user + "'";
 				String changes_content = SQLPanel.con.getSelectStatement(sql3);
 				changes_content = formatContent(changes_content);
-				changes_content = "\nUser: " + user + " hat bei den Artikel: "
-						+ artikel + " kleine Änderungen verfasst?" + "\n"
-						+ changes_content;
-				mynewContent = "";
-				mynewContent += resultField.getText();
-				resultField.setText(mynewContent + changes_content);
+				String changesInfo = "\nUser: " + user
+						+ " hat bei den Artikel: " + artikel
+						+ " kleine Änderungen verfasst?" + "\n";
+				resultField.setText(resultField.getText() + changesInfo
+						+ changes_content);
 				break;
 
 			default:
@@ -623,5 +632,13 @@ public class ComparisonPanel {
 
 	public void setArticleBoxcb(JComboBox<String> articleBoxcb) {
 		this.articleBoxcb = articleBoxcb;
+	}
+
+	public JScrollPane getjScrollPane() {
+		return jScrollPane;
+	}
+
+	public void setjScrollPane(JScrollPane jScrollPane) {
+		this.jScrollPane = jScrollPane;
 	}
 }
