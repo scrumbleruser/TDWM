@@ -37,14 +37,17 @@ public class ExpertenPanel {
 	}
 
 	private void search() {
-		String sql = "Select User , count(*) as count from revision where Artikel='"
-				+ article.getSelectedItem()
-				+ "' and Artikel='"
-				+ article2.getSelectedItem() + "'group by User order by count";
+		String sql = "Select User , count(*) as count, sum(if(Artikel='"
+				+ article.getSelectedItem() + "',1,0)) as '"
+				+ article.getSelectedItem() + "' , sum(if(Artikel='"
+				+ article2.getSelectedItem() + "',1,0)) as '"
+				+ article2.getSelectedItem()
+				+ "' from revision where Artikel='" + article.getSelectedItem()
+				+ "' or Artikel='" + article2.getSelectedItem()
+				+ "' group by User order by count";
 
 		String content = SQLPanel.con.getSelectStatement(sql);
 		textArea.setText(content);
-
 	}
 
 	private String[] getArticles() {

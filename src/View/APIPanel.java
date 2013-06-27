@@ -3,6 +3,7 @@ package View;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.sql.SQLException;
 import java.util.ArrayList;
 
 import javax.swing.ButtonGroup;
@@ -111,7 +112,11 @@ public class APIPanel {
 							+ r.getUser() + "'," + "'" + r.getTimestamp()
 							+ "'," + "'" + r.getSize() + "'," + "'"
 							+ r.isMinorchange() + "'";
-					SQLPanel.con.setInsertInto(values, "revision");
+					try {
+						SQLPanel.con.setInsertInto(values, "revision").close();
+					} catch (SQLException e1) {
+						e1.printStackTrace();
+					}
 					// SQLPanel.con.mysql_close();
 				}
 
@@ -251,7 +256,6 @@ public class APIPanel {
 		userField.setText("wissensmanagement");
 		passwordField.setText("asdasd");
 		starturl = "http://de.wikipedia.org/w/";
-		categoryField.setText("Berlin");
 		loginBt.doClick();
 //		for (String tab : pan.getTables()) {
 //			tbnamesComboBox.addItem(tab);
