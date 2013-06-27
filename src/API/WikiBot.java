@@ -24,7 +24,7 @@ public class WikiBot {
 	
 public Revision[] getAllRevisions()
 {
-	AllRevisions ar = new AllRevisions(wikiBot, article.getTitle());
+	Last500Revisions ar = new Last500Revisions(wikiBot, article.getTitle());
 	
 	return ar.getRevisions();
 }
