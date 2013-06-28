@@ -76,6 +76,7 @@ public class Testmain {
 //		System.out.println(u.toString());
 //	}
 
+	   //UserContribs uc = new UserContribs()wb.getWikiBot()
       
 	  
    }

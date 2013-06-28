@@ -112,11 +112,9 @@ public class APIPanel {
 							+ r.getUser() + "'," + "'" + r.getTimestamp()
 							+ "'," + "'" + r.getSize() + "'," + "'"
 							+ r.isMinorchange() + "'";
-					try {
-						SQLPanel.con.setInsertInto(values, "revision").close();
-					} catch (SQLException e1) {
-						e1.printStackTrace();
-					}
+
+					SQLPanel.con.setInsertInto(values, "revision");
+
 					// SQLPanel.con.mysql_close();
 				}
 
