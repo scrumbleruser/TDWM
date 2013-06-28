@@ -3,64 +3,54 @@ package View;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 
-import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
-import Vergleiche.*;
+import Vergleiche.Article;
+import Vergleiche.MainAnalyze;
+import Vergleiche.TypeOfChange;
+import Vergleiche.User;
 
 import net.miginfocom.swing.MigLayout;
-
+/**
+ * Representation of the necessary GUI elements to show the results of the analyzation process.
+ * @author Shimal
+ *
+ */
 public class ComparisonPanel {
 
-	// Main- and Subcontainer
-	private JPanel panel = new JPanel();;
-	private JPanel userAnalyzeContainer = new JPanel(new MigLayout());
-	private JPanel loginInfoContainer = new JPanel(new MigLayout());
-	private JPanel preferencesContainer = new JPanel(new MigLayout());
-	private JPanel resultsContainer = new JPanel(new MigLayout());
+	private JPanel panel = new JPanel();
+	
+	// Container 1
+	private JPanel container1 = new JPanel(new MigLayout());
+	private JComboBox<String> c1ArticlesBox1 = new JComboBox<String>();
+	private JTextArea c1ResultField1 = new JTextArea();
+	
+	// Container 2
+	private JPanel container2 = new JPanel(new MigLayout());
+	private JComboBox<String> c2UserField1 = new JComboBox<String>();
+	private JTextArea c2ResultField1 = new JTextArea();
+	private JTextArea c2ResultField2 = new JTextArea();
 
-	// Components
-	private JTextArea resultUser1 = new JTextArea();
-	private JTextArea resultUser2 = new JTextArea();
-	private JTextArea resultUser3 = new JTextArea();
-	private JTextArea resultField = new JTextArea();
-	private JScrollPane jScrollPane = new JScrollPane(resultField);
-
-	private JComboBox<String> userBoxcb = new JComboBox<String>();
-	private JComboBox<String> articleBoxcb = new JComboBox<String>();
-	private JComboBox<String> selectStatcb = new JComboBox<String>();
-	private JComboBox<String> userField1 = new JComboBox<String>();
-	private JComboBox<String> userField2 = new JComboBox<String>();
-	private JComboBox<String> userField3 = new JComboBox<String>();
-	private JComboBox<String> userField = new JComboBox<String>();
-	private JComboBox<String> articlesBox = new JComboBox<String>();
-	private JComboBox<String> categoryField = new JComboBox<String>();
-
-	// Buttons
-	private JButton analyzestartBt = new JButton("Start");
-	private JButton delcontentBt = new JButton("leeren");
-	private JButton userCompareBt = new JButton("Vergleichen");
-	private JButton categoryCompareBt = new JButton("Vergleichen");
-
-	private final ArrayList<Article> articles = new ArrayList<Article>();
-	protected Object getAnalyzeField;
-	// private DB db = new DB();
-	// private boolean laden = true;
-	private ArrayList<String> list = new ArrayList<String>();
+	// Container 3
+	private JPanel container3 = new JPanel(new MigLayout());
+	private JComboBox<String> c3CategoryField1 = new JComboBox<String>();
+	private JTextArea c3ResultField1 = new JTextArea();
+	private JComboBox<String> c3TypeOfChangesField = new JComboBox<String>();
+	private JTextArea c3ResultField2 = new JTextArea();
+	
+	private MainAnalyze test = new MainAnalyze();
 
 	/**
 	 * Create the application.
 	 * 
 	 * @throws IOException
 	 */
-	public ComparisonPanel() throws IOException {
+	public ComparisonPanel() {
 		init();
 	}
 
@@ -69,356 +59,204 @@ public class ComparisonPanel {
 	 * 
 	 * @throws IOException
 	 */
-	private void init() throws IOException {
-		// ArrayList<TempArticle> articlesInDB = db.getArticlesInDB();
-		// final ArrayList<Article> articles = new ArrayList<Article>();
-		//
-		// for (int i = 0; i < articlesInDB.size(); i++) {
-		// Category cat = new Category(articlesInDB.get(i).getCategory());
-		// ArrayList<Revision> revisions = new ArrayList<Revision>();
-		// // For efficiency we reduce the size of revisions
-		// for (int j = 0; j < (articlesInDB.get(i).getRevisions().size() / 50);
-		// j++) {
-		// User user = new User(articlesInDB.get(i).getRevisions().get(j)
-		// .getAuthor());
-		// File file = new File("res/"
-		// + articlesInDB.get(i).getTitle().replaceAll(" ", "")
-		// + "_Revision_"
-		// + articlesInDB.get(i).getRevisions().get(j).getID()
-		// .replaceAll(" ", "") + ".txt");
-		// revisions.add(new Revision(user, file));
-		// // System.out.println("User ist:" + user +
-		// // "\n und Artikel ist: " + file);
-		// }
-		// articles.add(new Article(articlesInDB.get(i).getTitle(), cat,
-		// revisions));
-		// }
+	private void init() {
 
 		// Maincontainer
 		panel.setLayout(new MigLayout("", "[]", "[]"));
 		panel.setOpaque(false);
 
 		// Subcontainers
-		userAnalyzeContainer.setPreferredSize(new Dimension(600,
-				userAnalyzeContainer.getHeight()));
-		loginInfoContainer.setPreferredSize(new Dimension(600,
-				loginInfoContainer.getHeight()));
-		preferencesContainer.setPreferredSize(new Dimension(600,
-				preferencesContainer.getHeight()));
-		resultsContainer.setPreferredSize(new Dimension(600, 300));
-
-		// User result fields
-		userField1.setPreferredSize(new Dimension(150, userField1.getHeight()));
-
-		resultUser1.setColumns(20);
-		resultUser1.setRows(20);
-		resultUser1.setLineWrap(true);
-		resultUser1.setWrapStyleWord(true);
-
-		resultUser2.setColumns(20);
-		resultUser2.setRows(20);
-		resultUser2.setLineWrap(true);
-		resultUser2.setWrapStyleWord(true);
-
-		resultUser3.setColumns(20);
-		resultUser3.setRows(20);
-		resultUser3.setLineWrap(true);
-		resultUser3.setWrapStyleWord(true);
-
-		for (int i = 0; i < articles.size(); i++) {
-			String article = articles.get(i).getTitle();
-			articlesBox.setSelectedItem(null);
-			articlesBox.addItem(article);
-		}
-
-		userFieldal();
-
-		articlesBox.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				try {
-					int artID = articlesBox.getSelectedIndex();
-					for (int i = 0; i < articles.get(artID).getRevisions()
-							.size(); i++) {
-						String aa = articles.get(artID).getRevisions().get(i)
-								.getAuthor().getName();
-						userField1.addItem(aa);
-					}
-					changesByUser(articlesBox.getSelectedIndex());
-				} catch (Exception ex) {
-					resultField.setText("An " + articlesBox.getSelectedItem()
-							+ " wurden keine Änderungen durchgeführt!");
-				}
-
-			}
-		});
-
-		// changesOnArticleByUser(articlesBox.getSelectedIndex(),
-		// userField3.getSelectedItem().toString());
+		container1.setPreferredSize(new Dimension(600,200));
+		container2.setPreferredSize(new Dimension(600,300));
+		container3.setPreferredSize(new Dimension(600,400));
 
 		// Preferences
-		userField2.setPreferredSize(new Dimension(150, userField2.getHeight()));
-		categoryField.setPreferredSize(new Dimension(355, categoryField
-				.getHeight()));
-
+		c1ArticlesBox1.setPreferredSize(new Dimension(150, c1ArticlesBox1.getHeight()));	
+		c2UserField1.setPreferredSize(new Dimension(150, c2UserField1.getHeight()));	
+		c3CategoryField1.setPreferredSize(new Dimension(150, c3CategoryField1.getHeight()));	
+		c3TypeOfChangesField.setPreferredSize(new Dimension(150, c3TypeOfChangesField.getHeight()));	
+		
 		// Results
-		jScrollPane
-				.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
-		jScrollPane.setPreferredSize(new Dimension(500, 500));
-		resultField.setLineWrap(true);
-		resultField.setAutoscrolls(true);
-		resultField.setWrapStyleWord(true);
+		c1ResultField1.setPreferredSize(new Dimension(600, 300));
+		c1ResultField1.setLineWrap(true);
+		c1ResultField1.setWrapStyleWord(true);
+		
+		c2ResultField1.setPreferredSize(new Dimension(600, 300));
+		c2ResultField1.setLineWrap(true);
+		c2ResultField1.setWrapStyleWord(true);
+		c2ResultField2.setPreferredSize(new Dimension(600, 300));
+		c2ResultField2.setLineWrap(true);
+		c2ResultField2.setWrapStyleWord(true);
+		
+		c3ResultField1.setPreferredSize(new Dimension(600, 300));
+		c3ResultField1.setLineWrap(true);
+		c3ResultField1.setWrapStyleWord(true);
+		c3ResultField2.setPreferredSize(new Dimension(600, 300));
+		c3ResultField2.setLineWrap(true);
+		c3ResultField2.setWrapStyleWord(true);
 
-		// Add components to the Subcontainers
-		// User Analysen sind hier definiert
-		userAnalyzeContainer.add(new JLabel(
-				"<html><b><H3>User Analysen: </h3></html>"), "span");
-		userAnalyzeContainer.add(new JLabel(
-				"<html><b>User - Artikel - Analysen </html>"), "span");
-		userAnalyzeContainer.add(userBoxcb, "span 2");
-		userAnalyzeContainer.add(articleBoxcb, "span 2");
-		userAnalyzeContainer.add(selectStatcb, "wrap");
-		userAnalyzeContainer.add(analyzestartBt, "span 2");
-		userAnalyzeContainer.add(delcontentBt, "wrap");
-
-		loginInfoContainer.add(
-				new JLabel("<html><b>User verlgeichen: </html>"), "span");
-		loginInfoContainer.add(new JLabel("Artikel: "), "gapright 64");
-		loginInfoContainer.add(articlesBox, "wrap");
-		loginInfoContainer.add(new JLabel("Autoren: "), "gapright 64");
-		loginInfoContainer.add(new JLabel("Autor 1: "));
-		loginInfoContainer.add(userField1);
-		loginInfoContainer.add(new JLabel("Autor 2: "));
-		loginInfoContainer.add(userField2);
-		loginInfoContainer.add(userCompareBt, "wrap");
-		loginInfoContainer.add(resultUser1, "span 3");
-		loginInfoContainer.add(resultUser2, "span");
-		loginInfoContainer.add(userField3, "wrap");
-		loginInfoContainer.add(resultUser3);
-
-		preferencesContainer.add(new JLabel(
-				"<html><b>Kategorien vergleichen: </html>>"), "wrap");
-
-		preferencesContainer.add(new JLabel("Kategorie: "), "gapright 107");
-		preferencesContainer.add(categoryField);
-		preferencesContainer.add(categoryCompareBt, "wrap");
-
-		resultsContainer.add(new JLabel("<html><b>Ergebnis: </html>"), "wrap");
-		resultsContainer.add(jScrollPane, "span");
-
-		// Add Subcontainers to the Maincontainer
-		panel.add(userAnalyzeContainer, "span");
-		panel.add(loginInfoContainer, "span");
-		panel.add(preferencesContainer, "span");
-		panel.add(resultsContainer, "span");
-
-		analyzestartBt.addActionListener(analyzeal);
-		delcontentBt.addActionListener(delcontental);
-		setcbDefaultValues();
-
-	}
-
-	public void loadDBandCreateFiles() {
-		// try {
-		// ArrayList<TempArticle> articlesInDB = db.getArticlesInDB();
-		// final ArrayList<Article> articles = new ArrayList<Article>();
-		//
-		// for (int i = 0; i < articlesInDB.size(); i++) {
-		// Category cat = new Category(articlesInDB.get(i).getCategory());
-		// ArrayList<Revision> revisions = new ArrayList<Revision>();
-		// // For efficiency we reduce the size of revisions
-		// for (int j = 0; j < (articlesInDB.get(i).getRevisions().size() / 50);
-		// j++) {
-		// User user = new User(articlesInDB.get(i).getRevisions()
-		// .get(j).getAuthor());
-		// File file = new File("res/"
-		// + articlesInDB.get(i).getTitle()
-		// .replaceAll(" ", "")
-		// + "_Revision_"
-		// + articlesInDB.get(i).getRevisions().get(j).getID()
-		// .replaceAll(" ", "") + ".txt");
-		// revisions.add(new Revision(user, file));
-		// // System.out.println("User ist:" + user +
-		// // "\n und Artikel ist: " + file);
-		// }
-		// articles.add(new Article(articlesInDB.get(i).getTitle(), cat,
-		// revisions));
-		// }
-		// } catch (Exception e) {
-		// // TODO Auto-generated catch block
-		// e.printStackTrace();
-		// }
-	}
-
-	// die vordefinierte User und Analysen sind hier enthalten
-	public void setcbDefaultValues() {
-		String[] user = new String[] { "AHZ", "Aka", "APPER", "Belsazar",
-				"Kaisersoft" };
-		for (String username : user) {
-			userBoxcb.addItem(username);
-		}
-		userBoxcb.setSelectedItem("Lear 21");
-
-		String[] analysen = new String[] { "Analyse1", "Analyse2", "Analyse3" };
-		for (String sql : analysen) {
-			selectStatcb.addItem(sql);
-		}
-		selectStatcb.setSelectedItem("Analyse1");
-
-		String[] artikel = new String[] { "Berlin-Prenzlauer Berg",
-				"Bundestagswahlkreis Kreuznach", "Christian_Lindner",
-				"Datenschutz", "Deutsche Rentenversicherung Saarland",
-				"Deutschland", "Doubrava u Lipové", "Erfrischungsgetränk",
-				"Eugen Schlachter", "Hacker", "Homöopathie",
-				"Interpretationen der Quantenmechanik", "Oudon",
-				"Physikalisches System", "Prism", "Quantenmaschine",
-				"U2 (Band)" };
-
-		for (String art : artikel) {
-			articleBoxcb.addItem(art);
-		}
-		articleBoxcb.setSelectedItem("Berlin-Prenzlauer Berg");
-	}
-
-	// Funktionalitäten
-	public void artBoxal() {
-		articlesBox.addActionListener(new ActionListener() {
+		prepareGUI();
+		
+		// ActionListeners
+		this.c1ArticlesBox1.addActionListener(new ActionListener() {	
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				try {
-					int artID = articlesBox.getSelectedIndex();
-					System.out.println("ArtID: " + artID);
-					for (int i = 0; i < articles.get(artID).getRevisions()
-							.size(); i++) {
-						String aa = articles.get(artID).getRevisions().get(i)
-								.getAuthor().getName();
-						userField1.addItem(aa);
-					}
-					changesByUser(articlesBox.getSelectedIndex());
-				} catch (Exception ex) {
-					resultField.setText("An " + articlesBox.getSelectedItem()
-							+ " wurden keine Änderungen durchgeführt!");
-				}
-
+				typeOfChangesOnArticle();
 			}
 		});
-	}
-
-	public void userFieldal() {
-		userField1.addActionListener(new ActionListener() {
+		
+		this.c2UserField1.addActionListener(new ActionListener() {
+			@Override
 			public void actionPerformed(ActionEvent e) {
-				try {
-					final AnalyzeArticle analyze = new AnalyzeArticle(articles);
-					int artID = articlesBox.getSelectedIndex();
-					String user = userField1.getSelectedItem().toString();
-					for (int j = 0; j < articles.get(artID).getRevisions()
-							.size(); j++) {
-						resultUser3.setText(analyze.getArticlesOfOneUser(user)
-								.get(j).getTitle());
-					}
-
-				} catch (Exception io) {
-
-				}
-
+				articleOfUser(c2UserField1.getSelectedItem().toString());
 			}
 		});
-	}
-
-	// Das SQL-Ergebnis wird hier formatiert, indem die ersten beiden Zeilen
-	// entfernt werden und nur der Rest zurück geliefert wird.
-	private String formatContent(String content) {
-		String[] line = content.split("\n");
-		String formatcontent = "";
-		for (int i = 2; i < line.length; i++) {
-			// System.out.println(line[i]);
-			formatcontent += line[i];
-			formatcontent += "\n";
-		}
-		// formatcontent += "\n";
-		return formatcontent;
-	}
-
-	private ArrayList<String> getArticle(String user) {
-		String artikeln = "";
-		String sql = "Select Artikel from revision where User='" + user
-				+ "'group by Artikel";
-		artikeln = SQLPanel.con.getSelectStatement(sql);
-		String[] line = artikeln.split("\n");
-		list.removeAll(list);
-		for (int i = 2; i < line.length; i++) {
-			line[i] = line[i].trim();
-			list.add(line[i]);
-		}
-		return list;
-	}
-
-	private String getCategories(String artikelname) {
-		String kategorien = "";
-		String sql = "Select Kategorie from kategorie where Artikel='"
-				+ artikelname + "'";
-		kategorien = SQLPanel.con.getSelectStatement(sql);
-		kategorien = formatContent(kategorien);
-		return kategorien;
-	}
-
-	// ActionListener für die User-Analysen und delete Textbox
-	private ActionListener analyzeal = new ActionListener() {
-		public void actionPerformed(ActionEvent e) {
-			String user = "" + userBoxcb.getSelectedItem();
-			int analysenr = selectStatcb.getSelectedIndex();
-			String artikel = "" + articleBoxcb.getSelectedItem();
-			ArrayList<String> listArticle = new ArrayList<String>();
-			listArticle.remove(listArticle);
-			switch (analysenr) {
-			case 0: // Article
-				String article_content = "";
-				listArticle = getArticle(user);
-				for (String lsart : listArticle) {
-					article_content += lsart;
-					article_content += "\n";
-				}
-				String artInfo = "Artikel des Users: " + user + "\n";
-				resultField.setText(resultField.getText() + artInfo
-						+ article_content);
-				break;
-			case 1: // Categories
-				listArticle = getArticle(user);
-				String cats = "";
-				for (int i = 0; i < listArticle.size(); i++) {
-					cats += getCategories(listArticle.get(i).toString());
-				}
-				String catInfo = "Kategorien zu Artikeln vom User: " + user
-						+ "\n";
-				resultField.setText(resultField.getText() + catInfo + cats);
-			case 2: // Minor Changes
-				String sql3 = "Select klAenderung from revision where Artikel='"
-						+ artikel + "'" + "and User='" + user + "'";
-				String changes_content = SQLPanel.con.getSelectStatement(sql3);
-				changes_content = formatContent(changes_content);
-				String changesInfo = "\nUser: " + user
-						+ " hat bei den Artikel: " + artikel
-						+ " kleine Änderungen verfasst?" + "\n";
-				resultField.setText(resultField.getText() + changesInfo
-						+ changes_content);
-				break;
-
-			default:
-				resultField.setText("Analyse nicht gefunden");
-
+		
+		this.c3CategoryField1.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				if((c3CategoryField1.getSelectedItem() != null) &&
+						(c3CategoryField1.getSelectedItem() != null))
+				similarUsersByCategory(c3CategoryField1.getSelectedItem().toString());
 			}
-		}
-	};
-
-	private ActionListener delcontental = new ActionListener() {
-		public void actionPerformed(ActionEvent e) {
-			resultField.setText("");
-
-		}
-	};
-
+		});
+		
+		c3TypeOfChangesField.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				similarUsersByTypeOfChange(c3TypeOfChangesField.getSelectedItem().toString());
+				
+			}
+		});
+		
+		// Add components to the Subcontainers
+		container1.add(
+				new JLabel("<html>1. Welche Arten von Änderungen gibt es?<br>" +
+						"2. Welche Muster aus Änderungen gibt es?<br></html>"), "span");
+		container1.add(new JLabel("<html><b>Artikel: </html>"), "gapright 64");
+		container1.add(c1ArticlesBox1, "wrap");
+		container1.add(c1ResultField1, "span");
+		container2.add(
+				new JLabel("<html>1. Welche Artikel ändert eine Person<br>" +
+						"2. Wie gehören diese zusammen?<br>" +
+						"3. Welche Arten von Änderungen führt sie durch?<br>" +
+						"4. Kann man Typen von Nutzern erkennen?<br></html>"), "span");
+		container2.add(new JLabel("<html><b>Autor: </html>"), "gapright 64");
+		container2.add(c2UserField1, "wrap");
+		container2.add(new JLabel("<html><b>Ergebnis: </html>"), "gapright 64");
+		container2.add(c2ResultField1, "wrap");
+		container2.add(new JLabel("<html><b>Änderungsart<br>(Autortyp): </html>"), "gapright 64");
+		container2.add(c2ResultField2, "wrap");
+		container3.add(
+				new JLabel("<html>Welche Nutzer sind sich ähnlich?<br></html>"), "span");
+		container3.add(new JLabel("<html><b>Kategorie: </html>"), "gapright 64");
+		container3.add(c3CategoryField1, "wrap");
+		container3.add(new JLabel("<html><b>Ergebnis: </html>"), "gapright 64");
+		container3.add(c3ResultField1, "span");
+		container3.add(new JLabel("<html><b>Änderungsart: </html>"));
+		container3.add(c3TypeOfChangesField, "wrap");
+		container3.add(new JLabel("<html><b>Ergebnis: </html>"), "gapright 64");
+		container3.add(c3ResultField2, "span");
+		
+		// Add Subcontainers to the Maincontainer
+		panel.add(container1, "span");
+		panel.add(container2, "span");
+		panel.add(container3, "span");
+		
+	}
+	
 	/**
-	 * Return the panel.
+	 * Preparing the fields of the GUI through adding the specific data
+	 */
+	private void prepareGUI() {
+		ArrayList<Article> articles = test.getAllArticles();
+		for(int i=0; i<articles.size(); i++)
+			this.c1ArticlesBox1.addItem(articles.get(i).getTitle());
+			
+		ArrayList<User> authors = test.getAllAuthorsOfAllArtciles();
+		for(int i=0; i<authors.size(); i++)
+			this.c2UserField1.addItem(authors.get(i).getName());
+			
+		for(int i=0; i<articles.size(); i++)
+			this.c3CategoryField1.addItem(articles.get(i).getCategory());
+			
+		ArrayList<TypeOfChange> change = test.getAllChangesOfAllArticles();
+		for(int i=0; i<change.size(); i++)
+			if(change.get(i) != null)
+				this.c3TypeOfChangesField.addItem(change.get(i).name());
+		
+		this.c1ArticlesBox1.setSelectedItem(null);
+		this.c2UserField1.setSelectedItem(null);
+		this.c3CategoryField1.setSelectedItem(null);
+		this.c3TypeOfChangesField.setSelectedItem(null);
+	}
+	
+	/**
+	 * Showing the type of changes on an specific article
+	 */
+	private void typeOfChangesOnArticle() {
+		try {
+			ArrayList<TypeOfChange> changes = test.getAllChangesOfArticle(getC1ArticlesBox1().getSelectedItem().toString());
+			this.c1ResultField1.append(getC1ArticlesBox1().getSelectedItem().toString() + "\n");
+			for(int i=0; i<changes.size(); i++)
+				if(changes.get(i) != null)
+					this.c1ResultField1.append("-> " + changes.get(i).toString() + "\n");
+		} catch(Exception ex) {
+			System.err.println("Fehler!!!");
+		}
+	}
+	
+	/**
+	 * Get articles of an author
+	 * @param user
+	 */
+	private void articleOfUser(String user) {
+		try {
+			ArrayList<Article> article = test.getAllChangesOfArticleByUser(user);
+			this.c2ResultField1.append("\n" + user + "\n");
+			for(int i=0; i<article.size(); i++) {
+				this.c2ResultField1.append("-> " + article.get(i).getTitle() + "\n");
+				this.c2ResultField2.append(article.get(i).getTitle() + "\n");
+				for(int j=0; j<article.get(i).getRevisions().size(); j++) 
+					if(article.get(i).getRevisions().get(j).getAuthor().getName().equals(user))
+						this.c2ResultField2.append("-> " + article.get(i).getRevisions().get(j).getTypeOfChange() + "\n\n");
+				
+			}
+		} catch(Exception ex) {
+			System.err.println("Fehler!!!");
+		}
+	}
+	
+	/**
+	 * Get similar users by category
+	 * @param category
+	 */
+	private void similarUsersByCategory(String category) {
+		ArrayList<Article> articles = test.getAllArticles();
+		
+		this.c3ResultField1.append(category + "\n");
+		for(int i=0; i<articles.size(); i++) 
+			for(int j=0; j<articles.get(i).getRevisions().size(); j++) 
+				if(articles.get(i).getCategory().equals(category))	
+					this.c3ResultField1.append("->" + articles.get(i).getRevisions().get(j).getAuthor().getName() + "\n");
+	}
+	
+	/**
+	 * Get similar users by type of change
+	 * @param category
+	 */
+	private void similarUsersByTypeOfChange(String typeOfChange) {
+		ArrayList<Article> articles = test.getAllArticles();
+		this.c3ResultField2.append(typeOfChange + "\n");
+		for(int i=0; i<articles.size(); i++) 
+			for(int j=0; j<articles.get(i).getRevisions().size(); j++) 
+				if(articles.get(i).getRevisions().get(j).getTypeOfChange() != null)
+					if(articles.get(i).getRevisions().get(j).getTypeOfChange().toString().equals(typeOfChange))	
+						this.c3ResultField2.append("->" + articles.get(i).getRevisions().get(j).getAuthor().getName() + "\n");
+	}
+	
+	/**
+	 * Returns the main panel
 	 */
 	public JPanel getComparisonPanel() {
 		return this.panel;
@@ -428,217 +266,43 @@ public class ComparisonPanel {
 	public JPanel getPanel() {
 		return panel;
 	}
-
-	public void setPanel(JPanel panel) {
-		this.panel = panel;
+	
+	public JComboBox<String> getC1ArticlesBox1() {
+		return c1ArticlesBox1;
 	}
 
-	public JPanel getLoginInfoContainer() {
-		return loginInfoContainer;
+	public JTextArea getC1ResultField1() {
+		return c1ResultField1;
 	}
 
-	public void setLoginInfoContainer(JPanel loginInfoContainer) {
-		this.loginInfoContainer = loginInfoContainer;
+
+	public JComboBox<String> getC2UserField1() {
+		return c2UserField1;
 	}
 
-	public JPanel getPreferencesContainer() {
-		return preferencesContainer;
+	public JTextArea getC2ResultField1() {
+		return c2ResultField1;
 	}
 
-	public void setPreferencesContainer(JPanel preferencesContainer) {
-		this.preferencesContainer = preferencesContainer;
+	public JTextArea getC2ResultField2() {
+		return c2ResultField2;
+	}
+	
+	public JComboBox<String> getC3CategoryField() {
+		return c3CategoryField1;
 	}
 
-	public JPanel getResultsContainer() {
-		return resultsContainer;
+	public JTextArea getC3ResultField1() {
+		return c3ResultField1;
 	}
 
-	public void setResultsContainer(JPanel resultsContainer) {
-		this.resultsContainer = resultsContainer;
+	public JTextArea getC3ResultField2() {
+		return c3ResultField2;
 	}
 
-	public JComboBox<String> getUserField1() {
-		return userField1;
+	public JComboBox<String> getC3TypeOfChangesField() {
+		return c3TypeOfChangesField;
 	}
 
-	public void setUserField1(JComboBox<String> userField1) {
-		this.userField1 = userField1;
-	}
-
-	public JComboBox<String> getUserField2() {
-		return userField2;
-	}
-
-	public void setUserField2(JComboBox<String> userField2) {
-		this.userField2 = userField2;
-	}
-
-	public JTextArea getResultUser1() {
-		return resultUser1;
-	}
-
-	public void setResultUser1(JTextArea resultUser1) {
-		this.resultUser1 = resultUser1;
-	}
-
-	public JTextArea getResultUser2() {
-		return resultUser2;
-	}
-
-	public void setResultUser2(JTextArea resultUser2) {
-		this.resultUser2 = resultUser2;
-	}
-
-	public JComboBox<String> getUserField() {
-		return userField;
-	}
-
-	public void setUserField(JComboBox<String> userField) {
-		this.userField = userField;
-	}
-
-	public JComboBox<String> getArticlesBox() {
-		return articlesBox;
-	}
-
-	public void setArticlesBox(JComboBox<String> articlesBox) {
-		this.articlesBox = articlesBox;
-	}
-
-	public JComboBox<String> getCategoryField() {
-		return categoryField;
-	}
-
-	public void setCategoryField(JComboBox<String> categoryField) {
-		this.categoryField = categoryField;
-	}
-
-	public JTextArea getResultField() {
-		return resultField;
-	}
-
-	public void setResultField(JTextArea resultField) {
-		this.resultField = resultField;
-	}
-
-	public JButton getUserCompareBt() {
-		return userCompareBt;
-	}
-
-	public void setUserCompareBt(JButton userCompareBt) {
-		this.userCompareBt = userCompareBt;
-	}
-
-	public JButton getCategoryCompareBt() {
-		return categoryCompareBt;
-	}
-
-	public void setCategoryCompareBt(JButton categoryCompareBt) {
-		this.categoryCompareBt = categoryCompareBt;
-	}
-
-	private void changesByUser(int selectedArticle) throws IOException {
-		final AnalyzeRevisionsOf change = new AnalyzeRevisionsOf(
-				(Article) articles.get(selectedArticle));
-		change.execute();
-		for (int i = 0; i < articles.size(); i++) {
-			for (int j = 0; j < articles.get(i).getRevisions().size(); i++) {
-
-				System.out.println();
-				resultField.setText(articles.get(i).getRevisions().get(j)
-						.getAuthor().getName());
-				// userField1.addItem(articles.get(i).getRevisions().get(j).getAuthor().getName());
-				// userField2.addItem(articles.get(i).getRevisions().get(j).getAuthor().getName());
-				// userField3.addItem(articles.get(i).getRevisions().get(j).getAuthor().getName());
-			}
-			userField1.addActionListener(new ActionListener() {
-
-				@Override
-				public void actionPerformed(ActionEvent e) {
-					try {
-						for (int j = 0; j < change.getAllTypeOfChangesOf(
-								(String) userField1.getSelectedItem()).size(); j++) {
-							resultUser1.setText(change
-									.getAllTypeOfChangesOf(
-											userField1.getSelectedItem()
-													.toString()).get(j)
-									.toString());
-						}
-					} catch (Exception ex) {
-						resultUser1.setText(userField1.getSelectedItem()
-								.toString()
-								+ " hat keine Änderungen durchgeführt!");
-					}
-				}
-			});
-			userField2.addActionListener(new ActionListener() {
-				@Override
-				public void actionPerformed(ActionEvent e) {
-					try {
-						for (int j = 0; j < change.getAllTypeOfChangesOf(
-								(String) userField2.getSelectedItem()).size(); j++) {
-							resultUser2.setText(change
-									.getAllTypeOfChangesOf(
-											userField2.getSelectedItem()
-													.toString()).get(j)
-									.toString());
-						}
-					} catch (Exception ex) {
-						resultUser2.setText(userField2.getSelectedItem()
-								.toString()
-								+ " hat keine Änderungen durchgeführt!");
-					}
-				}
-			});
-		}
-	}
-
-	private void changesOnArticleByUser(final int selectedArticle,
-			final String user) throws IOException {
-		final AnalyzeArticle aa = new AnalyzeArticle(articles);
-		for (int i = 0; i < aa.getUserTypOfChangesForOneArticle(
-				articles.get(selectedArticle), user).size(); i++) {
-			userField3.addActionListener(new ActionListener() {
-
-				@Override
-				public void actionPerformed(ActionEvent e) {
-					try {
-						for (int j = 0; j < articles.get(selectedArticle)
-								.getRevisions().size(); j++) {
-							resultUser3.setText(aa.getArticlesOfOneUser(user)
-									.get(j).getTitle());
-						}
-					} catch (Exception ex) {
-						resultUser3.setText(userField3.getSelectedItem()
-								.toString()
-								+ " hat keine Änderungen durchgeführt!");
-					}
-				}
-			});
-		}
-	}
-
-	public JButton getDelcontentBt() {
-		return delcontentBt;
-	}
-
-	public void setDelcontentBt(JButton delcontentBt) {
-		this.delcontentBt = delcontentBt;
-	}
-
-	public JComboBox<String> getArticleBoxcb() {
-		return articleBoxcb;
-	}
-
-	public void setArticleBoxcb(JComboBox<String> articleBoxcb) {
-		this.articleBoxcb = articleBoxcb;
-	}
-
-	public JScrollPane getjScrollPane() {
-		return jScrollPane;
-	}
-
-	public void setjScrollPane(JScrollPane jScrollPane) {
-		this.jScrollPane = jScrollPane;
-	}
+	
 }

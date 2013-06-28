@@ -1,18 +1,33 @@
 package Vergleiche;
 
 import java.util.ArrayList;
-
+/**
+ * Defines an article. During initialization the following information are needed: <br>
+ * - Title of the article <br>
+ * - Category of the article <br>
+ * - A list of revisions that belongs to the article
+ * @author Shimal
+ *
+ */
 public class Article {
 
 	String title;
-//	ArrayList<User> authors;
-	Category category;
+	ArrayList<User> authors;
+	String category;
 	ArrayList<Revision> revisions;
 	ArrayList<TypeOfChange> typeOfChange;
-	
-	public Article(String title, Category category, ArrayList<Revision> revisions) {
+	/**
+	 * Defines an article. During initialization the following information are needed: <br>
+	 * - Title of the article <br>
+	 * - Category of the article <br>
+	 * - A list of revisions that belongs to the article
+	 * @param title
+	 * @param category
+	 * @param revisions
+	 */
+	public Article(String title, String category, ArrayList<Revision> revisions) {
 		this.title = title;
-//		this.authors = authors;
+		this.authors = new ArrayList<User>();
 		this.category = category;
 		this.revisions = revisions;
 	}
@@ -21,11 +36,15 @@ public class Article {
 		return this.title;
 	}
 	
-//	public ArrayList<User> getAuthor() {
-//		return this.authors;
-//	}
+	public ArrayList<User> getAuthor() {
+		return this.authors;
+	}
 	
-	public Category getCategory() {
+	public void setAuthor(ArrayList<User> authors) {
+		this.authors = authors;
+	}
+	
+	public String getCategory() {
 		return this.category;
 	}
 	

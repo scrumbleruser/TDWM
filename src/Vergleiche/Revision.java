@@ -1,8 +1,14 @@
-package Vergleiche;
+	package Vergleiche;
 
 import java.io.File;
 import java.util.ArrayList;
-
+/**
+ * Defines a revision. During initialization the following information are needed: <br>
+ * - User (the author of the revision) <br>
+ * - A file with content of the revision 
+ * @author Shimal
+ *
+ */
 public class Revision {
 
 	private String id;
@@ -25,9 +31,6 @@ public class Revision {
 		this.chars = new ArrayList<String>();
 		this.maxLines = 0;
 		this.maxWords = 0;
-	}
-	
-	public Revision() {
 	}
 	
 	public String getID() {

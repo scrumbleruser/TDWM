@@ -7,8 +7,11 @@ import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
 import java.awt.BorderLayout;
 import java.io.IOException;
-
-
+/**
+ * The main class to start the whole program.
+ * @author Shimal
+ *
+ */
 public class View {
 
 	private JFrame frame;
@@ -51,7 +54,6 @@ public class View {
 		// Tabs
 		JTabbedPane tabbedPane = new JTabbedPane(JTabbedPane.TOP);
 		tabbedPane.addTab("Wiki API", new JScrollPane(new APIPanel().getAPIPanel()));
-//		tabbedPane.setMnemonicAt(0, KeyEvent.VK_1);
 		tabbedPane.addTab("Datenbank", new JScrollPane(new SQLPanel().getSQLPanel()));
 		tabbedPane.addTab("Vergleichen", new JScrollPane(new ComparisonPanel().getComparisonPanel()));
 		tabbedPane.addTab("Expertensuche", new JScrollPane(new ExpertenPanel().getExpertenPanel()));

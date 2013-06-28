@@ -1,32 +1,31 @@
 package Vergleiche;
-
+/**
+ * Defines the type of changes
+ * @author Shimal
+ */
 public enum TypeOfChange {
 	/**
-	 * Neues Wissen
+	 * Previous revision get corrected through removing lines or words 
 	 */
-	BIG_NEW_KNOWLEDGE,
-	MODERATE_NEW_KNOWLEDGE,
-	SMALL_NEW_KNOWLEDGE,
+	KORREKTUR,
 	/**
-	 * Wissensverbesserung
+	 * The actual revision get reformatted 
 	 */
-	BIG_IMPROVE_KNOWLEDGE,
-	MODERATE_IMPROVE_KNOWLEDGE,
-	SMALL_IMPROVE_KNOWLEDGE,
+	FORMATIERUNG,
 	/**
-	 * Wissenskorrektur. Tritt auf, falls die betroffen Revisions nach Analyse mehr Zeilen hat als die "Basisrevisions"
+	 * The actual revision get improved through adding lines or words 
 	 */
-	CORRECT_KNOWLEDGE,
+	VERBESSERUNG,
 	/**
-	 * GRAMMATIK, RECHTSCHREIBFEHLER
+	 * The actual revision get new knowledge through adding lines or words 
 	 */
-	GRAMMAR,
+	WISSENSPRODUKTION,
 	/**
-	 * Formatierung
+	 * The actual revision get reworked through adding a lot of lines or words 
 	 */
-	FORMAT,
+	UEBERARBEITUNG,
 	/**
-	 * Keine Änderung
+	 * The actual revision and the previous revision do not indicate any changes
 	 */
-	NO_CHANGE
+	KEINE_AENDERUNG
 }

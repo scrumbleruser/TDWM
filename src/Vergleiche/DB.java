@@ -12,7 +12,12 @@ import java.util.ArrayList;
 import API.GetRevision;
 import API.WikiBot;
 import SQL.Mysql_connect;
-
+/**
+ * DB Provides the necessary data to run the analyzation process.
+ * It imports data from the Databank and insert them to files.
+ * @author Shimal
+ *
+ */
 public class DB {
 
 	private ArrayList<TempArticle> articlesInDB = new ArrayList<TempArticle>();
@@ -25,7 +30,11 @@ public class DB {
 	public DB() throws IOException {
 		startDBOperations();
 	}
-
+	
+	/**
+	 * Starts the necessary DB operations to run the analyzation process
+	 * @throws IOException
+	 */
 	private void startDBOperations() throws IOException {
 		
 		// Delete file if it exists
@@ -35,7 +44,7 @@ public class DB {
 				"ArticleTitles");
 
 		// Add articles titles to the article
-		for (int i = 0; i < getDateExtractedFromFile("res/ArticleTitles.txt").size(); i++) {
+		for (int i = 0; i < getDateExtractedFromFile("res/ArticleTitles.txt").size()/2; i++) {
 			String title = getDateExtractedFromFile("res/ArticleTitles.txt").get(i);
 			articlesInDB.add(new TempArticle(title));
 		}
@@ -43,6 +52,7 @@ public class DB {
 		// Get revision IDs of each article from DB
 		for (int i = 0; i < articlesInDB.size(); i++) {
 			String tmp = articlesInDB.get(i).getTitle().replaceAll("  ", "");
+//			tmp.replaceAll(" ", "");
 			// Delete file if it exists
 			deleteFile("RevisionsOf" + tmp);
 			getDataFromDB("Select RevisionID from revision where artikel=\""
@@ -72,6 +82,7 @@ public class DB {
 					getDateExtractedFromFile("res/Categories.txt").get(i));
 		}
 		
+		// Importing the content of the revisions from Wikipedia 
 		for(int i=0; i<articlesInDB.size(); i++) {
 			for(int j=0; j<(articlesInDB.get(i).getRevisions().size()/50); j++) {
 				WikiBot wb = new WikiBot("wissensmanagement", "asdasd");
@@ -134,12 +145,13 @@ public class DB {
 	 * @throws IOException
 	 */
 	private ArrayList<String> readFile(File file) throws IOException {
-		BufferedReader input = new BufferedReader(
-				new FileReader(file.getPath()));
+		@SuppressWarnings("resource")
+		BufferedReader input = new BufferedReader(new FileReader(file.getPath()));
 		String string = input.readLine();
 		ArrayList<String> content = new ArrayList<String>();
 		while ((string != null)) {
-			content.add(string);
+			if (!string.equals(""))
+				content.add(string);
 			string = input.readLine();
 		}
 		return content;
@@ -162,31 +174,9 @@ public class DB {
 		}
 	}
 	
-	public void removeEmptyLinesFromFile(String input, String output) {
-		try {
-			FileReader fr = new FileReader(input); 
-			BufferedReader br = new BufferedReader(fr); 
-			FileWriter fw = new FileWriter(output); 
-			String line;
-
-			while((line = br.readLine()) != null)
-			{ 
-//			    line = line.trim(); // remove leading and trailing whitespace
-			    if (!line.equals("")) // don't write out blank lines
-			    {
-			        fw.write(line, 0, line.length());
-			    }
-			}
-			fr.close();
-			fw.close();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} 
-	}
-	
 	/**
-	 * Imports data from the DB. The methode contains the login data for the server. The user have to define the SQL statement and the filename.
+	 * Imports data from the DB. The methode contains the login data for the server. 
+	 * The user have to define the SQL statement and the filename.
 	 * @param sqlStatement defines the SQL statement
 	 * @param filename the name of the file in which the data have to be saved
 	 */
@@ -200,10 +190,18 @@ public class DB {
 		writeInFileSQLStatement("res/" + filename + ".txt", content);
 	}
 	
+	/**
+	 * Get temporary articles
+	 * @return
+	 */
 	public ArrayList<TempArticle> getArticlesInDB() {
 		return this.articlesInDB;
 	}
 	
+	/**
+	 * Delete files
+	 * @param filename
+	 */
 	private void deleteFile(String filename) {
 		File file = new File("res/" + filename + ".txt"); 
 		if(file.exists())

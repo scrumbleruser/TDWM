@@ -1,60 +1,51 @@
 package Vergleiche;
-
-import java.util.ArrayList;
-
+/**
+ * Defines a User. The constructor needs the follwing information: <br>
+ * - The name of the Author of revision <br>
+ * - The name of the article <br>
+ * - The ID of the revision
+ * @author Shimal
+ */
 public class User {
 
 	String name;
-	String status; // z.B. Experte fuer ...
-	ArrayList<TypeOfChange> typeOfChange;
+	String article;
+	String revision;
+	String typeOfChange;
 
-	public User(String name) {
+	public User(String name, String article, String revision) {
 		this.name = name;
-		this.typeOfChange = new ArrayList<TypeOfChange>();
+		this.article = article;
+		this.revision = revision;
+		this.typeOfChange = null;
 	}
 
 	public String getName() {
 		return this.name;
 	}
 
-	public void setStatus(Status status) {
-		if (status.equals(Status.BEGINNER))
-			this.status = "Beginner";
-		if (status.equals(Status.INTERMEDIATE))
-			this.status = "Fortgeschritten";
-		this.status = "Experte";
+	public String getArticle() {
+		return article;
 	}
 	
-	public String getStatus() {
-		return this.status;
+	// Getter & Setter
+	public void setArticle(String article) {
+		this.article = article;
+	}
+
+	public String getRevision() {
+		return revision;
+	}
+
+	public void setRevision(String revision) {
+		this.revision = revision;
 	}
 	
-	public ArrayList<TypeOfChange> getTypeOfChange() {
+	public String getTypeOfChange() {
 		return this.typeOfChange;
 	}
 	
-	public UserType getUserType() {
-		int correcting = 0;
-		int improving = 0;
-		int newKnowledge = 0;
-		
-		for(int i=0; i<this.typeOfChange.size(); i++) {
-			if(this.typeOfChange.get(i).equals(UserType.KORREKTUR))
-				correcting++;
-			if(this.typeOfChange.get(i).equals(UserType.NEUES_WISSEN))
-				newKnowledge++;
-			if(this.typeOfChange.get(i).equals(UserType.VERBESSERUNG))
-				improving++;
-		}
-		
-		if(correcting > improving && correcting > newKnowledge) {
-			return UserType.KORREKTUR;
-		} else if (improving > correcting && improving > newKnowledge) {
-			return UserType.VERBESSERUNG;
-		} else if(newKnowledge > correcting && newKnowledge > improving) {
-			return UserType.NEUES_WISSEN;
-		} else {
-			return UserType.KEINE_KLASSIFIZIERUNG;
-		}
+	public void setTypeOfChange(TypeOfChange type) {
+		this.typeOfChange = type.toString();
 	}
 }

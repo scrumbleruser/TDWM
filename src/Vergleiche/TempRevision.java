@@ -1,13 +1,16 @@
 package Vergleiche;
 
-import java.io.File;
-import java.util.ArrayList;
-
+/**
+ * A temporary revision class. It is used for importing data from the Databank.
+ * The class is not needed if you do not want to change the process of importing
+ * and inserting data from the Databak to files
+ * @author Shimal
+ */
 public class TempRevision {
 
 	private String author;
 	private String id;
-	
+
 	public TempRevision(String author, String id) {
 		this.author = author;
 		this.id = id;

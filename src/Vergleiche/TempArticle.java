@@ -1,7 +1,12 @@
 package Vergleiche;
 
 import java.util.ArrayList;
-
+/**
+ * A temporary article class. It is used for importing data from the Databank.
+ * The class is not needed if you do not want to change the process of importing
+ * and inserting data from the Databak to files
+ * @author Shimal
+ */
 public class TempArticle {
 	
 	String title;
