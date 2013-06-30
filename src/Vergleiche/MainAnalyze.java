@@ -54,7 +54,6 @@ public class MainAnalyze {
 		}
 
 		for (int m = 0; m < articles.size(); m++) {
-			System.out.println("Articles size: " + articles.size());
 			for (int i = 1; i < articles.get(m).getRevisions().size(); i++) {
 				try {
 					analyze = new AnalyzeRevision(articles.get(m)

@@ -12,11 +12,13 @@ import java.util.ArrayList;
 import API.GetRevision;
 import API.WikiBot;
 import SQL.Mysql_connect;
+
 /**
- * DB Provides the necessary data to run the analyzation process.
- * It imports data from the Databank and insert them to files.
+ * DB Provides the necessary data to run the analyzation process. It imports
+ * data from the Databank and insert them to files.
+ * 
  * @author Shimal
- *
+ * 
  */
 public class DB {
 
@@ -30,13 +32,14 @@ public class DB {
 	public DB() throws IOException {
 		startDBOperations();
 	}
-	
+
 	/**
 	 * Starts the necessary DB operations to run the analyzation process
+	 * 
 	 * @throws IOException
 	 */
 	private void startDBOperations() throws IOException {
-		
+
 		// Delete file if it exists
 		deleteFile("ArticleTitles");
 		// Get Article titles from DB
@@ -44,21 +47,23 @@ public class DB {
 				"ArticleTitles");
 
 		// Add articles titles to the article
-		for (int i = 0; i < getDateExtractedFromFile("res/ArticleTitles.txt").size()/2; i++) {
-			String title = getDateExtractedFromFile("res/ArticleTitles.txt").get(i);
+		for (int i = 0; i < getDateExtractedFromFile("res/ArticleTitles.txt")
+				.size() / 2; i++) {
+			String title = getDateExtractedFromFile("res/ArticleTitles.txt")
+					.get(i);
 			articlesInDB.add(new TempArticle(title));
 		}
-			
+
 		// Get revision IDs of each article from DB
 		for (int i = 0; i < articlesInDB.size(); i++) {
 			String tmp = articlesInDB.get(i).getTitle().replaceAll("  ", "");
-//			tmp.replaceAll(" ", "");
+			// tmp.replaceAll(" ", "");
 			// Delete file if it exists
 			deleteFile("RevisionsOf" + tmp);
 			getDataFromDB("Select RevisionID from revision where artikel=\""
 					+ tmp + "\"", "RevisionsOf" + tmp);
 		}
-		
+
 		// Get users of each article from DB
 		for (int i = 0; i < articlesInDB.size(); i++) {
 			String tmp = articlesInDB.get(i).getTitle().replaceAll("  ", "");
@@ -75,25 +80,29 @@ public class DB {
 					getDateExtractedFromFile("res/RevisionsOf" + tmp + ".txt",
 							"res/UsersOf" + tmp + ".txt"));
 		}
-		
+
 		// Add category to the specific article
 		for (int i = 0; i < articlesInDB.size(); i++) {
 			articlesInDB.get(i).setCategory(
 					getDateExtractedFromFile("res/Categories.txt").get(i));
 		}
-		
-		// Importing the content of the revisions from Wikipedia 
-		for(int i=0; i<articlesInDB.size(); i++) {
-			for(int j=0; j<(articlesInDB.get(i).getRevisions().size()/50); j++) {
+
+		// Importing the content of the revisions from Wikipedia
+		for (int i = 0; i < articlesInDB.size(); i++) {
+			for (int j = 0; j < (articlesInDB.get(i).getRevisions().size() / 50); j++) {
 				WikiBot wb = new WikiBot("wissensmanagement", "asdasd");
-				int revID = Integer.parseInt(articlesInDB.get(i).getRevisions().get(j).getID().replaceAll("  ", ""));
+				int revID = Integer.parseInt(articlesInDB.get(i).getRevisions()
+						.get(j).getID().replaceAll("  ", ""));
 				GetRevision rev = new GetRevision(wb.getWikiBot(), revID);
 				// Delete file if it exists
-				deleteFile(articlesInDB.get(i).getTitle().replaceAll("  ", "") + "_Revision_" + revID);
-				writeInFileSQLStatement("res/" + articlesInDB.get(i).getTitle().replaceAll("  ", "") + "_Revision_" + revID + ".txt", rev.getRevision().getContent());
+				deleteFile(articlesInDB.get(i).getTitle().replaceAll("  ", "")
+						+ "_Revision_" + revID);
+				writeInFileSQLStatement("res/"
+						+ articlesInDB.get(i).getTitle().replaceAll("  ", "")
+						+ "_Revision_" + revID + ".txt", rev.getRevision()
+						.getContent());
 			}
 		}
-		
 	}
 
 	/**
@@ -146,7 +155,8 @@ public class DB {
 	 */
 	private ArrayList<String> readFile(File file) throws IOException {
 		@SuppressWarnings("resource")
-		BufferedReader input = new BufferedReader(new FileReader(file.getPath()));
+		BufferedReader input = new BufferedReader(
+				new FileReader(file.getPath()));
 		String string = input.readLine();
 		ArrayList<String> content = new ArrayList<String>();
 		while ((string != null)) {
@@ -156,11 +166,14 @@ public class DB {
 		}
 		return content;
 	}
-	
+
 	/**
 	 * Writes a string in a file
-	 * @param fn is the name of the file
-	 * @param text is the content. This will be added to the file
+	 * 
+	 * @param fn
+	 *            is the name of the file
+	 * @param text
+	 *            is the content. This will be added to the file
 	 */
 	public void writeInFileSQLStatement(String fn, String text) {
 		File f = new File(fn);
@@ -173,12 +186,15 @@ public class DB {
 			e.printStackTrace();
 		}
 	}
-	
+
 	/**
-	 * Imports data from the DB. The methode contains the login data for the server. 
-	 * The user have to define the SQL statement and the filename.
-	 * @param sqlStatement defines the SQL statement
-	 * @param filename the name of the file in which the data have to be saved
+	 * Imports data from the DB. The methode contains the login data for the
+	 * server. The user have to define the SQL statement and the filename.
+	 * 
+	 * @param sqlStatement
+	 *            defines the SQL statement
+	 * @param filename
+	 *            the name of the file in which the data have to be saved
 	 */
 	private void getDataFromDB(String sqlStatement, String filename) {
 		String user = "y9r106037";
@@ -189,23 +205,25 @@ public class DB {
 		String content = con.getSelectStatement(sqlStatement);
 		writeInFileSQLStatement("res/" + filename + ".txt", content);
 	}
-	
+
 	/**
 	 * Get temporary articles
+	 * 
 	 * @return
 	 */
 	public ArrayList<TempArticle> getArticlesInDB() {
 		return this.articlesInDB;
 	}
-	
+
 	/**
 	 * Delete files
+	 * 
 	 * @param filename
 	 */
 	private void deleteFile(String filename) {
-		File file = new File("res/" + filename + ".txt"); 
-		if(file.exists())
-			file.delete(); 
+		File file = new File("res/" + filename + ".txt");
+		if (file.exists())
+			file.delete();
 	}
 
 }

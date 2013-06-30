@@ -142,10 +142,6 @@ public class AnalyzeRevision {
 					revision2.getUniqueWords())) {
 				revision2.setTypeOfChange(TypeOfChange.WISSENSPRODUKTION);
 				revision2.getAuthor().setTypeOfChange(TypeOfChange.WISSENSPRODUKTION);
-				System.out.println("Line Size " + revision1.getFile().getPath() + ": " + revision1.getLines().size());
-				System.out.println("Uniquewords Size " + revision1.getFile().getPath() + ": " + revision1.getUniqueWords().size());
-				System.out.println("Line Size " + revision2.getFile().getPath() + ": " + revision2.getLines().size());
-				System.out.println("Uniquewords Size " + revision2.getFile().getPath() + ": " + revision2.getUniqueWords().size());
 			} else if (reworkRevision(revision1.getLines(),
 					revision2.getLines(), revision1.getUniqueWords(),
 					revision2.getUniqueWords())) {
