@@ -54,7 +54,7 @@ public class Testmain {
 	   
 	   AllRevisions ar = new AllRevisions(wb.getWikiBot(),"Christian_Lindner");
 	   
-	   GetUserContribs uc = new GetUserContribs(wb.getWikiBot(), "AHZ");
+	   GetUserContribs uc = new GetUserContribs(wb.getWikiBot(), "Belsazar");
 	   
 	   HashSet<String> hs = new HashSet();
 	   

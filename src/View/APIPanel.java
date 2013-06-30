@@ -85,7 +85,7 @@ public class APIPanel {
 					i++;
 				}
 				for (int f = 0; f < category.size(); f++) {
-					values = "'" + cat + "','" + category.get(f).toString()
+					values = "'" + category.get(f).toString() + "','" + cat
 							+ "'";
 					SQLPanel.con.setInsertInto(values, "kategorie");
 
