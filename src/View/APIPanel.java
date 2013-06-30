@@ -74,18 +74,18 @@ public class APIPanel {
 		public void actionPerformed(ActionEvent e) {
 			String cat = "" + categorycb.getSelectedItem();
 			String values = "";
-			ArrayList<String> catarray = new ArrayList<String>();
+			ArrayList<String> category = new ArrayList<String>();
 			if (!cat.equals("")) {
 				wikiBot.setArticle(cat);
 				int i = 0;
-				for (String s : wikiBot.getLinks()) {
+				for (String s : wikiBot.getCategories()) {
 					resultArea.append(s + "\n");
-					catarray.add(s);
+					category.add(s);
 					System.out.println(i + " " + s);
 					i++;
 				}
-				for (int f = 0; f < catarray.size(); f++) {
-					values = "'" + cat + "','" + catarray.get(f).toString()
+				for (int f = 0; f < category.size(); f++) {
+					values = "'" + cat + "','" + category.get(f).toString()
 							+ "'";
 					SQLPanel.con.setInsertInto(values, "kategorie");
 
