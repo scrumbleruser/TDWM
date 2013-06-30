@@ -22,8 +22,10 @@ import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
+
 /**
  * Gibt Information über den Verlauf der Größe eines Artikels wieder.
+ * 
  * @author Bernhard Hermes
  * 
  */
@@ -35,7 +37,7 @@ public class Graph {
 	private DefaultCategoryDataset dataset = new DefaultCategoryDataset();
 	private JFreeChart chart;
 	private ChartPanel chartPanel;
-	
+
 	private boolean ja = false;
 
 	public Graph() {
@@ -53,9 +55,8 @@ public class Graph {
 		// Maincontainer
 		panel.setLayout(new MigLayout("", "[]", "[]"));
 		panel.setOpaque(false);
-		
 
-		if(ja == true){
+		if (ja == true) {
 			createDataset(dataset);
 		}
 		chart = createChart(dataset);
@@ -64,36 +65,37 @@ public class Graph {
 		// chartPanel.setPreferredSize(new Dimension(500, 270));
 
 		article.setPreferredSize(new Dimension(150, article.getHeight()));
-		button.addActionListener(new ActionListener() {			
+		button.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-				search();				
+				search();
 			}
 		});
-		
-		panel.add(chartPanel,"span");
-		panel.add(label,"span 3");
+
+		panel.add(chartPanel, "span");
+		panel.add(label, "span 3");
 		panel.add(article);
 		panel.add(button);
 	}
-	
-	private String[] getArticles()
-	{
+
+	private String[] getArticles() {
 		String sql = "Select Artikel from revision group by Artikel";
 
 		String content = SQLPanel.con.getSelectStatement(sql);
-		
+
 		ArrayList<String> rtn = new ArrayList<String>();
-		
-		for (String s: content.split("\n" ))
-		{
-			rtn.add(s.trim());
+
+		if (!content.equals("")) {
+			for (String s : content.split("\n")) {
+				rtn.add(s.trim());
+			}
+
+			rtn.remove(0);
+			rtn.remove(0);
+
 		}
-		
-		rtn.remove(0);
-		rtn.remove(0);
-		
 		return rtn.toArray(new String[rtn.size()]);
+
 	}
 
 	public JPanel getGraph() {
@@ -178,8 +180,8 @@ public class Graph {
 		// ****************************************************************************
 
 		// customise the renderer...
-//		final LineAndShapeRenderer renderer = (LineAndShapeRenderer) plot
-//				.getRenderer();
+		// final LineAndShapeRenderer renderer = (LineAndShapeRenderer) plot
+		// .getRenderer();
 		// renderer.setDrawShapes(true);
 
 		// OPTIONAL CUSTOMISATION COMPLETED.

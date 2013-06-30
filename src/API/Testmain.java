@@ -1,6 +1,8 @@
 package API;
 
 import java.util.ArrayList;
+import java.util.HashSet;
+
 import net.sourceforge.jwbf.core.contentRep.Article;
 import net.sourceforge.jwbf.mediawiki.actions.MediaWiki;
 import net.sourceforge.jwbf.mediawiki.bots.MediaWikiBot;
@@ -50,7 +52,20 @@ public class Testmain {
 //	   for(String s : tmo)
 //		   System.out.println(s);
 	   
-	   AllRevisions ar = new AllRevisions(wb.getWikiBot(),"Deutschland");
+	   AllRevisions ar = new AllRevisions(wb.getWikiBot(),"Christian_Lindner");
+	   
+	   GetUserContribs uc = new GetUserContribs(wb.getWikiBot(), "AHZ");
+	   
+	   HashSet<String> hs = new HashSet();
+	   
+	   for(UserContribs u : uc.getUserContribs())
+	   {
+		   hs.add(u.getTitle());
+	   }
+	   
+	   
+	   for(String s : hs)
+		   System.out.println(s);
 	   
 //	   for(Revision r : ar.getRevisions())
 //	   System.out.println(r.toString());

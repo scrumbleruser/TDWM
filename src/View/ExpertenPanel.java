@@ -77,14 +77,16 @@ public class ExpertenPanel {
 		String content = SQLPanel.con.getSelectStatement(sql);
 
 		ArrayList<String> rtn = new ArrayList<String>();
+		
+		if (!content.equals("")) {
+			for (String s : content.split("\n")) {
+				rtn.add(s.trim());
+			}
 
-		for (String s : content.split("\n")) {
-			rtn.add(s.trim());
+			rtn.remove(0);
+			rtn.remove(0);
+
 		}
-
-		rtn.remove(0);
-		rtn.remove(0);
-
 		return rtn.toArray(new String[rtn.size()]);
 	}
 
