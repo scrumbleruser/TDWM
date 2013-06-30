@@ -3,11 +3,11 @@ package View;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.sql.SQLException;
 import java.util.ArrayList;
 
 import javax.swing.ButtonGroup;
 import javax.swing.JButton;
+import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JPasswordField;
@@ -24,7 +24,9 @@ import API.WikiBot;
 import net.miginfocom.swing.MigLayout;
 
 /**
- * Panel mit dem Informionen vom Wiki gesammelt und in die Datenbank geschrieben werden können.
+ * Panel mit dem Informionen vom Wiki gesammelt und in die Datenbank geschrieben
+ * werden können.
+ * 
  * @author Bernhard Hermes
  * 
  */
@@ -41,13 +43,14 @@ public class APIPanel {
 	private JTextField userField = new JTextField();
 	private JPasswordField passwordField = new JPasswordField();
 	private JTextField usernameField = new JTextField();
-	private JTextField articleField = new JTextField();
-//	private JTextField revisionField = new JTextField();
-	private JTextField categoryField = new JTextField();
+	// private JTextField articleField = new JTextField();
+	private JComboBox<String> articlecb = new JComboBox<String>();
+	// private JTextField revisionField = new JTextField();
+	private JComboBox<String> categorycb = new JComboBox<String>();
 	private JTextArea resultArea = new JTextArea();
 	private JScrollPane resultField = new JScrollPane(resultArea);
 
-//	private JComboBox<String> tbnamesComboBox = new JComboBox<String>();
+	// private JComboBox<String> tbnamesComboBox = new JComboBox<String>();
 
 	private JRadioButton rbWikiDE = new JRadioButton();
 	private JRadioButton rbWikiEN = new JRadioButton();
@@ -64,15 +67,15 @@ public class APIPanel {
 		init();
 	}
 
-	//ActionListener der aufgerufen wird, wenn Ausführen gedrückt wird.
+	// ActionListener der aufgerufen wird, wenn Ausführen gedrückt wird.
 	private ActionListener execBTAL = new ActionListener() {
 
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			String cat = categoryField.getText();
+			String cat = "" + categorycb.getSelectedItem();
 			String values = "";
 			ArrayList<String> catarray = new ArrayList<String>();
-			if (!categoryField.getText().equals("")) {
+			if (!cat.equals("")) {
 				wikiBot.setArticle(cat);
 				int i = 0;
 				for (String s : wikiBot.getLinks()) {
@@ -95,11 +98,13 @@ public class APIPanel {
 				resultArea.append(ui.getUsername());
 			}
 
-			if (!articleField.getText().equals("")) {
-				wikiBot.setArticle(articleField.getText());
+			String item = "" + articlecb.getSelectedItem();
+			System.out.println("MySelected" + item);
+			if (!item.equals("")) {
+				wikiBot.setArticle(item);
 				resultArea.append(wikiBot.getArticle().getTitle());
-//				JComboBox<String> cb = initComboBox(tbnamesComboBox);
-//				String myselectedTab = "" + cb.getSelectedItem();
+				// JComboBox<String> cb = initComboBox(tbnamesComboBox);
+				// String myselectedTab = "" + cb.getSelectedItem();
 				for (Revision r : wikiBot.getAllRevisions()) {
 					resultArea.append(r.toString() + "\n");
 					// stmt = mysql.setInsertInto(r.getName(), r.getRevid() +
@@ -164,12 +169,10 @@ public class APIPanel {
 		// Preferences
 		usernameField
 				.setPreferredSize(new Dimension(150, userField.getHeight()));
-		articleField
-				.setPreferredSize(new Dimension(150, userField.getHeight()));
-//		revisionField
-//				.setPreferredSize(new Dimension(150, userField.getHeight()));
-		categoryField
-				.setPreferredSize(new Dimension(150, userField.getHeight()));
+		articlecb.setPreferredSize(new Dimension(150, userField.getHeight()));
+		// revisionField
+		// .setPreferredSize(new Dimension(150, userField.getHeight()));
+		categorycb.setPreferredSize(new Dimension(150, userField.getHeight()));
 
 		// Results
 		resultField
@@ -226,13 +229,13 @@ public class APIPanel {
 		preferencesContainer.add(new JLabel("User: "));
 		preferencesContainer.add(usernameField);
 		preferencesContainer.add(new JLabel("Artikel: "));
-		preferencesContainer.add(articleField, "wrap");
-//		preferencesContainer.add(new JLabel("Revision: "));
-//		preferencesContainer.add(revisionField);
+		preferencesContainer.add(articlecb, "wrap");
+		// preferencesContainer.add(new JLabel("Revision: "));
+		// preferencesContainer.add(revisionField);
 		preferencesContainer.add(new JLabel("Kategorie: "), "gapright 30");
-		preferencesContainer.add(categoryField, "wrap");
-//		preferencesContainer.add(new JLabel("Tables: "));
-//		preferencesContainer.add(tbnamesComboBox);
+		preferencesContainer.add(categorycb, "wrap");
+		// preferencesContainer.add(new JLabel("Tables: "));
+		// preferencesContainer.add(tbnamesComboBox);
 
 		resultsContainer.add(new JLabel("<html><b>Ergebnis: </html>"), "wrap");
 		resultsContainer.add(resultField, "span");
@@ -247,6 +250,7 @@ public class APIPanel {
 
 		initData();
 	}
+
 	/**
 	 * Initialize Data
 	 */
@@ -255,24 +259,42 @@ public class APIPanel {
 		passwordField.setText("asdasd");
 		starturl = "http://de.wikipedia.org/w/";
 		loginBt.doClick();
-//		for (String tab : pan.getTables()) {
-//			tbnamesComboBox.addItem(tab);
-//		}
-//		tbnamesComboBox.setSelectedItem("revision");
+		// for (String tab : pan.getTables()) {
+		// tbnamesComboBox.addItem(tab);
+		// }
+		// tbnamesComboBox.setSelectedItem("revision");
+
+		String[] artikel = { "","Homöopathie", "Christian_Lindner", "U2_(Band)",
+				"PRISM_(Überwachungsprogramm)", "Datenschutz", "Deutschland",
+				"Hacker", "Erfrischungsgetränk" };
+		for (String art : artikel) {
+			articlecb.addItem(art);
+		}
+		articlecb.setSelectedItem("");
+
+		String[] kategorien = { "","Chaos Computer Club", "Datenschutz",
+				"Deutschland", "Erfrischungsgetränk", "Hackerkultur",
+				"Homöopathie", "Hydrotherapie", "Rockband", "The Dubliners",
+				"U2", "Irische Band", "Unternehmensberater", "New Economy" };
+		for (String kat : kategorien) {
+			categorycb.addItem(kat);
+		}
+		categorycb.setSelectedItem("");
+
 	}
 
-//	public JComboBox<String> initComboBox(final JComboBox<String> combobox) {
-//
-//		combobox.addItemListener(new ItemListener() {
-//			@SuppressWarnings("unchecked")
-//			public void itemStateChanged(ItemEvent e) {
-//				JComboBox<String> selectedChoice = (JComboBox<String>) e
-//						.getItemSelectable();
-//			}
-//		});
-//		return combobox;
-//
-//	}
+	// public JComboBox<String> initComboBox(final JComboBox<String> combobox) {
+	//
+	// combobox.addItemListener(new ItemListener() {
+	// @SuppressWarnings("unchecked")
+	// public void itemStateChanged(ItemEvent e) {
+	// JComboBox<String> selectedChoice = (JComboBox<String>) e
+	// .getItemSelectable();
+	// }
+	// });
+	// return combobox;
+	//
+	// }
 
 	// Getter und Setter
 	public JPanel getAPIPanel() {
@@ -292,21 +314,13 @@ public class APIPanel {
 		return this.usernameField;
 	}
 
-	public JTextField getArticleField() {
-		return this.articleField;
-	}
-
-//	public JTextField getRevisionField() {
-//		return this.revisionField;
-//	}
-
-	public JTextField getCategoryField() {
-		return this.categoryField;
-	}
-
-//	public JComboBox getTbnamesComboBox() {
-//		return tbnamesComboBox;
-//	}
+	// public JTextField getRevisionField() {
+	// return this.revisionField;
+	// }
+	
+	// public JComboBox getTbnamesComboBox() {
+	// return tbnamesComboBox;
+	// }
 
 	public JTextArea getResultField() {
 		return this.resultArea;
@@ -342,6 +356,22 @@ public class APIPanel {
 
 	public void setResultField(JScrollPane resultField) {
 		this.resultField = resultField;
+	}
+
+	public JComboBox<String> getArticlecb() {
+		return articlecb;
+	}
+
+	public void setArticlecb(JComboBox<String> articlecb) {
+		this.articlecb = articlecb;
+	}
+
+	public JComboBox<String> getCategorycb() {
+		return categorycb;
+	}
+
+	public void setCategorycb(JComboBox<String> categorycb) {
+		this.categorycb = categorycb;
 	}
 
 }
