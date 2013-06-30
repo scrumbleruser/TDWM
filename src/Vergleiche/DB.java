@@ -48,7 +48,7 @@ public class DB {
 
 		// Add articles titles to the article
 		for (int i = 0; i < getDateExtractedFromFile("res/ArticleTitles.txt")
-				.size() / 2; i++) {
+				.size(); i++) {
 			String title = getDateExtractedFromFile("res/ArticleTitles.txt")
 					.get(i);
 			articlesInDB.add(new TempArticle(title));
@@ -81,7 +81,14 @@ public class DB {
 							"res/UsersOf" + tmp + ".txt"));
 		}
 
+		// Delete file if it exists
+		deleteFile("Categories");
 		// Add category to the specific article
+		for (int i = 0; i < articlesInDB.size(); i++) {
+			getDataFromDB("Select Kategorie from kategorie where artikel=\""
+					+ articlesInDB.get(i).getTitle() + "\"", "Categories");
+		}
+		
 		for (int i = 0; i < articlesInDB.size(); i++) {
 			articlesInDB.get(i).setCategory(
 					getDateExtractedFromFile("res/Categories.txt").get(i));
@@ -89,7 +96,7 @@ public class DB {
 
 		// Importing the content of the revisions from Wikipedia
 		for (int i = 0; i < articlesInDB.size(); i++) {
-			for (int j = 0; j < (articlesInDB.get(i).getRevisions().size() / 50); j++) {
+			for (int j = 0; j < (articlesInDB.get(i).getRevisions().size() / 20); j++) {
 				WikiBot wb = new WikiBot("wissensmanagement", "asdasd");
 				int revID = Integer.parseInt(articlesInDB.get(i).getRevisions()
 						.get(j).getID().replaceAll("  ", ""));
