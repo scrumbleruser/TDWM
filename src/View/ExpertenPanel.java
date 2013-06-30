@@ -37,6 +37,8 @@ public class ExpertenPanel {
 	}
 
 	private void search() {
+		
+		//SQL Daten abrufen
 		String sql = "Select User , count(*) as count, sum(if(Artikel='"
 				+ article.getSelectedItem() + "',1,0)) as '"
 				+ article.getSelectedItem() + "' , sum(if(Artikel='"
@@ -47,7 +49,26 @@ public class ExpertenPanel {
 				+ "' group by User order by count";
 
 		String content = SQLPanel.con.getSelectStatement(sql);
-		textArea.setText(content);
+		StringBuilder print = new StringBuilder();
+		
+		//Nutzer die nur einen Artikel bearbeitet haben werden gefiltert
+		int coun = 0;
+		for(String s : content.split("\n"))
+		{
+			coun++;
+			if(coun>2)
+			{
+			String[] t = s.split("  ");
+			if(!t[2].equals("0") && !t[3].equals("0"))
+				print.append(s+ "\n");
+			}
+			else
+			{
+				print.append(s+ "\n");
+			}
+		}
+			
+		textArea.setText(print.toString());
 	}
 
 	private String[] getArticles() {
