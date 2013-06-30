@@ -33,7 +33,7 @@ public class MainAnalyze {
 				String cat = articlesInDB.get(i).getCategory();
 				ArrayList<Revision> revisions = new ArrayList<Revision>();
 				// For efficiency we reduce the size of revisions
-				for (int j = 0; j < (articlesInDB.get(i).getRevisions().size() / 20); j++) {
+				for (int j = 0; j < (articlesInDB.get(i).getRevisions().size() / 50); j++) {
 					User user = new User(articlesInDB.get(i).getRevisions()
 							.get(j).getAuthor(),
 							articlesInDB.get(i).getTitle(), articlesInDB.get(i)

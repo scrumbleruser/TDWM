@@ -6,7 +6,6 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.util.ArrayList;
 
 import API.GetRevision;
@@ -55,10 +54,12 @@ public class DB {
 		}
 
 		// Get revision IDs of each article from DB
+
 		for (int i = 0; i < articlesInDB.size(); i++) {
 			String tmp = articlesInDB.get(i).getTitle().replaceAll("  ", "");
 			// tmp.replaceAll(" ", "");
 			// Delete file if it exists
+
 			deleteFile("RevisionsOf" + tmp);
 			getDataFromDB("Select RevisionID from revision where artikel=\""
 					+ tmp + "\"", "RevisionsOf" + tmp);
@@ -88,15 +89,16 @@ public class DB {
 			getDataFromDB("Select Kategorie from kategorie where artikel=\""
 					+ articlesInDB.get(i).getTitle() + "\"", "Categories");
 		}
-		
+
 		for (int i = 0; i < articlesInDB.size(); i++) {
 			articlesInDB.get(i).setCategory(
 					getDateExtractedFromFile("res/Categories.txt").get(i));
 		}
 
 		// Importing the content of the revisions from Wikipedia
+		// if(!fileExists("ArticleTitles")) {
 		for (int i = 0; i < articlesInDB.size(); i++) {
-			for (int j = 0; j < (articlesInDB.get(i).getRevisions().size() / 20); j++) {
+			for (int j = 0; j < (articlesInDB.get(i).getRevisions().size() / 50); j++) {
 				WikiBot wb = new WikiBot("wissensmanagement", "asdasd");
 				int revID = Integer.parseInt(articlesInDB.get(i).getRevisions()
 						.get(j).getID().replaceAll("  ", ""));
@@ -110,6 +112,7 @@ public class DB {
 						.getContent());
 			}
 		}
+		// }
 	}
 
 	/**
@@ -231,6 +234,14 @@ public class DB {
 		File file = new File("res/" + filename + ".txt");
 		if (file.exists())
 			file.delete();
+	}
+
+	// Checks if file exists
+	private boolean fileExists(String filename) {
+		File file = new File("res/" + filename + ".txt");
+		if (file.exists())
+			return true;
+		return false;
 	}
 
 }

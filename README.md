@@ -1,4 +1,0 @@
-TDWM
-====
-
-Technologien des Wissensmanagement
