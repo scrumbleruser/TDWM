@@ -21,7 +21,6 @@ import net.miginfocom.swing.MigLayout;
 /**
  * Representation of the necessary GUI elements to show the results of the analyzation process.
  * @author Shimal
- *
  */
 public class ComparisonPanel {
 	
