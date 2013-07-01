@@ -52,23 +52,23 @@ public class Testmain {
 //	   for(String s : tmo)
 //		   System.out.println(s);
 	   
-	   AllRevisions ar = new AllRevisions(wb.getWikiBot(),"Christian_Lindner");
+	   Last500Revisions ar = new Last500Revisions(wb.getWikiBot(),"Christian_Lindner");
+//	   
+//	   GetUserContribs uc = new GetUserContribs(wb.getWikiBot(), "Belsazar");
+//	   
+//	   HashSet<String> hs = new HashSet();
+//	   
+//	   for(UserContribs u : uc.getUserContribs())
+//	   {
+//		   hs.add(u.getTitle());
+//	   }
+//	   
+//	   
+//	   for(String s : hs)
+//		   System.out.println(s);
 	   
-	   GetUserContribs uc = new GetUserContribs(wb.getWikiBot(), "Belsazar");
-	   
-	   HashSet<String> hs = new HashSet();
-	   
-	   for(UserContribs u : uc.getUserContribs())
-	   {
-		   hs.add(u.getTitle());
-	   }
-	   
-	   
-	   for(String s : hs)
-		   System.out.println(s);
-	   
-//	   for(Revision r : ar.getRevisions())
-//	   System.out.println(r.toString());
+	   for(Revision r : ar.getRevisions())
+	   System.out.println(r.toString());
 //	   
 //	   UserInfo ui = new UserInfo(wb.getWikiBot(), "Reinhard_Dietrich");
 //	   System.out.println(ui.toString());
