@@ -45,7 +45,7 @@ public class Last500Revisions extends MWAction {
 				MediaWiki.URL_API
 						+ "?action=query&titles="
 						+ MediaWiki.encode(title)
-						+ "&prop=revisions&rvlimit=max&rvprop=ids%7Ctimestamp%7Cuser%7Cuserid%7Cflags%7Csize&format=xml");
+						+ "&prop=revisions&rvlimit=max&rvprop=ids%7Ctimestamp%7Cuser%7Cuserid%7Cflags%7Csize%7Ccontent&format=xml");
 		while (rvcontinue != null) {
 			rvcontinue = null;
 
@@ -134,6 +134,7 @@ public class Last500Revisions extends MWAction {
 				rev.setTimeStamp(element.getAttributeValue("timestamp"));
 				rev.setMinorchange(element.getAttributeValue("minor"));
 				rev.setSize(element.getAttributeValue("size"));
+				rev.setContent(element.getText());
 				rtn.add(rev);
 
 			} else {
